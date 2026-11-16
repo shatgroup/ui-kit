@@ -7,7 +7,7 @@ function ToggleGroup({ className, children, ...props }: ToggleGroupPrimitive.Pro
   return (
     <ToggleGroupPrimitive
       data-slot="toggle-group"
-      className={cn("inline-flex h-control-sm items-center gap-1 rounded-md bg-muted p-1", className)}
+      className={cn("inline-flex max-w-full flex-wrap items-center gap-1 rounded-md bg-muted p-1", className)}
       {...props}
     >
       {children}

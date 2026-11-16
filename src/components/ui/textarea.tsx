@@ -6,7 +6,7 @@ function Textarea({ className, ...props }: ComponentProps<"textarea">) {
   return (
     <textarea
       data-slot="textarea"
-      className={cn(fieldClass, "min-h-16 px-3 py-2 text-sm", className)}
+      className={cn(fieldClass, "min-h-16 px-3 py-2 text-sm read-only:bg-muted", className)}
       {...props}
     />
   )

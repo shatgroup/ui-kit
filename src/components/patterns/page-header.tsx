@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import { Fragment, type ReactNode } from "react"
 import { Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb.tsx"
 import { Button } from "@/components/ui/button.tsx"
@@ -22,18 +22,20 @@ export function PageHeader({ title, description, crumbs, actions }: PageHeaderPr
         <Breadcrumb>
           <BreadcrumbList>
             {crumbs.map((crumb, index) => (
-              <BreadcrumbItem key={crumb.label}>
+              <Fragment key={crumb.label}>
                 {index > 0 ? <BreadcrumbSeparator /> : null}
-                {crumb.onClick ? (
-                  <BreadcrumbLink render={<Button variant="link" size="sm" onClick={crumb.onClick} />}>{crumb.label}</BreadcrumbLink>
-                ) : index === crumbs.length - 1 ? (
-                  <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                ) : (
-                  <Text as="span" size="sm" tone="muted">
-                    {crumb.label}
-                  </Text>
-                )}
-              </BreadcrumbItem>
+                <BreadcrumbItem>
+                  {crumb.onClick ? (
+                    <BreadcrumbLink render={<Button variant="link" size="sm" onClick={crumb.onClick} />}>{crumb.label}</BreadcrumbLink>
+                  ) : index === crumbs.length - 1 ? (
+                    <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                  ) : (
+                    <Text as="span" size="sm" tone="muted">
+                      {crumb.label}
+                    </Text>
+                  )}
+                </BreadcrumbItem>
+              </Fragment>
             ))}
           </BreadcrumbList>
         </Breadcrumb>

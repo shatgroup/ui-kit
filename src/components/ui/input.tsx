@@ -13,7 +13,7 @@ function Input({ className, size = "md", type, ...props }: InputProps) {
     <InputPrimitive
       type={type}
       data-slot="input"
-      className={cn(range ? "h-2 w-full accent-primary" : cn(fieldClass, CONTROL_SIZE[size]), className)}
+      className={cn(range ? "h-2 w-full accent-primary" : cn(fieldClass, "read-only:bg-muted", CONTROL_SIZE[size]), className)}
       {...props}
     />
   )

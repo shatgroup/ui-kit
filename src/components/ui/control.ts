@@ -24,6 +24,6 @@ export const focusRing =
 export const fieldClass = [
   "box-border w-full min-w-0 rounded-md border border-input bg-background text-foreground shadow-xs",
   "placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-50",
-  "read-only:bg-muted aria-invalid:border-destructive",
+  "aria-invalid:border-destructive",
   focusRing,
 ].join(" ")

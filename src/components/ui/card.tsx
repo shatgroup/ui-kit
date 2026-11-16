@@ -12,7 +12,7 @@ function Card({ className, ...props }: ComponentProps<"div">) {
 }
 
 function CardHeader({ className, ...props }: ComponentProps<"div">) {
-  return <div data-slot="card-header" className={cn("flex flex-col gap-1", className)} {...props} />
+  return <div data-slot="card-header" className={cn("flex min-w-0 flex-col gap-1", className)} {...props} />
 }
 
 function CardTitle({ className, ...props }: ComponentProps<"div">) {
