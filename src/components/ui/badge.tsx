@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils.ts"
 import { Truncated } from "./truncated.tsx"
 
 const badgeVariants = cva(
-  "inline-flex h-5 max-w-full min-w-0 items-center rounded-full px-2 text-xs font-medium",
+  "inline-flex h-5 max-w-full min-w-0 items-center rounded-md px-2 text-xs font-medium",
   {
     variants: {
       variant: {

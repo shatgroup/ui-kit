@@ -45,7 +45,7 @@ function NavButton({
       className={cn(
         "w-full justify-start",
         collapsed && "w-10 px-0",
-        active && "bg-sidebar-primary text-sidebar-primary-foreground",
+        active && "bg-sidebar-accent font-medium text-sidebar-accent-foreground",
       )}
       aria-current={active ? "page" : undefined}
       aria-label={item.label}
@@ -106,7 +106,7 @@ export function AppShell({ logo, groups, activeId, onNavigate, topbar, children 
   return (
     <Box className="min-h-dvh">
       <Inline align="stretch" wrap={false} className="min-h-dvh">
-        <Box tone="card" border className={cn("hidden shrink-0 md:block", collapsed ? "w-16" : "w-60")}>
+        <Box border className={cn("hidden shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-16" : "w-60")}>
           <Stack gap={4} className="h-dvh p-3">
             <Inline align="center" justify={collapsed ? "center" : "start"}>
               {logo}

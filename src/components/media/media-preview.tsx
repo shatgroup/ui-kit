@@ -40,7 +40,7 @@ export function MediaPreview({
 
   return (
     <div data-ratio={ratio} className="relative w-full overflow-hidden rounded-md bg-muted">
-      {status === "empty" || !src ? (
+      {status === "empty" || (status !== "error" && !src) ? (
         <Box className="flex h-full items-center justify-center p-4">
           <EmptyState title="Chưa có tư liệu" description="Thả ảnh hoặc video vào để xem trước." />
         </Box>

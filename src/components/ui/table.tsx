@@ -32,7 +32,7 @@ function TableFooter({ className, ...props }: ComponentProps<"tfoot">) {
 }
 
 function TableRow({ className, ...props }: ComponentProps<"tr">) {
-  return <tr data-slot="table-row" className={cn("border-b border-border", className)} {...props} />
+  return <tr data-slot="table-row" className={cn("border-b border-border hover:bg-muted/50", className)} {...props} />
 }
 
 type CellProps = {
@@ -59,7 +59,7 @@ function TableHead({
       data-slot="table-head"
       data-col={grow ? "grow" : "fit"}
       data-col-sticky={sticky ? "true" : undefined}
-      className={cn("h-control-sm px-3 text-left font-medium text-muted-foreground", numeric && "text-right tabular-nums", className)}
+      className={cn("h-12 px-3 text-left text-sm font-medium text-muted-foreground", numeric && "text-right tabular-nums", className)}
       // check-ui-ignore-next-line: minWidth là số pixel của từng cột, không có class tĩnh
       style={minWidth ? { minWidth } : undefined}
       {...props}
@@ -84,7 +84,7 @@ function TableCell({
       data-slot="table-cell"
       data-col={grow ? "grow" : "fit"}
       data-col-sticky={sticky ? "true" : undefined}
-      className={cn("h-control-md px-3 align-middle", numeric && "text-right tabular-nums", className)}
+      className={cn("h-12 px-3 align-middle text-sm", numeric && "text-right tabular-nums", className)}
       // check-ui-ignore-next-line: minWidth là số pixel của từng cột, không có class tĩnh
       style={minWidth ? { minWidth } : undefined}
       {...props}
