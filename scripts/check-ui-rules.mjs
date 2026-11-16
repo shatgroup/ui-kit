@@ -16,7 +16,6 @@ const stringLiteral = /`(?:\\.|[^`\\])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g
 
 const errors = []
 const exceptions = []
-const showcaseArbitrary = []
 const uiArbitrary = []
 
 function walk(dir) {
@@ -55,10 +54,6 @@ function report(file, line, message) {
     uiArbitrary.push(`${rel}:${line}: ${message}`)
     return
   }
-  if (rel.startsWith("src/pages/showcase/") && message.startsWith("Giá trị tuỳ ý")) {
-    showcaseArbitrary.push(`${rel}:${line}: ${message}`)
-    return
-  }
   errors.push(`${rel}:${line}: ${message}`)
 }
 
@@ -69,6 +64,7 @@ function normalize(token) {
 
 function checkClass(file, line, token) {
   if (ignoredLine(file, line)) return
+  const rel = path.relative(root, file).split(path.sep).join("/")
   const value = normalize(token)
   if (!value) return
   if (margin.test(value)) {
@@ -83,6 +79,9 @@ function checkClass(file, line, token) {
   }
   if (shadedColor.test(value) || plainColor.test(value)) {
     report(file, line, "Dùng token màu, không dùng màu Tailwind mặc định")
+  }
+  if (rel.startsWith("src/pages/") && /^(?:bg-|rounded-|shadow-(?!none(?:$|:))|border(?:-|$)|text-(?:primary|muted|foreground|destructive|success|warning|info|chart|background|card|popover|secondary|accent|sidebar|badge|white|black))/.test(value)) {
+    report(file, line, "Trang không chứa class trang trí")
   }
   if (/^shadow-(?!none(?:$|:))/.test(value)) {
     report(file, line, "Không dùng shadow, popup dùng viền")
@@ -143,10 +142,6 @@ for (const file of walk(src)) {
 
 if (uiArbitrary.length > 0) {
   console.log(`check:ui ui: ${uiArbitrary.length} giá trị tuỳ ý`)
-}
-
-if (showcaseArbitrary.length > 0) {
-  console.log(`check:ui showcase: ${showcaseArbitrary.length} giá trị tuỳ ý`)
 }
 
 if (exceptions.length > 0) {

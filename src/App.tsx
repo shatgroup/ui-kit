@@ -1,24 +1,43 @@
 import { TooltipProvider } from "@/components/ui/tooltip.tsx"
 import { Toaster } from "@/components/ui/sonner.tsx"
 import { Container, Text } from "@/components/layout/index.ts"
-import { KitPage } from "@/pages/kit-page.tsx"
-import { PreviewMotionPage } from "@/pages/preview-motion-page.tsx"
-import { PreviewPage } from "@/pages/preview-page.tsx"
+import { DesignSystemPage } from "@/pages/design-system-page.tsx"
 import { ShowcasePage } from "@/pages/showcase-page.tsx"
-import { TokensPage } from "@/pages/tokens-page.tsx"
 
 export default function App() {
   const path = window.location.pathname.replace(/\/$/, "") || "/"
-  let page = (
+  if (path === "/" || path === "/tokens" || path === "/kit" || path === "/design-system") {
+    if (path !== "/design-system") window.history.replaceState(null, "", "/design-system")
+    return (
+      <TooltipProvider>
+        <DesignSystemPage />
+        <Toaster />
+      </TooltipProvider>
+    )
+  }
+  if (path === "/preview") {
+    window.history.replaceState(null, "", "/showcase?tab=posm")
+    return (
+      <TooltipProvider>
+        <ShowcasePage />
+        <Toaster />
+      </TooltipProvider>
+    )
+  }
+  if (path === "/preview-motion") {
+    window.history.replaceState(null, "", "/showcase?tab=motion")
+    return (
+      <TooltipProvider>
+        <ShowcasePage />
+        <Toaster />
+      </TooltipProvider>
+    )
+  }
+  const page = path === "/showcase" ? <ShowcasePage /> : path === "/design-system" ? <DesignSystemPage /> : (
     <Container>
       <Text>Không có trang này.</Text>
     </Container>
   )
-  if (path === "/" || path === "/tokens") page = <TokensPage />
-  if (path === "/kit") page = <KitPage />
-  if (path === "/preview") page = <PreviewPage />
-  if (path === "/preview-motion") page = <PreviewMotionPage />
-  if (path === "/showcase") page = <ShowcasePage />
 
   return (
     <TooltipProvider>

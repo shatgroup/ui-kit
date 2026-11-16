@@ -5,9 +5,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest"
 const widths = [375, 768, 1440]
 const themes = ["light", "dark"] as const
 const pages = [
-  { path: "/kit", tabs: [""] },
-  { path: "/preview", tabs: [""] },
-  { path: "/showcase", tabs: ["Cards", "Dashboard", "Application"] },
+  { path: "/design-system", tabs: [""] },
+  { path: "/showcase", tabs: ["Cards", "Dashboard", "Application", "POSM", "Motion"] },
 ]
 
 function scan() {
@@ -93,9 +92,16 @@ function scan() {
     })
   }
 
+  document.querySelectorAll("body *").forEach((el) => {
+    if (!(el instanceof Element) || hidden(el) || el.matches(":focus, :focus-visible")) return
+    const shadow = getComputedStyle(el).boxShadow
+    const painted = shadow && shadow !== "none" && !/^rgba\(0,\s*0,\s*0,\s*0\) 0px 0px 0px 0px(?:, rgba\(0,\s*0,\s*0,\s*0\) 0px 0px 0px 0px)*$/.test(shadow)
+    if (painted) failures.push(`còn shadow: ${el.tagName}`)
+  })
+
   if (document.documentElement.scrollWidth > window.innerWidth + 2) failures.push("tràn trang")
   const controls = [...document.querySelectorAll("button, input, [data-slot=select-trigger]")].filter(
-    (el) => el instanceof HTMLElement && !hidden(el) && !el.closest("[data-slot=calendar], [data-slot=tabs-list], [data-slot=toggle-group]") && getComputedStyle(el).position !== "absolute",
+    (el) => el instanceof HTMLElement && !hidden(el) && !el.closest("[data-slot=calendar], [data-slot=tabs-list], [data-slot=toggle-group], [data-slot=input-group], [data-slot=badge]") && getComputedStyle(el).position !== "absolute",
   )
   const groups = new Map<Element, HTMLElement[]>()
   for (const el of controls) {
@@ -165,6 +171,41 @@ describe("kiểm showcase", () => {
             await page.waitForTimeout(300)
             const found = await page.evaluate(scan)
             for (const message of found) failures.push(`${item.path} ${tab || "-"} ${width} ${theme}: ${message}`)
+            if (item.path === "/design-system" && width === 1440) {
+              const states = await page.evaluate(() => {
+                const read = (label: string) => {
+                  const el = document.querySelector(`[aria-label="${label}"]`)
+                  if (!(el instanceof HTMLElement)) return ""
+                  const style = getComputedStyle(el)
+                  return `${style.backgroundColor}|${style.transform}`
+                }
+                return { switch: read("Bật tắt"), box: read("Đã chọn") }
+              })
+              await page.getByRole("switch", { name: "Bật tắt" }).click()
+              await page.getByRole("checkbox", { name: "Đã chọn" }).click()
+              await page.getByRole("radio", { name: "Hai" }).click()
+              await page.getByRole("button", { name: "Bảng" }).click()
+              const after = await page.evaluate(() => {
+                const read = (label: string) => {
+                  const el = document.querySelector(`[aria-label="${label}"]`)
+                  if (!(el instanceof HTMLElement)) return ""
+                  const style = getComputedStyle(el)
+                  return `${style.backgroundColor}|${style.transform}`
+                }
+                const radio = document.querySelector('[aria-label="Radio"] [data-checked]')
+                const toggle = document.querySelector('[data-slot="toggle-group-item"][data-pressed]')
+                return {
+                  switch: read("Bật tắt"),
+                  box: read("Đã chọn"),
+                  radio: radio ? getComputedStyle(radio).backgroundColor : "",
+                  toggle: toggle ? getComputedStyle(toggle).backgroundColor : "",
+                }
+              })
+              if (states.switch === after.switch) failures.push(`${theme}: Switch không đổi`)
+              if (states.box === after.box) failures.push(`${theme}: Checkbox không đổi`)
+              if (!after.radio) failures.push(`${theme}: Radio không checked`)
+              if (!after.toggle) failures.push(`${theme}: Toggle không pressed`)
+            }
           }
         }
       }

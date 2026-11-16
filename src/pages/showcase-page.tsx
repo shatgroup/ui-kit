@@ -1,20 +1,41 @@
 import { useState, type ReactNode } from "react"
 import { Box, Inline, Stack } from "@/components/layout/index.ts"
+import { MotionBoard } from "@/components/patterns/motion-board.tsx"
+import { PosmBoard } from "@/components/patterns/posm-board.tsx"
+import { ShowcaseApplication } from "@/components/patterns/showcase/application.tsx"
+import { ShowcaseCards } from "@/components/patterns/showcase/cards/index.tsx"
+import { ShowcaseDashboard } from "@/components/patterns/showcase/dashboard/index.tsx"
 import { MotionReduceToggle, ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
-import { ShowcaseApplication } from "@/pages/showcase/application.tsx"
-import { ShowcaseCards } from "@/pages/showcase/cards/index.tsx"
-import { ShowcaseDashboard } from "@/pages/showcase/dashboard/index.tsx"
+
+const TABS = ["cards", "dashboard", "application", "posm", "motion"] as const
+type Tab = (typeof TABS)[number]
+
+function initialTab(): Tab {
+  const value = new URLSearchParams(window.location.search).get("tab")
+  return TABS.includes(value as Tab) ? (value as Tab) : "cards"
+}
 
 export function ShowcasePage() {
-  const [tab, setTab] = useState("cards")
+  const [tab, setTab] = useState<Tab>(initialTab)
+
+  function choose(value: string) {
+    const next = TABS.includes(value as Tab) ? (value as Tab) : "cards"
+    setTab(next)
+    const url = new URL(window.location.href)
+    url.pathname = "/showcase"
+    url.search = `?tab=${next}`
+    window.history.replaceState(null, "", url)
+  }
 
   const tabs = (
-    <Tabs value={tab} onValueChange={(value) => setTab(value)}>
+    <Tabs value={tab} onValueChange={choose}>
       <TabsList>
         <TabsTrigger value="cards">Cards</TabsTrigger>
         <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
         <TabsTrigger value="application">Application</TabsTrigger>
+        <TabsTrigger value="posm">POSM</TabsTrigger>
+        <TabsTrigger value="motion">Motion</TabsTrigger>
       </TabsList>
     </Tabs>
   )
@@ -26,9 +47,11 @@ export function ShowcasePage() {
   )
 
   if (tab === "dashboard") return <ShowcaseDashboard leading={tabs} topbar={theme} />
+  if (tab === "posm") return <PosmBoard leading={tabs} topbar={theme} />
+  if (tab === "motion") return <MotionBoard leading={tabs} topbar={theme} />
 
   return (
-    <Stack gap={4} className="min-h-dvh py-4">
+    <Stack gap={4}>
       <Frame>
         <Inline gap={2} align="center" justify="between">
           {tabs}
@@ -42,7 +65,7 @@ export function ShowcasePage() {
 
 function Frame({ children }: { children: ReactNode }) {
   return (
-    <Box className="flex w-full justify-center px-4">
+    <Box padding={4} className="flex w-full justify-center">
       <Box className="w-full max-w-7xl">{children}</Box>
     </Box>
   )
