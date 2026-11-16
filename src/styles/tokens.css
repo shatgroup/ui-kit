@@ -619,3 +619,41 @@ html {
 :root[data-reduce-motion="true"] [data-slot="chart"][data-draw="true"] :is(.recharts-area, .recharts-line, .recharts-bar, .recharts-rectangle) {
   animation: none;
 }
+
+.specimen-display {
+  font-size: 8rem;
+  line-height: 1;
+}
+
+.specimen-word {
+  font-size: 4.5rem;
+  line-height: 1;
+}
+
+.swatch-stack > * + * {
+  margin-top: calc(var(--space-4) * -1);
+}
+
+.kit-masonry {
+  columns: 1;
+  column-gap: var(--space-4);
+}
+
+.kit-masonry > * {
+  break-inside: avoid;
+  margin-bottom: var(--space-4);
+}
+
+@media (min-width: 48rem) {
+  .kit-masonry {
+    columns: 2;
+  }
+}
+
+@media (min-width: 80rem) {
+  .kit-masonry {
+    columns: 3;
+  }
+}
+  animation: none;
+}
