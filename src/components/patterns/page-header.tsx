@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { Inline, Stack, Text } from "@/components/layout/index.ts"
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb.tsx"
 import { Button } from "@/components/ui/button.tsx"
 
 export type Crumb = {
@@ -18,26 +19,24 @@ export function PageHeader({ title, description, crumbs, actions }: PageHeaderPr
   return (
     <Stack gap={3}>
       {crumbs && crumbs.length > 0 ? (
-        <Inline gap={2} align="center">
-          {crumbs.map((crumb, index) => (
-            <Inline key={crumb.label} gap={2} align="center">
-              {index > 0 ? (
-                <Text as="span" size="sm" tone="muted">
-                  /
-                </Text>
-              ) : null}
-              {crumb.onClick ? (
-                <Button variant="link" size="sm" onClick={crumb.onClick}>
-                  {crumb.label}
-                </Button>
-              ) : (
-                <Text as="span" size="sm" tone="muted">
-                  {crumb.label}
-                </Text>
-              )}
-            </Inline>
-          ))}
-        </Inline>
+        <Breadcrumb>
+          <BreadcrumbList>
+            {crumbs.map((crumb, index) => (
+              <BreadcrumbItem key={crumb.label}>
+                {index > 0 ? <BreadcrumbSeparator /> : null}
+                {crumb.onClick ? (
+                  <BreadcrumbLink render={<Button variant="link" size="sm" onClick={crumb.onClick} />}>{crumb.label}</BreadcrumbLink>
+                ) : index === crumbs.length - 1 ? (
+                  <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                ) : (
+                  <Text as="span" size="sm" tone="muted">
+                    {crumb.label}
+                  </Text>
+                )}
+              </BreadcrumbItem>
+            ))}
+          </BreadcrumbList>
+        </Breadcrumb>
       ) : null}
       <Stack gap={3} className="sm:flex-row sm:items-start sm:justify-between">
         <Stack gap={1} className="min-w-0">
