@@ -6,46 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx"
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx";
-
-const teamMembers = [
-  {
-    name: "Sofia Davis",
-    email: "m@example.com",
-    avatar: "/samples/avatars/01.svg",
-    role: "Owner",
-  },
-  {
-    name: "Jackson Lee",
-    email: "p@example.com",
-    avatar: "/samples/avatars/02.svg",
-    role: "Developer",
-  },
-  {
-    name: "Isabella Nguyen",
-    email: "i@example.com",
-    avatar: "/samples/avatars/03.svg",
-    role: "Billing",
-  },
-];
-
-const roles = [
-  {
-    name: "Viewer",
-    description: "Can view and comment.",
-  },
-  {
-    name: "Developer",
-    description: "Can view, comment and edit.",
-  },
-  {
-    name: "Billing",
-    description: "Can view, comment and manage billing.",
-  },
-  {
-    name: "Owner",
-    description: "Admin-level access to all resources.",
-  },
-];
+import { teamMembers, teamRoles as roles } from "@/fixtures/cards.ts";
 
 export function CardsTeamMembers() {
   return (

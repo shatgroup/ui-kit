@@ -17,34 +17,7 @@ import { Input } from "@/components/ui/input.tsx";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip.tsx";
 import { cn } from "@/lib/utils.ts";
 import { ArrowUpIcon, CheckIcon, PlusIcon } from "lucide-react";
-
-const users = [
-  {
-    name: "Olivia Martin",
-    email: "m@example.com",
-    avatar: "/samples/avatars/01.svg",
-  },
-  {
-    name: "Isabella Nguyen",
-    email: "isabella.nguyen@email.com",
-    avatar: "/samples/avatars/03.svg",
-  },
-  {
-    name: "Emma Wilson",
-    email: "emma@example.com",
-    avatar: "/samples/avatars/05.svg",
-  },
-  {
-    name: "Jackson Lee",
-    email: "lee@example.com",
-    avatar: "/samples/avatars/02.svg",
-  },
-  {
-    name: "William Kim",
-    email: "will@email.com",
-    avatar: "/samples/avatars/04.svg",
-  },
-] as const;
+import { chatMessages, chatUsers as users } from "@/fixtures/cards.ts";
 
 type User = (typeof users)[number];
 
@@ -52,24 +25,7 @@ export function CardsChat() {
   const [open, setOpen] = React.useState(false);
   const [selectedUsers, setSelectedUsers] = React.useState<User[]>([]);
 
-  const [messages, setMessages] = React.useState([
-    {
-      role: "agent",
-      content: "Hi, how can I help you today?",
-    },
-    {
-      role: "user",
-      content: "Hey, I'm having trouble with my account.",
-    },
-    {
-      role: "agent",
-      content: "What seems to be the problem?",
-    },
-    {
-      role: "user",
-      content: "I can't log in.",
-    },
-  ]);
+  const [messages, setMessages] = React.useState(chatMessages.map((item) => ({ ...item })));
   const [input, setInput] = React.useState("");
   const inputLength = input.trim().length;
 

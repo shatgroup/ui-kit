@@ -2,43 +2,11 @@
    Bố cục, class và số liệu giữ từ bản gốc. Import đổi sang component của kit. */
 import { Area, AreaChart, Line, LineChart } from "recharts";
 
+import { revenueSeries } from "@/fixtures/cards.ts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart.tsx";
 
-const data = [
-  {
-    revenue: 10400,
-    subscription: 40,
-  },
-  {
-    revenue: 14405,
-    subscription: 90,
-  },
-  {
-    revenue: 9400,
-    subscription: 200,
-  },
-  {
-    revenue: 8200,
-    subscription: 278,
-  },
-  {
-    revenue: 7000,
-    subscription: 89,
-  },
-  {
-    revenue: 9600,
-    subscription: 239,
-  },
-  {
-    revenue: 11244,
-    subscription: 78,
-  },
-  {
-    revenue: 26475,
-    subscription: 89,
-  },
-];
+const data = revenueSeries;
 
 const chartConfig = {
   revenue: {

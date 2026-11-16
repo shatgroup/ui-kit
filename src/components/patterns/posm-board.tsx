@@ -43,34 +43,9 @@ import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from "@/compo
 import { Switch } from "@/components/ui/switch.tsx"
 import { Textarea } from "@/components/ui/textarea.tsx"
 import { toast } from "sonner"
+import { posmRequests, posmTypes, type PosmRequest, type PosmStatus } from "@/fixtures/posm.ts"
 
-type Status = "pending" | "doing" | "done"
-
-type RequestRow = {
-  id: string
-  code: string
-  store: string
-  type: string
-  qty: number
-  status: Status
-  date: string
-}
-
-const LONG_STORE = "Shondo 22 Nguyễn Ảnh Thủ – Trung Mỹ Tây, Quận 12, TP. Hồ Chí Minh"
-const STORES = ["Shondo Quận 1", LONG_STORE, "Shondo Thủ Đức"]
-const TYPES = ["Standee", "Wobbler", "Poster"]
-const STATUS_CYCLE: Status[] = ["pending", "doing", "done"]
-const STATUS_LABEL: Record<Status, string> = { pending: "Chờ duyệt", doing: "Đang làm", done: "Đã xong" }
-
-const ROWS: RequestRow[] = Array.from({ length: 40 }, (_, index) => ({
-  id: String(index + 1),
-  code: `POSM-${2400 + index}`,
-  store: index % 5 === 0 ? LONG_STORE : STORES[index % STORES.length] ?? STORES[0],
-  type: TYPES[index % TYPES.length] ?? "Standee",
-  qty: (index % 9) + 1,
-  status: STATUS_CYCLE[index % STATUS_CYCLE.length] ?? "pending",
-  date: `${String((index % 27) + 1).padStart(2, "0")}/11/2026`,
-}))
+const STATUS_LABEL: Record<PosmStatus, string> = { pending: "Chờ duyệt", doing: "Đang làm", done: "Đã xong" }
 
 const GROUPS: AppNavGroup[] = [
   {
@@ -91,7 +66,7 @@ const GROUPS: AppNavGroup[] = [
   },
 ]
 
-const COLUMNS: DataColumn<RequestRow>[] = [
+const COLUMNS: DataColumn<PosmRequest>[] = [
   { id: "code", header: "Mã", accessor: (row) => row.code, minWidth: 120 },
   { id: "store", header: "Cửa hàng", accessor: (row) => row.store, minWidth: 240, grow: true },
   { id: "type", header: "Loại POSM", accessor: (row) => row.type, minWidth: 120, cell: (row) => <Badge variant="outline">{row.type}</Badge> },
@@ -114,9 +89,9 @@ export function PosmBoard({ leading, topbar = <ThemeToggle /> }: { leading?: Rea
   const [store, setStore] = useState("all")
   const [type, setType] = useState("all")
   const [status, setStatus] = useState("all")
-  const [detail, setDetail] = useState<RequestRow | null>(null)
+  const [detail, setDetail] = useState<PosmRequest | null>(null)
   const [sheetOpen, setSheetOpen] = useState(false)
-  const [deleteRow, setDeleteRow] = useState<RequestRow | null>(null)
+  const [deleteRow, setDeleteRow] = useState<PosmRequest | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [storeField, setStoreField] = useState("")
   const [typeField, setTypeField] = useState("")
@@ -128,7 +103,7 @@ export function PosmBoard({ leading, topbar = <ThemeToggle /> }: { leading?: Rea
 
   const rows = useMemo(
     () =>
-      ROWS.filter((row) => {
+      posmRequests.filter((row) => {
         const text = `${row.code} ${row.store}`.toLowerCase()
         if (query && !text.includes(query.trim().toLowerCase())) return false
         if (store === "q1" && !row.store.includes("Quận 1")) return false
@@ -163,7 +138,7 @@ export function PosmBoard({ leading, topbar = <ThemeToggle /> }: { leading?: Rea
       onChange: setType,
       options: [
         { value: "all", label: "Tất cả" },
-        ...TYPES.map((item) => ({ value: item, label: item })),
+        ...posmTypes.map((item) => ({ value: item, label: item })),
       ],
     },
     {
@@ -363,7 +338,7 @@ export function PosmBoard({ leading, topbar = <ThemeToggle /> }: { leading?: Rea
                               <SelectValue placeholder="Chọn loại" />
                             </SelectTrigger>
                             <SelectContent>
-                              {TYPES.map((item) => (
+                              {posmTypes.map((item) => (
                                 <SelectItem key={item} value={item}>
                                   {item}
                                 </SelectItem>

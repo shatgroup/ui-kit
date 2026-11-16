@@ -12,25 +12,14 @@ import { PageHeader } from "@/components/patterns/page-header.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import { toast } from "sonner"
-
-const LONG = "Cảnh khai trương Shondo Nguyễn Ảnh Thủ, máy quay đi ngang quầy"
-
-const STATUSES: JobState[] = ["queued", "running", "done", "failed", "cancelled"]
-
-const CLIPS = Array.from({ length: 12 }, (_, index) => ({
-  id: String(index + 1),
-  name: index === 2 ? LONG : `Đoạn ${index + 1}`,
-  duration: `0:${String(8 + index).padStart(2, "0")}`,
-  status: STATUSES[index % STATUSES.length] ?? "queued",
-  progress: 20 + index * 5,
-}))
+import { motionClips } from "@/fixtures/motion.ts"
 
 export function MotionBoard({ leading, topbar = <ThemeToggle /> }: { leading?: ReactNode; topbar?: ReactNode }) {
   const [menu, setMenu] = useState("project")
   const [step, setStep] = useState(2)
   const [clipId, setClipId] = useState("3")
   const [job, setJob] = useState<JobState>("running")
-  const clip = CLIPS.find((item) => item.id === clipId) ?? CLIPS[0]
+  const clip = motionClips.find((item) => item.id === clipId) ?? motionClips[0]
 
   const steps: StepItem[] = [
     { id: "script", label: "Kịch bản", status: step > 0 ? "done" : step === 0 ? "current" : "todo" },
@@ -80,7 +69,7 @@ export function MotionBoard({ leading, topbar = <ThemeToggle /> }: { leading?: R
         <SplitPane
           start={
             <Stack gap={2} className="p-2">
-              {CLIPS.map((item) => (
+              {motionClips.map((item) => (
                 <Stack key={item.id} gap={1} className="rounded-md border border-border p-2">
                   <Button
                     variant={item.id === clipId ? "secondary" : "ghost"}

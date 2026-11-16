@@ -13,29 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select.tsx";
 import { Separator } from "@/components/ui/separator.tsx";
-
-const people = [
-  {
-    name: "Olivia Martin",
-    email: "m@example.com",
-    avatar: "/samples/avatars/03.svg",
-  },
-  {
-    name: "Isabella Nguyen",
-    email: "b@example.com",
-    avatar: "/samples/avatars/04.svg",
-  },
-  {
-    name: "Sofia Davis",
-    email: "p@example.com",
-    avatar: "/samples/avatars/05.svg",
-  },
-  {
-    name: "Ethan Thompson",
-    email: "e@example.com",
-    avatar: "/samples/avatars/01.svg",
-  },
-];
+import { sharePeople as people } from "@/fixtures/cards.ts";
 export function CardsShare() {
   return (
     <Card>

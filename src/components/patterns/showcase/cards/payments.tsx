@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table/legacy";
 import { MoreHorizontalIcon } from "lucide-react";
 import * as React from "react";
+import { payments } from "@/fixtures/cards.ts";
 
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
@@ -36,44 +37,7 @@ type SortingState = { id: string; desc: boolean }[]
 type ColumnFiltersState = { id: string; value: unknown }[]
 type VisibilityState = Record<string, boolean>
 
-const data: Payment[] = [
-  {
-    id: "m5gr84i9",
-    amount: 316,
-    status: "success",
-    email: "ken99@example.com",
-  },
-  {
-    id: "3u1reuv4",
-    amount: 242,
-    status: "success",
-    email: "Abe45@example.com",
-  },
-  {
-    id: "derv1ws0",
-    amount: 837,
-    status: "processing",
-    email: "Monserrat44@example.com",
-  },
-  {
-    id: "bhqecj4p",
-    amount: 721,
-    status: "failed",
-    email: "carmella@example.com",
-  },
-  {
-    id: "k9f2m3n4",
-    amount: 450,
-    status: "pending",
-    email: "jason78@example.com",
-  },
-  {
-    id: "p5q6r7s8",
-    amount: 1280,
-    status: "success",
-    email: "sarah23@example.com",
-  },
-];
+const data: Payment[] = payments;
 
 export type Payment = {
   id: string;

@@ -13,49 +13,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card.tsx";
+import { goalSeries } from "@/fixtures/cards.ts";
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart.tsx";
 
-const data = [
-  {
-    goal: 400,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 239,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 349,
-  },
-];
+const data = goalSeries;
 
 const chartConfig = {
   goal: {

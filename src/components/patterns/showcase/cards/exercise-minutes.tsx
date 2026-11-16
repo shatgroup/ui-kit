@@ -2,46 +2,11 @@
    Bố cục, class và số liệu giữ từ bản gốc. Import đổi sang component của kit. */
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
+import { exerciseSeries } from "@/fixtures/cards.ts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart.tsx";
 
-const data = [
-  {
-    average: 400,
-    today: 240,
-    day: "Monday",
-  },
-  {
-    average: 300,
-    today: 139,
-    day: "Tuesday",
-  },
-  {
-    average: 200,
-    today: 980,
-    day: "Wednesday",
-  },
-  {
-    average: 278,
-    today: 390,
-    day: "Thursday",
-  },
-  {
-    average: 189,
-    today: 480,
-    day: "Friday",
-  },
-  {
-    average: 239,
-    today: 380,
-    day: "Saturday",
-  },
-  {
-    average: 349,
-    today: 430,
-    day: "Sunday",
-  },
-];
+const data = exerciseSeries;
 
 const chartConfig = {
   today: {

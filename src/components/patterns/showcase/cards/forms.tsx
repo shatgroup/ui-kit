@@ -14,21 +14,7 @@ import { Input } from "@/components/ui/input.tsx";
 import { Label } from "@/components/ui/label.tsx";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
-
-const plans = [
-  {
-    id: "starter",
-    name: "Starter Plan",
-    description: "Perfect for small businesses.",
-    price: "$10",
-  },
-  {
-    id: "pro",
-    name: "Pro Plan",
-    description: "More features and storage.",
-    price: "$20",
-  },
-] as const;
+import { plans } from "@/fixtures/cards.ts";
 
 export function CardsForms() {
   return (
