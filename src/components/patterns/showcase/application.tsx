@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import { Area, AreaChart, XAxis } from "recharts"
+import { Area, AreaChart, XAxis, YAxis } from "recharts"
 import { CalendarIcon, CheckIcon, DollarSignIcon, FileIcon, PaperclipIcon, PhoneIcon, SendIcon, VideoIcon } from "lucide-react"
 import { Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Ticker } from "@/components/patterns/ticker.tsx"
@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx"
 import { ChartContainer, type ChartConfig } from "@/components/ui/chart.tsx"
+import { EmptyState } from "@/components/ui/empty-state.tsx"
 import { Input } from "@/components/ui/input.tsx"
 import { InputGroup } from "@/components/ui/input-group.tsx"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.tsx"
@@ -75,7 +76,8 @@ export function ShowcaseApplication() {
                 <ChartContainer config={priceConfig} className="h-40 w-full">
                   <AreaChart data={stockMonths} margin={{ left: 16, right: 16, top: 8, bottom: 0 }}>
                     <XAxis dataKey="month" tickLine={false} axisLine={false} interval={0} padding={{ left: 16, right: 16 }} />
-                    <Area dataKey="price" type="monotone" fill="var(--color-price)" fillOpacity={0.2} stroke="var(--color-price)" strokeWidth={2} />
+                    <YAxis hide domain={[0, 100]} />
+                    <Area dataKey="price" type="linear" fill="var(--color-price)" fillOpacity={0.2} stroke="var(--color-price)" strokeWidth={2} />
                   </AreaChart>
                 </ChartContainer>
                 <div className="grid grid-cols-2">
@@ -117,26 +119,30 @@ export function ShowcaseApplication() {
                   <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
                 </TabsList>
                 <TabsContent value={tx}>
-                  <Stack gap={3}>
-                    {rows.map((item) => (
-                      <Inline key={item.title} gap={3} align="center" justify="between">
-                        <Inline gap={3} align="center" className="min-w-0">
-                          <span className="flex size-8 items-center justify-center rounded-md bg-muted">
-                            <DollarSignIcon className="size-4" />
-                          </span>
-                          <Stack gap={0} className="min-w-0">
-                            <Text size="sm" weight="medium">{item.title}</Text>
-                            <Text size="xs" tone="muted">{item.detail}</Text>
+                  {rows.length === 0 ? (
+                    <EmptyState title="No transactions" />
+                  ) : (
+                    <Stack gap={3}>
+                      {rows.map((item) => (
+                        <Inline key={item.title} gap={3} align="center" justify="between">
+                          <Inline gap={3} align="center" className="min-w-0">
+                            <span className="flex size-8 items-center justify-center rounded-md bg-muted">
+                              <DollarSignIcon className="size-4" />
+                            </span>
+                            <Stack gap={0} className="min-w-0">
+                              <Text size="sm" weight="medium">{item.title}</Text>
+                              <Text size="xs" tone="muted">{item.detail}</Text>
+                            </Stack>
+                          </Inline>
+                          <Stack gap={0} align="end">
+                            <Text size="sm" weight="medium" className="text-primary-text">{item.amount}</Text>
+                            <Text size="xs" tone="muted">{item.date}</Text>
                           </Stack>
                         </Inline>
-                        <Stack gap={0} align="end">
-                          <Text size="sm" weight="medium" className="text-primary-text">{item.amount}</Text>
-                          <Text size="xs" tone="muted">{item.date}</Text>
-                        </Stack>
-                      </Inline>
-                    ))}
-                    <Button variant="outline" className="w-full">View all</Button>
-                  </Stack>
+                      ))}
+                      <Button variant="outline" className="w-full">View all</Button>
+                    </Stack>
+                  )}
                 </TabsContent>
               </Tabs>
             </CardContent>

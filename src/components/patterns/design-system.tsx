@@ -324,10 +324,10 @@ function DesignSystem() {
           </KitCard>
 
           <KitCard title="Dropdown">
-            <Stack gap={2} className="min-h-48">
+            <Stack gap={2} className="min-h-72">
               <Select open modal={false} value="figma" onOpenChange={() => undefined}>
                 <SelectTrigger aria-label="Dropdown"><span>Figma</span></SelectTrigger>
-                <SelectContent>
+                <SelectContent side="bottom" collisionAvoidance={{ side: "none", align: "shift", fallbackAxisSide: "none" }}>
                   <SelectItem value="framer">Framer</SelectItem>
                   <SelectItem value="sketch">Sketch</SelectItem>
                   <SelectItem value="invision">InVision Studio</SelectItem>

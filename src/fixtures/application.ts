@@ -6,12 +6,12 @@ export const ticker = [
 ]
 
 export const stockMonths = [
-  { month: "Jan", price: 96 },
-  { month: "Feb", price: 112 },
-  { month: "Mar", price: 104 },
-  { month: "Apr", price: 108 },
-  { month: "May", price: 126 },
-  { month: "Jun", price: 121 },
+  { month: "Jan", price: 46 },
+  { month: "Feb", price: 78 },
+  { month: "Mar", price: 52 },
+  { month: "Apr", price: 28 },
+  { month: "May", price: 86 },
+  { month: "Jun", price: 74 },
 ]
 
 export const transactions = {
@@ -20,8 +20,8 @@ export const transactions = {
     { title: "Freelance Payment", detail: "Payment for Invoice #INV-4421 – Website redesign project", amount: "+$800.00", date: "Dec 14" },
     { title: "Salary Payment", detail: "Monthly salary – Acme Corporation SRL, Payroll November 2025", amount: "+$2500.00", date: "Dec 01" },
   ],
-  pending: [{ title: "Client retainer", detail: "Waiting for bank", amount: "+$1,200.00", date: "Apr 18" }],
-  cancelled: [{ title: "Domain renewal", detail: "Cancelled by owner", amount: "+$18.00", date: "Mar 30" }],
+  pending: [],
+  cancelled: [],
 }
 
 export const activity = [
