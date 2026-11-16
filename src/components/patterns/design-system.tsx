@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, type ReactNode } from "react"
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react"
 import {
   BellIcon,
   FileIcon,
@@ -37,30 +37,68 @@ import { TagsInput } from "@/components/ui/tags-input.tsx"
 import { MotionReduceToggle, ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
-import { toast } from "sonner"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx"
+import standardMd from "../../../docs/STANDARD.md?raw"
+import { toast } from "sonner"
 
 const SWATCHES = [
-  { name: "background", className: "bg-background", ink: "text-foreground" },
-  { name: "foreground", className: "bg-foreground", ink: "text-background" },
-  { name: "primary", className: "bg-primary", ink: "text-primary-foreground" },
-  { name: "primary-text", className: "bg-primary-text", ink: "text-background" },
-  { name: "muted", className: "bg-muted", ink: "text-foreground" },
-  { name: "accent", className: "bg-accent", ink: "text-accent-foreground" },
-  { name: "destructive", className: "bg-destructive", ink: "text-destructive-foreground" },
-  { name: "chart-1", className: "bg-chart-1", ink: "text-foreground" },
-  { name: "chart-2", className: "bg-chart-2", ink: "text-foreground" },
-  { name: "chart-3", className: "bg-chart-3", ink: "text-foreground" },
-  { name: "chart-4", className: "bg-chart-4", ink: "text-foreground" },
-  { name: "chart-5", className: "bg-chart-5", ink: "text-foreground" },
+  { name: "background", className: "bg-background" },
+  { name: "foreground", className: "bg-foreground" },
+  { name: "primary", className: "bg-primary" },
+  { name: "primary-text", className: "bg-primary-text" },
+  { name: "muted", className: "bg-muted" },
+  { name: "accent", className: "bg-accent" },
+  { name: "destructive", className: "bg-destructive" },
+  { name: "chart-1", className: "bg-chart-1" },
+  { name: "chart-2", className: "bg-chart-2" },
+  { name: "chart-3", className: "bg-chart-3" },
+  { name: "chart-4", className: "bg-chart-4" },
+  { name: "chart-5", className: "bg-chart-5" },
 ]
+const INTENTIONAL = new Set<string>()
 const TYPE_ROWS = [
   { name: "Tiêu đề", weight: "bold" as const, size: "3xl" as const },
   { name: "Mục", weight: "semibold" as const, size: "xl" as const },
   { name: "Nội dung", weight: "medium" as const, size: "base" as const },
   { name: "Phụ", weight: "normal" as const, size: "sm" as const },
 ]
+const BUTTON_VARIANTS = ["primary", "secondary", "outline", "ghost", "destructive", "link"] as const
 const ICONS = [HouseIcon, SearchIcon, BellIcon, SettingsIcon, UserIcon, FolderIcon, FileIcon, ImageIcon]
+
+function channel(value: number) {
+  const unit = value / 255
+  return unit <= 0.04045 ? unit / 12.92 : ((unit + 0.055) / 1.055) ** 2.4
+}
+
+function parseRgb(value: string) {
+  const match = value.match(/rgba?\(([^)]+)\)/)
+  if (!match) return null
+  const parts = match[1].split(",").map((part) => Number.parseFloat(part))
+  if (parts.slice(0, 3).some((part) => Number.isNaN(part))) return null
+  return [parts[0] ?? 0, parts[1] ?? 0, parts[2] ?? 0] as const
+}
+
+function luminance(rgb: readonly [number, number, number]) {
+  return 0.2126 * channel(rgb[0]) + 0.7152 * channel(rgb[1]) + 0.0722 * channel(rgb[2])
+}
+
+function contrast(a: readonly [number, number, number], b: readonly [number, number, number]) {
+  const left = luminance(a)
+  const right = luminance(b)
+  const light = Math.max(left, right)
+  const dark = Math.min(left, right)
+  return (light + 0.05) / (dark + 0.05)
+}
+
+function toHex(rgb: readonly [number, number, number]) {
+  return `#${rgb.map((part) => Math.round(part).toString(16).padStart(2, "0")).join("")}`
+}
+
+function standardSection(title: string) {
+  const chunk = standardMd.split(/^## /m).find((part) => part.startsWith(title))
+  if (!chunk) return ""
+  return chunk.split("\n").slice(1).join(" ").replace(/\s+/g, " ").trim()
+}
 
 function Section({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -82,13 +120,42 @@ function DesignSystem() {
   const [tags, setTags] = useState(["Standee"])
   const [date, setDate] = useState<Date | undefined>(new Date(2026, 10, 16))
   const [alert, setAlert] = useState(true)
-  const [hex, setHex] = useState<Record<string, string>>({})
+  const swatchRefs = useRef<Record<string, HTMLElement | null>>({})
+  const typeRefs = useRef<Array<HTMLElement | null>>([])
+  const spaceRef = useRef<HTMLDivElement>(null)
+  const radiusRef = useRef<HTMLDivElement>(null)
+  const controlSm = useRef<HTMLButtonElement>(null)
+  const controlMd = useRef<HTMLButtonElement>(null)
+  const controlLg = useRef<HTMLButtonElement>(null)
+  const [ink, setInk] = useState<Array<{ name: string; className: string; hex: string; ink: "text-ink-black" | "text-ink-white"; ratio: string; label: string }>>([])
+  const [typeMetrics, setTypeMetrics] = useState<Array<{ weight: string; size: string; line: string; tracking: string }>>([])
+  const [measured, setMeasured] = useState({ space: "", radius: "", sm: "", md: "", lg: "" })
 
   useLayoutEffect(() => {
-    const style = getComputedStyle(document.documentElement)
-    const next: Record<string, string> = {}
-    for (const item of SWATCHES) next[item.name] = style.getPropertyValue(`--${item.name}`).trim()
-    setHex(next)
+    const black = [0, 0, 0] as const
+    const white = [255, 255, 255] as const
+    setInk(SWATCHES.map((item) => {
+      const rgb = parseRgb(getComputedStyle(swatchRefs.current[item.name]!).backgroundColor) ?? black
+      const onBlack = contrast(rgb, black)
+      const onWhite = contrast(rgb, white)
+      const tone = onBlack >= onWhite ? "text-ink-black" as const : "text-ink-white" as const
+      const ratio = Math.max(onBlack, onWhite)
+      const label = INTENTIONAL.has(item.name) ? "NGOẠI LỆ" : ratio >= 4.5 ? "ĐẠT" : "KHÔNG ĐẠT"
+      return { ...item, hex: toHex(rgb), ink: tone, ratio: ratio.toFixed(2), label }
+    }))
+    setTypeMetrics(TYPE_ROWS.map((_, index) => {
+      const style = getComputedStyle(typeRefs.current[index]!)
+      return { weight: style.fontWeight, size: style.fontSize, line: style.lineHeight, tracking: style.letterSpacing }
+    }))
+    const spaceStyle = spaceRef.current ? getComputedStyle(spaceRef.current) : null
+    const radius = radiusRef.current ? getComputedStyle(radiusRef.current).borderRadius : ""
+    setMeasured({
+      space: spaceStyle?.gap ?? "",
+      radius,
+      sm: controlSm.current ? getComputedStyle(controlSm.current).height : "",
+      md: controlMd.current ? getComputedStyle(controlMd.current).height : "",
+      lg: controlLg.current ? getComputedStyle(controlLg.current).height : "",
+    })
   }, [])
 
   return (
@@ -118,12 +185,20 @@ function DesignSystem() {
             </CardContent>
           </Card>
           <Stack gap={2}>
-            {SWATCHES.map((item) => (
-              <Box key={item.name} className={`${item.className} ${item.ink} rounded-lg border border-border p-3`}>
-                <Text size="sm" weight="medium" className={item.ink}>{item.name}</Text>
-                <Text size="xs" className={item.ink}>{hex[item.name] || item.name}</Text>
-              </Box>
-            ))}
+            {SWATCHES.map((item) => {
+              const row = ink.find((entry) => entry.name === item.name)
+              const tone = row?.ink ?? "text-ink-black"
+              return (
+                <div
+                  key={item.name}
+                  ref={(node) => { swatchRefs.current[item.name] = node }}
+                  className={`${item.className} ${tone} rounded-lg border border-border p-3`}
+                >
+                  <Text size="sm" weight="medium" className={tone}>{item.name}</Text>
+                  <Text size="xs" className={tone}>{row ? `${row.hex} · ${row.ratio}:1 · ${row.label}` : item.name}</Text>
+                </div>
+              )
+            })}
           </Stack>
         </Grid>
         <Card>
@@ -140,13 +215,17 @@ function DesignSystem() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {TYPE_ROWS.map((row) => (
+                {TYPE_ROWS.map((row, index) => (
                   <TableRow key={row.name}>
-                    <TableCell><Text size={row.size} weight={row.weight}>{row.name}</Text></TableCell>
-                    <TableCell>{row.weight}</TableCell>
-                    <TableCell>{row.size}</TableCell>
-                    <TableCell>1.5</TableCell>
-                    <TableCell>0</TableCell>
+                    <TableCell>
+                      <span ref={(node) => { typeRefs.current[index] = node?.firstElementChild instanceof HTMLElement ? node.firstElementChild : null }}>
+                        <Text size={row.size} weight={row.weight}>{row.name}</Text>
+                      </span>
+                    </TableCell>
+                    <TableCell>{typeMetrics[index]?.weight ?? row.weight}</TableCell>
+                    <TableCell>{typeMetrics[index]?.size ?? row.size}</TableCell>
+                    <TableCell>{typeMetrics[index]?.line ?? ""}</TableCell>
+                    <TableCell>{typeMetrics[index]?.tracking ?? ""}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -154,9 +233,39 @@ function DesignSystem() {
           </CardContent>
         </Card>
         <Grid columns={{ base: 1, md: 2, xl: 4 }} gap={4}>
-          <Card><CardHeader><CardTitle>Khoảng cách</CardTitle></CardHeader><CardContent><Text size="sm" tone="muted">0–16 theo thang 4px</Text></CardContent></Card>
-          <Card><CardHeader><CardTitle>Bo góc</CardTitle></CardHeader><CardContent><Text size="sm" tone="muted">sm −4 · md −2 · lg · xl +4</Text></CardContent></Card>
-          <Card><CardHeader><CardTitle>Control</CardTitle></CardHeader><CardContent><Text size="sm" tone="muted">sm 32 · md 36 · lg 44</Text></CardContent></Card>
+          <Card>
+            <CardHeader><CardTitle>Khoảng cách</CardTitle></CardHeader>
+            <CardContent>
+              <div ref={spaceRef} className="flex flex-col gap-4">
+                <Text size="sm">Đo gap 4: {measured.space}</Text>
+                <Text size="xs" tone="muted">{standardSection("Khoảng cách")}</Text>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader><CardTitle>Bo góc</CardTitle></CardHeader>
+            <CardContent>
+              <Stack gap={2}>
+                <span ref={radiusRef} className="size-8 rounded-md border border-border" />
+                <Text size="sm">Đo rounded-md: {measured.radius}</Text>
+                <Text size="xs" tone="muted">{standardSection("Bo góc")}</Text>
+              </Stack>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader><CardTitle>Control</CardTitle></CardHeader>
+            <CardContent>
+              <Stack gap={2}>
+                <Inline gap={2}>
+                  <Button ref={controlSm} size="sm">sm</Button>
+                  <Button ref={controlMd} size="md">md</Button>
+                  <Button ref={controlLg} size="lg">lg</Button>
+                </Inline>
+                <Text size="sm">Đo: sm {measured.sm} · md {measured.md} · lg {measured.lg}</Text>
+                <Text size="xs" tone="muted">{standardSection("Control")}</Text>
+              </Stack>
+            </CardContent>
+          </Card>
           <Card><CardHeader><CardTitle>Chart</CardTitle></CardHeader><CardContent><Inline gap={2}>{["bg-chart-1", "bg-chart-2", "bg-chart-3", "bg-chart-4", "bg-chart-5"].map((item) => <span key={item} className={`size-6 rounded-md ${item}`} />)}</Inline></CardContent></Card>
         </Grid>
       </Stack>
@@ -165,13 +274,18 @@ function DesignSystem() {
         <Text as="h2" size="xl" weight="semibold">UI Kit</Text>
         <Grid columns={{ base: 1, lg: 2 }} gap={4}>
           <Section label="Buttons">
-            <Inline gap={2} wrap>
-              <Button>Default</Button>
-              <Button variant="secondary">Hover</Button>
-              <Button variant="outline">Pressed</Button>
-              <Button disabled>Disabled</Button>
-              <Button loading>Loading</Button>
-            </Inline>
+            <Stack gap={2}>
+              {BUTTON_VARIANTS.map((variant) => (
+                <Inline key={variant} gap={2} wrap>
+                  <Button variant={variant}>{variant}</Button>
+                  <Button variant={variant} forceState="hover">Hover</Button>
+                  <Button variant={variant} forceState="pressed">Pressed</Button>
+                  <Button variant={variant} forceState="focus">Focus</Button>
+                  <Button variant={variant} disabled>Disabled</Button>
+                  <Button variant={variant} loading>Loading</Button>
+                </Inline>
+              ))}
+            </Stack>
           </Section>
           <Section label="Inputs">
             <Stack gap={2}>
@@ -185,18 +299,14 @@ function DesignSystem() {
             </Stack>
           </Section>
           <Section label="Dropdown">
-            <Stack gap={2}>
-              <Select defaultValue="one">
+            <Stack gap={2} className="min-h-48">
+              <Select open modal={false} value="one" onOpenChange={() => undefined}>
                 <SelectTrigger aria-label="Chọn mục"><span>Mục một</span></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="one">Mục một</SelectItem>
                   <SelectItem value="two">Mục hai</SelectItem>
                 </SelectContent>
               </Select>
-              <div className="rounded-md border border-border bg-popover p-1 text-sm">
-                <div className="rounded-md bg-accent px-2 py-2 text-accent-foreground">Mục đang trỏ</div>
-                <div className="px-2 py-2">Mục đã chọn</div>
-              </div>
             </Stack>
           </Section>
           <Section label="Checkbox / Radio">
@@ -248,7 +358,10 @@ function DesignSystem() {
           <Section label="Progress">
             <Stack gap={2}>
               {Array.from({ length: 8 }, (_, index) => (
-                <Progress key={index} value={((index + 1) / 8) * 100} />
+                <Stack key={index} gap={1}>
+                  <Text size="xs">Step {index + 1} of 8</Text>
+                  <Progress value={((index + 1) / 8) * 100} />
+                </Stack>
               ))}
             </Stack>
           </Section>

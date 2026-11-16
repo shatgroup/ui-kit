@@ -14,6 +14,24 @@ const iconLg = "[&_svg]:size-4.5"
 
 const iconClass = { sm: iconSm, md: iconMd, lg: iconLg }
 
+const hoverForce = {
+  primary: "bg-primary/90",
+  secondary: "bg-secondary/80",
+  outline: "bg-muted",
+  ghost: "bg-muted",
+  destructive: "bg-destructive/90",
+  link: "underline",
+} as const
+
+const pressedForce = {
+  primary: "bg-primary/80",
+  secondary: "bg-secondary/70",
+  outline: "bg-accent",
+  ghost: "bg-accent",
+  destructive: "bg-destructive/80",
+  link: "underline",
+} as const
+
 const buttonVariants = cva(
   [
     "inline-flex min-w-0 max-w-full shrink items-center justify-center gap-2 rounded-md border border-transparent",
@@ -25,12 +43,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "border-primary bg-primary text-primary-foreground hover:bg-primary/90",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        outline: "border-input bg-background hover:bg-muted",
-        ghost: "hover:bg-muted",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        link: "text-primary-text underline-offset-4 hover:underline",
+        primary: "border-primary bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70",
+        outline: "border-input bg-background hover:bg-muted active:bg-accent",
+        ghost: "hover:bg-muted active:bg-accent",
+        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80",
+        link: "text-primary-text underline-offset-4 hover:underline active:underline",
       },
       size: {
         sm: BUTTON_SIZE.sm,
@@ -49,6 +67,7 @@ type ButtonProps = ButtonPrimitive.Props &
   VariantProps<typeof buttonVariants> & {
     loading?: boolean
     size?: ControlSize
+    forceState?: "hover" | "pressed" | "focus"
   }
 
 function Button({
@@ -56,16 +75,27 @@ function Button({
   variant = "primary",
   size = "md",
   loading = false,
+  forceState,
   disabled,
   children,
   ...props
 }: ButtonProps) {
+  const shown = variant ?? "primary"
   return (
     <ButtonPrimitive
       data-slot="button"
+      data-force-state={forceState}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
-      className={cn(buttonVariants({ variant, size }), iconClass[size], "relative", className)}
+      className={cn(
+        buttonVariants({ variant, size }),
+        iconClass[size],
+        "relative",
+        forceState === "hover" && hoverForce[shown],
+        forceState === "pressed" && pressedForce[shown],
+        forceState === "focus" && "border-ring ring-2 ring-ring",
+        className,
+      )}
       {...props}
     >
       <Truncated className={cn("inline-flex items-center gap-2", loading && "invisible")}>

@@ -65,6 +65,14 @@
   height: var(--control-lg);
 }
 
+@utility text-ink-black {
+  color: #000;
+}
+
+@utility text-ink-white {
+  color: #fff;
+}
+
 [data-scroll-x="true"] {
   overflow-x: auto;
 }
