@@ -3,7 +3,7 @@ import { Box, Inline, Stack } from "@/components/layout/index.ts"
 import { MotionReduceToggle, ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
 import { ShowcaseApplication } from "@/pages/showcase-application.tsx"
-import { ShowcaseCards } from "@/pages/showcase-cards.tsx"
+import { ShowcaseCards } from "@/pages/showcase/cards/index.tsx"
 import { ShowcaseDashboard } from "@/pages/showcase-dashboard.tsx"
 
 export function ShowcasePage() {
