@@ -34,10 +34,10 @@ function TagsInput({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap gap-1">
-        {value.map((tag) => (
-          <Badge key={tag} variant="outline">
+        {value.map((tag, index) => (
+          <Badge key={`${tag}-${index}`} variant="outline">
             {tag}
-            <button type="button" className="inline-flex size-3 items-center justify-center" aria-label={`Xoá ${tag}`} onClick={() => onValueChange(value.filter((item) => item !== tag))}>
+            <button type="button" className="inline-flex size-3 items-center justify-center" aria-label={`Xoá ${tag}`} onClick={() => onValueChange(value.filter((_, itemIndex) => itemIndex !== index))}>
               <XIcon className="size-3" />
             </button>
           </Badge>

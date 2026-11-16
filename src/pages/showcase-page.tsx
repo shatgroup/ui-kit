@@ -46,15 +46,15 @@ export function ShowcasePage() {
   return (
     <Stack gap={4}>
       <Frame>{tabs}</Frame>
-      <Frame>{tab === "application" ? <ShowcaseApplication /> : <ShowcaseCards />}</Frame>
+      <Frame wide={tab === "cards"}>{tab === "application" ? <ShowcaseApplication /> : <ShowcaseCards />}</Frame>
     </Stack>
   )
 }
 
-function Frame({ children }: { children: ReactNode }) {
+function Frame({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
   return (
     <Box padding={4} className="flex w-full flex-col items-center">
-      <Box className="w-full max-w-7xl">{children}</Box>
+      <Box className={wide ? "w-full" : "w-full max-w-7xl"}>{children}</Box>
     </Box>
   )
 }

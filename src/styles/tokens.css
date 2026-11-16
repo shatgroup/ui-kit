@@ -246,7 +246,7 @@ html {
   justify-content: center;
   font-size: 12.8px;
   color: var(--muted-foreground);
-  text-transform: lowercase;
+  text-transform: capitalize;
 }
 
 [data-slot="calendar"] .calendar-week + .calendar-week {
@@ -630,8 +630,12 @@ html {
   line-height: 1;
 }
 
+.swatch-stack > * {
+  position: relative;
+}
+
 .swatch-stack > * + * {
-  margin-top: calc(var(--space-4) * -1);
+  margin-top: calc(var(--space-8) * -1);
 }
 
 .kit-masonry {
@@ -642,6 +646,10 @@ html {
 .kit-masonry > * {
   break-inside: avoid;
   margin-bottom: var(--space-4);
+}
+
+@utility grid-cols-auto-fr {
+  grid-template-columns: auto minmax(0, 1fr);
 }
 
 @media (min-width: 48rem) {

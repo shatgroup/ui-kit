@@ -188,7 +188,7 @@ function DesignSystem() {
         <span className="specimen-word font-medium text-muted-foreground">Be Vietnam Pro</span>
       </Inline>
 
-      <Grid columns={{ base: 1, lg: 2 }} gap={6}>
+      <Grid columns={{ base: 1, lg: 2 }} gap={6} className="items-start">
         <Card>
           <CardContent>
             <Stack gap={2}>
@@ -227,7 +227,7 @@ function DesignSystem() {
               {TYPE_ROWS.map((row, index) => (
                 <TableRow key={row.name}>
                   <TableCell>
-                    <span ref={(node) => { typeRefs.current[index] = node }}>
+                    <span ref={(node) => { typeRefs.current[index] = node?.firstElementChild instanceof HTMLElement ? node.firstElementChild : node }}>
                       <Text size={row.size} weight={row.weight}>{row.name}</Text>
                     </span>
                   </TableCell>

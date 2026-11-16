@@ -35,7 +35,7 @@ export const activity = [
 
 export const appMessages = [
   { from: "them" as const, name: "Alex Rivera", time: "8:56 AM", text: "Hey! Did you get a chance to look at the Q4 campaign deck I sent yesterday?" },
-  { from: "me" as const, name: "You", time: "9:01 AM", text: "Give me 30–40 min and I'll go through it properly. Anything you want my eyes on?" },
+  { from: "me" as const, name: "You", time: "9:01 AM", text: "Give me 30–40 min and I'll go through it properly. Anything you want my eyes on?", reaction: "♥" },
   { from: "them" as const, name: "Alex Rivera", time: "9:22 AM", text: "Mainly the pricing page and the new color palette. Marketing thinks the green is too “crypto looking” lol" },
   { from: "me" as const, name: "You", time: "10:28 AM", text: "Q4_Campaign_Deck_Revised.pdf", file: "4.0 MB" },
   { from: "them" as const, name: "Alex Rivera", time: "10:28 AM", text: "Perfect! I see you updated the color scheme. This looks way better!" },

@@ -73,8 +73,8 @@ export function ShowcaseApplication() {
                   <Badge variant="success">+1.25% ↗</Badge>
                 </Inline>
                 <ChartContainer config={priceConfig} className="h-40 w-full">
-                  <AreaChart data={stockMonths} margin={{ left: 0, right: 0, top: 8 }}>
-                    <XAxis dataKey="month" tickLine={false} axisLine={false} />
+                  <AreaChart data={stockMonths} margin={{ left: 16, right: 16, top: 8, bottom: 0 }}>
+                    <XAxis dataKey="month" tickLine={false} axisLine={false} interval={0} padding={{ left: 16, right: 16 }} />
                     <Area dataKey="price" type="monotone" fill="var(--color-price)" fillOpacity={0.2} stroke="var(--color-price)" strokeWidth={2} />
                   </AreaChart>
                 </ChartContainer>
@@ -216,7 +216,7 @@ export function ShowcaseApplication() {
                     <Text size="xs" weight="medium" className="text-primary-text">{message.name}</Text>
                     <Text size="xs" tone="muted">{message.time}</Text>
                   </Inline>
-                  <div className={message.from === "me" ? "max-w-full rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground" : "max-w-full rounded-lg bg-muted px-3 py-2 text-sm"}>
+                  <div className={`relative ${message.from === "me" ? "max-w-full rounded-lg bg-primary px-3 py-2 text-sm text-primary-foreground" : "max-w-full rounded-lg bg-muted px-3 py-2 text-sm"}`}>
                     {message.file ? (
                       <Inline gap={2} align="center">
                         <FileIcon className="size-4" />
@@ -228,6 +228,9 @@ export function ShowcaseApplication() {
                     ) : (
                       message.text
                     )}
+                    {"reaction" in message && message.reaction ? (
+                      <span className="absolute -right-1 -bottom-2 rounded-full border border-border bg-card px-1 text-xs text-foreground">{message.reaction}</span>
+                    ) : null}
                   </div>
                 </Stack>
               ))}
