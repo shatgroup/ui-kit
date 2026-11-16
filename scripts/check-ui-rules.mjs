@@ -99,6 +99,12 @@ for (const file of walk(src)) {
     if (/style=\{\{/.test(line)) {
       report(file, lineNo, "Không dùng inline style")
     }
+    if (/\btransition-all\b/.test(line)) {
+      report(file, lineNo, "Không dùng transition-all, ghi rõ thuộc tính")
+    }
+    if (/\d+ms\b/.test(line) || /cubic-bezier\(/.test(line)) {
+      report(file, lineNo, "Thời lượng và easing chỉ dùng token CSS")
+    }
     if (!inUi && /<(button|input|select|textarea)\b/.test(line)) {
       report(file, lineNo, "Dùng component kit, không dùng phần tử HTML thô")
     }

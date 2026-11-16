@@ -19,7 +19,7 @@ function Checkbox({ className, indeterminate, ...props }: CheckboxPrimitive.Root
       )}
       {...props}
     >
-      <CheckboxPrimitive.Indicator className="flex items-center justify-center">
+      <CheckboxPrimitive.Indicator data-slot="checkbox-indicator" className="flex items-center justify-center">
         {indeterminate ? <MinusIcon className="size-3.5" /> : <CheckIcon className="size-3.5" />}
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>

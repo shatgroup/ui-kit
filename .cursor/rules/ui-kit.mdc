@@ -14,6 +14,7 @@ alwaysApply: true
 - Không tự dựng bảng phân trang, thanh bước, khung kéo, upload, trình phát hay trạng thái tác vụ.
 - Thiếu component hoặc token thì dừng và báo. Không tự chế.
 - Xong việc phải chạy `npm run check:ui` và `npm run build`. Cả hai pass mới tính là xong.
+- Chuyển động chỉ dùng `opacity`, `transform`, `clip-path`, màu, bóng. Không chuyển động width, height, top, left, margin, padding, trừ sidebar. Không `transition-all`. Thời lượng và easing chỉ lấy token `--duration-*` và `--ease-*`.
 
 Component: `Button` hành động · `Input` một dòng · `Textarea` nhiều dòng · `Label` nhãn · `Select` chọn một mục · `Checkbox`/`CheckboxField` bật tắt có label · `RadioGroup`/`RadioField` chọn một mục có label · `Switch`/`SwitchField` bật tắt ngay có label · `Badge` trạng thái ngắn · `Card` khối có viền · `Table` bảng thô, cột số `numeric`, cột xuống dòng `wrap` · `Dialog` hộp giữa màn hình, nội dung dài trong `DialogBody` · `Sheet` bảng từ mép, nội dung dài trong `SheetBody` · `Tabs` đổi nhóm nội dung, mặc định co theo chữ, `fullWidth` khi cần trải · `DropdownMenu` menu một dòng · `Tooltip` chú thích khi rê chuột · `Popover` nội dung phụ khi bấm · `Avatar` ảnh hoặc chữ viết tắt · `Skeleton` chỗ chờ khi tải · `Separator` đường kẻ · `Toaster` gắn một lần, gọi `toast` để báo kết quả · `FormField` label + control + ghi chú hoặc lỗi · `EmptyState` danh sách trống · `Spinner` vòng xoay khi nút đang xử lý.
 

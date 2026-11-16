@@ -26,6 +26,7 @@ type BoxProps = {
   border?: boolean
   radius?: Radius
   className?: string
+  slot?: string
   children?: ReactNode
 }
 
@@ -35,10 +36,12 @@ export function Box({
   border = false,
   radius = "none",
   className,
+  slot,
   children,
 }: BoxProps) {
   return (
     <div
+      data-slot={slot}
       className={cn(
         "min-w-0",
         TONE[tone],

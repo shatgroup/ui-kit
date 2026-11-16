@@ -109,7 +109,7 @@ export function AppShell({ logo, groups, activeId, onNavigate, leading, topbar, 
   return (
     <Box className="min-h-dvh">
       <Inline align="stretch" wrap={false} className="min-h-dvh">
-        <Box border className={cn("sticky top-0 hidden h-dvh shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-16" : "w-60")}>
+        <Box slot="sidebar" border className={cn("sticky top-0 hidden h-dvh shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-16" : "w-60")}>
           <Stack gap={4} className="h-full p-3">
             <Inline align="center" justify={collapsed ? "center" : "start"}>
               {logo}

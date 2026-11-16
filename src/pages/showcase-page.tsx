@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react"
 import { Box, Inline, Stack } from "@/components/layout/index.ts"
-import { Button } from "@/components/ui/button.tsx"
+import { MotionReduceToggle, ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
 import { ShowcaseApplication } from "@/pages/showcase-application.tsx"
 import { ShowcaseCards } from "@/pages/showcase-cards.tsx"
@@ -8,13 +8,6 @@ import { ShowcaseDashboard } from "@/pages/showcase-dashboard.tsx"
 
 export function ShowcasePage() {
   const [tab, setTab] = useState("cards")
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"))
-
-  function toggleTheme() {
-    const next = !document.documentElement.classList.contains("dark")
-    document.documentElement.classList.toggle("dark", next)
-    setDark(next)
-  }
 
   const tabs = (
     <Tabs value={tab} onValueChange={(value) => setTab(value)}>
@@ -26,9 +19,10 @@ export function ShowcasePage() {
     </Tabs>
   )
   const theme = (
-    <Button variant="secondary" onClick={toggleTheme}>
-      {dark ? "Light" : "Dark"}
-    </Button>
+    <Inline gap={2} align="center">
+      <MotionReduceToggle />
+      <ThemeToggle lightLabel="Light" darkLabel="Dark" />
+    </Inline>
   )
 
   if (tab === "dashboard") return <ShowcaseDashboard leading={tabs} topbar={theme} />

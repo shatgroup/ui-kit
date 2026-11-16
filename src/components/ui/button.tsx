@@ -17,7 +17,7 @@ const iconClass = { sm: iconSm, md: iconMd, lg: iconLg }
 const buttonVariants = cva(
   [
     "inline-flex min-w-0 max-w-full shrink items-center justify-center gap-2 rounded-md border border-transparent",
-    "font-medium whitespace-nowrap transition-colors select-none",
+    "font-medium whitespace-nowrap select-none",
     "disabled:pointer-events-none disabled:opacity-50",
     focusRing,
   ].join(" "),

@@ -1,6 +1,6 @@
 import { useLayoutEffect, useState } from "react"
 import { Box, Container, Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
-import { Button } from "@/components/ui/button.tsx"
+import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import type { Space } from "@/components/layout/index.ts"
 
 type Mode = "light" | "dark"
@@ -130,12 +130,11 @@ function measure(pair: Pair): Row | null {
 }
 
 export function TokensPage() {
-  const [mode, setMode] = useState<Mode>("light")
+  const [mode, setMode] = useState<Mode>(() => (document.documentElement.classList.contains("dark") ? "dark" : "light"))
   const [rows, setRows] = useState<Row[]>([])
   const [charts, setCharts] = useState<{ name: string; bg: string; hex: string }[]>([])
 
   useLayoutEffect(() => {
-    document.documentElement.classList.toggle("dark", mode === "dark")
     setRows(PAIRS.map(measure).filter((row): row is Row => row !== null))
     setCharts(
       CHARTS.map((chart) => {
@@ -152,13 +151,7 @@ export function TokensPage() {
           <Text as="h1" size="3xl" weight="semibold">
             Token
           </Text>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => setMode((current) => (current === "light" ? "dark" : "light"))}
-          >
-            {mode === "light" ? "Tối" : "Sáng"}
-          </Button>
+          <ThemeToggle onChange={(next) => setMode(next ? "dark" : "light")} />
         </Inline>
 
         <Stack gap={4}>

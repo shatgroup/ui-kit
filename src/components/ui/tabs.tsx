@@ -9,6 +9,7 @@ function Tabs({ className, ...props }: TabsPrimitive.Root.Props) {
 function TabsList({
   className,
   fullWidth = false,
+  children,
   ...props
 }: TabsPrimitive.List.Props & { fullWidth?: boolean }) {
   return (
@@ -21,7 +22,10 @@ function TabsList({
         className,
       )}
       {...props}
-    />
+    >
+      {children}
+      <TabsPrimitive.Indicator data-slot="tabs-indicator" />
+    </TabsPrimitive.List>
   )
 }
 

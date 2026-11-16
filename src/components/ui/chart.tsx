@@ -1,8 +1,11 @@
-import { useId, useMemo, type ComponentProps, type ReactNode } from "react"
+import { cloneElement, isValidElement, useEffect, useId, useMemo, useState, type ComponentProps, type ReactElement, type ReactNode } from "react"
 import * as RechartsPrimitive from "recharts"
+import { isReduced } from "@/components/ui/theme-toggle.tsx"
 import { cn } from "@/lib/utils.ts"
 
 export type ChartConfig = Record<string, { label?: ReactNode; color?: string }>
+
+const drawnCharts = new Set<string>()
 
 function ChartContainer({
   id,
@@ -19,12 +22,30 @@ function ChartContainer({
     .filter((entry) => entry[1].color)
     .map(([key, item]) => `--color-${key}: ${item.color};`)
     .join("")
+  const [draw, setDraw] = useState(false)
+
+  useEffect(() => {
+    if (!styleText || isReduced() || drawnCharts.has(styleText)) return
+    setDraw(true)
+    const duration = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--duration-chart"))
+    const timer = window.setTimeout(() => drawnCharts.add(styleText), duration)
+    return () => window.clearTimeout(timer)
+  }, [styleText])
+
+  const chart = isValidElement(children)
+    ? cloneElement(children as ReactElement<{ isAnimationActive?: boolean }>, { isAnimationActive: false })
+    : children
 
   return (
-    <div data-slot="chart" data-chart={chartId} className={cn("flex w-full min-w-0 justify-center text-sm", className)}>
+    <div
+      data-slot="chart"
+      data-chart={chartId}
+      data-draw={draw ? "true" : undefined}
+      className={cn("flex w-full min-w-0 justify-center text-sm", className)}
+    >
       <style>{`[data-chart="${chartId}"] { ${styleText} }`}</style>
       <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
-        {children}
+        {chart}
       </RechartsPrimitive.ResponsiveContainer>
     </div>
   )

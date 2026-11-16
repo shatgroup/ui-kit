@@ -20,6 +20,7 @@ import { Calendar } from "@/components/ui/calendar.tsx"
 import { vi } from "date-fns/locale"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
+import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import {
   Dialog,
   DialogBody,
@@ -106,13 +107,13 @@ const COLUMNS: DataColumn<RequestRow>[] = [
 ]
 
 export function PreviewPage() {
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"))
   const [menu, setMenu] = useState("requests")
   const [query, setQuery] = useState("")
   const [store, setStore] = useState("all")
   const [type, setType] = useState("all")
   const [status, setStatus] = useState("all")
   const [detail, setDetail] = useState<RequestRow | null>(null)
+  const [sheetOpen, setSheetOpen] = useState(false)
   const [deleteRow, setDeleteRow] = useState<RequestRow | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [storeField, setStoreField] = useState("")
@@ -178,12 +179,6 @@ export function PreviewPage() {
     },
   ]
 
-  function toggleTheme() {
-    const next = !document.documentElement.classList.contains("dark")
-    document.documentElement.classList.toggle("dark", next)
-    setDark(next)
-  }
-
   function save() {
     if (!storeField) {
       setStoreError("Chọn cửa hàng")
@@ -212,11 +207,7 @@ export function PreviewPage() {
       groups={GROUPS}
       activeId={menu}
       onNavigate={setMenu}
-      topbar={
-        <Button variant="secondary" onClick={toggleTheme}>
-          {dark ? "Sáng" : "Tối"}
-        </Button>
-      }
+      topbar={<ThemeToggle />}
     >
       <Stack gap={4}>
         <PageHeader
@@ -264,7 +255,7 @@ export function PreviewPage() {
                 }
               />
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => setDetail(row)}>Xem</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => { setDetail(row); setSheetOpen(true) }}>Xem</DropdownMenuItem>
                 <DropdownMenuItem variant="destructive" onClick={() => setDeleteRow(row)}>
                   Xoá
                 </DropdownMenuItem>
@@ -274,7 +265,13 @@ export function PreviewPage() {
         />
       </Stack>
 
-      <Sheet open={detail !== null} onOpenChange={(open) => !open && setDetail(null)}>
+      <Sheet
+        open={sheetOpen}
+        onOpenChange={(open) => setSheetOpen(open)}
+        onOpenChangeComplete={(open) => {
+          if (!open) setDetail(null)
+        }}
+      >
         <SheetContent>
           <SheetHeader>
             <SheetTitle>{detail?.code}</SheetTitle>

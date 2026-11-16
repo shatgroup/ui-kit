@@ -10,6 +10,7 @@ import { Stepper, type StepItem } from "@/components/media/stepper.tsx"
 import { AppShell } from "@/components/patterns/app-shell.tsx"
 import { PageHeader } from "@/components/patterns/page-header.tsx"
 import { Button } from "@/components/ui/button.tsx"
+import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import { toast } from "sonner"
 
 const LONG = "Cảnh khai trương Shondo Nguyễn Ảnh Thủ, máy quay đi ngang quầy"
@@ -25,7 +26,6 @@ const CLIPS = Array.from({ length: 12 }, (_, index) => ({
 }))
 
 export function PreviewMotionPage() {
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"))
   const [menu, setMenu] = useState("project")
   const [step, setStep] = useState(2)
   const [clipId, setClipId] = useState("3")
@@ -38,12 +38,6 @@ export function PreviewMotionPage() {
     { id: "motion", label: "Motion", status: step > 2 ? "done" : step === 2 ? "current" : "todo" },
     { id: "pack", label: "Đóng gói", status: step > 3 ? "done" : step === 3 ? "current" : "todo" },
   ]
-
-  function toggleTheme() {
-    const next = !document.documentElement.classList.contains("dark")
-    document.documentElement.classList.toggle("dark", next)
-    setDark(next)
-  }
 
   return (
     <AppShell
@@ -66,11 +60,7 @@ export function PreviewMotionPage() {
       ]}
       activeId={menu}
       onNavigate={setMenu}
-      topbar={
-        <Button variant="secondary" onClick={toggleTheme}>
-          {dark ? "Sáng" : "Tối"}
-        </Button>
-      }
+      topbar={<ThemeToggle />}
     >
       <Stack gap={4}>
         <PageHeader title="Khai trương Shondo" description="Đang ở bước Motion. Có thể quay lại bước đã xong." />

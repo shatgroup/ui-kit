@@ -22,7 +22,7 @@ function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
       )}
       {...props}
     >
-      <RadioPrimitive.Indicator className="size-2 rounded-full bg-primary-foreground" />
+      <RadioPrimitive.Indicator data-slot="radio-indicator" className="size-2 rounded-full bg-primary-foreground" />
     </RadioPrimitive.Root>
   )
 }

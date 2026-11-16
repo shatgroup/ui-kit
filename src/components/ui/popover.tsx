@@ -30,6 +30,7 @@ function PopoverContent({
       >
         <PopoverPrimitive.Popup
           data-slot="popover-content"
+          data-side={side}
           className={cn(
             "z-50 w-60 max-w-full rounded-md bg-popover p-3 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none",
             className,

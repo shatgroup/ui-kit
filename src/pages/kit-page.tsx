@@ -3,6 +3,7 @@ import { Box, Container, Inline, Stack, Text } from "@/components/layout/index.t
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
+import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx"
 import { CheckboxField } from "@/components/ui/checkbox.tsx"
 import {
@@ -53,14 +54,7 @@ function go(path: string) {
 }
 
 export function KitPage() {
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"))
   const [choice, setChoice] = useState("a")
-
-  function toggleTheme() {
-    const next = !document.documentElement.classList.contains("dark")
-    document.documentElement.classList.toggle("dark", next)
-    setDark(next)
-  }
 
   return (
     <Container size="xl">
@@ -79,9 +73,7 @@ export function KitPage() {
             <Button variant="link" onClick={() => go("/preview")}>
               Xem trước
             </Button>
-            <Button variant="secondary" onClick={toggleTheme}>
-              {dark ? "Sáng" : "Tối"}
-            </Button>
+            <ThemeToggle />
           </Inline>
         </Inline>
 
