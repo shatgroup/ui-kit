@@ -8,11 +8,12 @@ type InputProps = Omit<ComponentProps<typeof InputPrimitive>, "size"> & {
 }
 
 function Input({ className, size = "md", type, ...props }: InputProps) {
+  const range = type === "range"
   return (
     <InputPrimitive
       type={type}
       data-slot="input"
-      className={cn(fieldClass, CONTROL_SIZE[size], className)}
+      className={cn(range ? "h-2 w-full accent-primary" : cn(fieldClass, CONTROL_SIZE[size]), className)}
       {...props}
     />
   )

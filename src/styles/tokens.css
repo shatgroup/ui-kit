@@ -83,3 +83,15 @@
 [data-slot="tabs-list"][data-full-width="true"] [data-slot="tabs-trigger"] {
   flex: 1 1 0;
 }
+
+[data-ratio="16/9"] {
+  aspect-ratio: 16 / 9;
+}
+
+[data-ratio="9/16"] {
+  aspect-ratio: 9 / 16;
+}
+
+[data-ratio="1/1"] {
+  aspect-ratio: 1 / 1;
+}
