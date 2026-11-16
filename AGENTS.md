@@ -179,3 +179,29 @@ Component kit, mỗi cái một việc:
 - `FormField` — label, control, ghi chú hoặc lỗi.
 - `EmptyState` — danh sách hoặc tab không có dữ liệu.
 - `Spinner` — vòng xoay trong nút đang xử lý.
+
+Pattern dựng sẵn:
+
+- `AppShell` — khung app: sidebar, topbar, nội dung. Dưới 768px sidebar mở bằng Sheet.
+- `PageHeader` — tiêu đề trang, mô tả, breadcrumb, nút bên phải.
+- `FilterBar` — ô tìm, select lọc, xoá lọc, số kết quả. Mọi control size md.
+- `DataTable` — bảng có sắp xếp, phân trang, chọn nhiều dòng, cuộn ngang, chế độ thẻ trên mobile.
+- `FormLayout` — form chia section, nút Lưu/Huỷ dính đáy.
+- `StatCard` — số liệu tóm tắt.
+- `StatusTimeline` — các mốc trạng thái theo thời gian.
+
+Component cho motion-video:
+
+- `Stepper` — các bước của một quy trình.
+- `SplitPane` — hai vùng kéo đổi tỉ lệ.
+- `MediaPreview` — khung xem ảnh hoặc video.
+- `AudioPlayer` — phát audio.
+- `Dropzone` — kéo thả file.
+- `JobStatus` — trạng thái một tác vụ dựng.
+
+Cách chọn:
+
+- Trang danh sách dùng `AppShell` + `PageHeader` + `FilterBar` + `DataTable`.
+- Trang form dùng `FormLayout`.
+- Không tự dựng bảng có phân trang hoặc sắp xếp bằng `Table` thô. Dùng `DataTable`.
+- Không tự dựng thanh bước, khung kéo, upload, trình phát, trạng thái tác vụ.
