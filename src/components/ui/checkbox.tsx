@@ -1,52 +1,29 @@
-import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
-import { CheckIcon, MinusIcon } from "lucide-react"
-import { useId, type ReactNode } from "react"
-import { cn } from "@/lib/utils.ts"
-import { focusRing } from "./control.ts"
-import { Label } from "./label.tsx"
+import * as React from "react"
+import { cn } from "cn"
+import { CheckIcon } from "lucide-react"
+import { Checkbox as CheckboxPrimitive } from "radix-ui"
 
 function Checkbox({
   className,
-  indeterminate,
-  checked,
   ...props
-}: Omit<CheckboxPrimitive.Root.Props, "checked"> & { checked?: boolean | "indeterminate" }) {
-  const mixed = indeterminate || checked === "indeterminate"
+}: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
-      indeterminate={mixed}
-      checked={mixed ? false : checked}
       className={cn(
-        "flex size-4 shrink-0 items-center justify-center rounded-sm border border-input bg-background text-primary-foreground",
-        "data-checked:border-primary data-checked:bg-primary data-indeterminate:border-primary data-indeterminate:bg-primary",
-        "disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive",
-        focusRing,
-        className,
+        "peer size-4 shrink-0 rounded-[4px] border border-input shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:bg-input/30 dark:aria-invalid:ring-destructive/40 dark:data-[state=checked]:bg-primary",
+        className
       )}
       {...props}
     >
-      <CheckboxPrimitive.Indicator data-slot="checkbox-indicator" className="flex items-center justify-center">
-        {indeterminate ? <MinusIcon className="size-3.5" /> : <CheckIcon className="size-3.5" />}
+      <CheckboxPrimitive.Indicator
+        data-slot="checkbox-indicator"
+        className="grid place-content-center text-current transition-none"
+      >
+        <CheckIcon className="size-3.5" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )
 }
 
-function CheckboxField({
-  label,
-  id,
-  className,
-  ...props
-}: CheckboxPrimitive.Root.Props & { label: ReactNode }) {
-  const autoId = useId()
-  const fieldId = id ?? autoId
-  return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
-      <Checkbox id={fieldId} {...props} />
-      <Label htmlFor={fieldId}>{label}</Label>
-    </span>
-  )
-}
-
-export { Checkbox, CheckboxField }
+export { Checkbox }

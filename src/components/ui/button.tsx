@@ -1,117 +1,62 @@
-import { Button as ButtonPrimitive } from "@base-ui/react/button"
+import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils.ts"
-import { BUTTON_SIZE, focusRing, ICON_SIZE, type ControlSize } from "./control.ts"
-import { Spinner } from "./spinner.tsx"
-import { Truncated } from "./truncated.tsx"
-
-// check-ui-ignore-next-line: selector con của Tailwind cần ngoặc để khoá cỡ icon lucide
-const iconSm = "[&_svg]:size-3.5"
-// check-ui-ignore-next-line: selector con của Tailwind cần ngoặc để khoá cỡ icon lucide
-const iconMd = "[&_svg]:size-4"
-// check-ui-ignore-next-line: selector con của Tailwind cần ngoặc để khoá cỡ icon lucide
-const iconLg = "[&_svg]:size-4.5"
-
-const iconClass = { sm: iconSm, default: iconMd, lg: iconLg }
-
-const hoverForce = {
-  primary: "bg-primary/90",
-  secondary: "bg-secondary/80",
-  outline: "bg-muted",
-  ghost: "bg-muted",
-  destructive: "bg-destructive/90",
-  link: "underline",
-} as const
-
-const pressedForce = {
-  primary: "bg-primary/80",
-  secondary: "bg-secondary/70",
-  outline: "bg-accent",
-  ghost: "bg-accent",
-  destructive: "bg-destructive/80",
-  link: "underline",
-} as const
+import { cn } from "cn"
+import { Slot } from "radix-ui"
 
 const buttonVariants = cva(
-  [
-    "inline-flex min-w-0 max-w-full shrink items-center justify-center gap-2 rounded-md border border-transparent",
-    "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-    "font-medium whitespace-nowrap select-none",
-    "disabled:pointer-events-none disabled:opacity-50",
-    focusRing,
-  ].join(" "),
+  "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        primary: "border-primary bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
-        default: "border-primary bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70",
-        outline: "border-input bg-background hover:bg-muted active:bg-accent",
-        ghost: "hover:bg-muted active:bg-accent",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 active:bg-destructive/80",
-        link: "text-primary-text underline-offset-4 hover:underline active:underline",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        destructive:
+          "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
+        outline:
+          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+        secondary:
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+        ghost:
+          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        sm: BUTTON_SIZE.sm,
-        default: BUTTON_SIZE.default,
-        lg: BUTTON_SIZE.lg,
-        icon: "size-8 p-0",
-        "icon-sm": "size-7 p-0",
+        default: "h-9 px-4 py-2 has-[>svg]:px-3",
+        xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
+        sm: "h-8 gap-1.5 rounded-md px-3 has-[>svg]:px-2.5",
+        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
+        icon: "size-9",
+        "icon-xs": "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3",
+        "icon-sm": "size-8",
+        "icon-lg": "size-10",
       },
     },
     defaultVariants: {
-      variant: "primary",
+      variant: "default",
       size: "default",
     },
-  },
-)
-
-type ButtonProps = ButtonPrimitive.Props &
-  VariantProps<typeof buttonVariants> & {
-    loading?: boolean
-    variant?: VariantProps<typeof buttonVariants>["variant"] | "default"
-    size?: ControlSize | "icon" | "icon-sm"
-    forceState?: "hover" | "pressed" | "focus"
   }
+)
 
 function Button({
   className,
-  variant = "primary",
+  variant = "default",
   size = "default",
-  loading = false,
-  forceState,
-  disabled,
-  children,
+  asChild = false,
   ...props
-}: ButtonProps) {
-  const shown = variant === "default" ? "primary" : (variant ?? "primary")
-  const controlSize: ControlSize = size === "icon" ? "default" : size === "icon-sm" ? "sm" : size
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+  }) {
+  const Comp = asChild ? Slot.Root : "button"
+
   return (
-    <ButtonPrimitive
+    <Comp
       data-slot="button"
-      data-force-state={forceState}
-      disabled={disabled || loading}
-      aria-busy={loading || undefined}
-      className={cn(
-        buttonVariants({ variant: shown, size }),
-        iconClass[controlSize],
-        "relative",
-        forceState === "hover" && hoverForce[shown],
-        forceState === "pressed" && pressedForce[shown],
-        forceState === "focus" && "border-ring ring-2 ring-ring",
-        className,
-      )}
+      data-variant={variant}
+      data-size={size}
+      className={cn(buttonVariants({ variant, size, className }))}
       {...props}
-    >
-      <Truncated className={cn("inline-flex items-center gap-2", loading && "invisible")}>
-        {children}
-      </Truncated>
-      {loading ? (
-        <span className="absolute inset-0 flex items-center justify-center">
-          <Spinner className={ICON_SIZE[controlSize]} />
-        </span>
-      ) : null}
-    </ButtonPrimitive>
+    />
   )
 }
 
