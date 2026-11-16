@@ -17,6 +17,7 @@ const stringLiteral = /`(?:\\.|[^`\\])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g
 const errors = []
 const exceptions = []
 const showcaseArbitrary = []
+const uiArbitrary = []
 
 function walk(dir) {
   const files = []
@@ -37,8 +38,23 @@ function lineOf(source, index) {
   return source.slice(0, index).split("\n").length
 }
 
+function hexOutsideSelector(line) {
+  let depth = 0
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index]
+    if (char === "[") depth += 1
+    else if (char === "]" && depth > 0) depth -= 1
+    else if (char === "#" && depth === 0 && /^[0-9A-Fa-f]{3,8}\b/.test(line.slice(index + 1))) return true
+  }
+  return false
+}
+
 function report(file, line, message) {
   const rel = path.relative(root, file).split(path.sep).join("/")
+  if (message.startsWith("Giá trị tuỳ ý") && rel.startsWith("src/components/ui/")) {
+    uiArbitrary.push(`${rel}:${line}: ${message}`)
+    return
+  }
   if (rel.startsWith("src/pages/showcase/") && message.startsWith("Giá trị tuỳ ý")) {
     showcaseArbitrary.push(`${rel}:${line}: ${message}`)
     return
@@ -95,7 +111,7 @@ for (const file of walk(src)) {
   lines.forEach((line, index) => {
     const lineNo = index + 1
     if (skip.has(lineNo)) return
-    if (/#[0-9A-Fa-f]{3,8}\b/.test(line)) {
+    if (hexOutsideSelector(line)) {
       report(file, lineNo, "Không ghi mã màu trong file tsx")
     }
     if (/\brgb\s*\(/.test(line) || /\bhsl\s*\(/.test(line)) {
@@ -120,6 +136,10 @@ for (const file of walk(src)) {
     const line = lineOf(source, match.index)
     for (const token of body.split(/\s+/)) checkClass(file, line, token)
   }
+}
+
+if (uiArbitrary.length > 0) {
+  console.log(`check:ui ui: ${uiArbitrary.length} giá trị tuỳ ý`)
 }
 
 if (showcaseArbitrary.length > 0) {

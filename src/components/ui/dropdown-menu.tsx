@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils.ts"
 import { Truncated } from "./truncated.tsx"
 
 const itemClass =
-  "flex w-full min-w-0 cursor-default items-center gap-2 rounded-md px-2 py-2 text-left text-sm whitespace-normal outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:opacity-50"
+  "flex w-full min-w-0 cursor-default items-center gap-2 rounded-md px-2 py-2 text-left text-sm whitespace-normal outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />

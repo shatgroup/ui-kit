@@ -2,10 +2,9 @@ import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils.ts"
-import { Truncated } from "./truncated.tsx"
 
 const badgeVariants = cva(
-  "inline-flex h-5 max-w-full min-w-0 items-center rounded-md px-2 text-xs font-medium",
+  "inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-md px-2 text-xs font-medium whitespace-nowrap [&>svg]:pointer-events-none [&>svg]:size-3",
   {
     variants: {
       variant: {
@@ -36,7 +35,7 @@ function Badge({
     props: mergeProps<"span">(
       {
         className: cn(badgeVariants({ variant }), className),
-        children: <Truncated>{children}</Truncated>,
+        children,
       },
       props,
     ),

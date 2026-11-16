@@ -29,7 +29,7 @@ function SelectTrigger({
       className={cn(
         fieldClass,
         CONTROL_SIZE[size],
-        "flex items-center justify-between gap-2 text-left",
+        "flex items-center justify-between gap-2 text-left [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
@@ -92,7 +92,7 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full min-w-0 cursor-default items-center rounded-md py-2 pr-8 pl-2 text-left text-sm whitespace-normal outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:opacity-50",
+        "relative flex w-full min-w-0 cursor-default items-center gap-1 rounded-md py-2 pr-8 pl-2 text-left text-sm whitespace-normal outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}
