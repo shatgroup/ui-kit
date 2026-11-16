@@ -1,5 +1,18 @@
 import { useState, type ReactNode } from "react"
-import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon } from "lucide-react"
+import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, GripVerticalIcon } from "lucide-react"
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core"
+import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
+import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import { CSS } from "@dnd-kit/utilities"
 import { flexRender } from "@tanstack/react-table"
 import {
   getCoreRowModel,
@@ -42,6 +55,8 @@ type DataTableProps<T> = {
   selectable?: boolean
   renderActions?: (row: T) => ReactNode
   bulkActions?: (ids: string[]) => ReactNode
+  reorderable?: boolean
+  onReorder?: (ids: string[]) => void
 }
 
 const PAGE_SIZES = ["10", "20", "50"]
@@ -60,8 +75,11 @@ export function DataTable<T extends Record<string, unknown>>({
   selectable = false,
   renderActions,
   bulkActions,
+  reorderable = false,
+  onReorder,
 }: DataTableProps<T>) {
   const [pageSize, setPageSize] = useState("10")
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor), useSensor(KeyboardSensor))
   const defs: LegacyColumnDef<T>[] = columns.map((column) => ({
     id: column.id,
     accessorFn: column.accessor,
@@ -90,6 +108,15 @@ export function DataTable<T extends Record<string, unknown>>({
   const size = table.getState().pagination.pageSize
   const from = total === 0 ? 0 : pageIndex * size + 1
   const to = Math.min(total, (pageIndex + 1) * size)
+
+  function handleReorder(event: DragEndEvent) {
+    if (!onReorder || !event.over || event.active.id === event.over.id) return
+    const ids = data.map((row) => getRowId(row))
+    const oldIndex = ids.indexOf(String(event.active.id))
+    const newIndex = ids.indexOf(String(event.over.id))
+    if (oldIndex < 0 || newIndex < 0) return
+    onReorder(arrayMove(ids, oldIndex, newIndex))
+  }
 
   if (loading) {
     return (
@@ -129,6 +156,7 @@ export function DataTable<T extends Record<string, unknown>>({
         </Inline>
       ) : null}
       <Box className={mobileMode === "cards" ? "hidden sm:block" : undefined}>
+        <ReorderFrame enabled={reorderable} ids={rows.map((row) => row.id)} sensors={sensors} onDragEnd={handleReorder}>
         <Table stickyFirstColumn={stickyFirstColumn}>
           <TableHeader>
             {table.getHeaderGroups().map((group) => (
@@ -164,7 +192,7 @@ export function DataTable<T extends Record<string, unknown>>({
           </TableHeader>
           <TableBody>
             {rows.map((row) => (
-              <TableRow key={row.id}>
+              <RowShell key={row.id} sortable={reorderable} rowId={row.id}>
                 {row.getVisibleCells().map((cell, index) => {
                   const column = columns[index]
                   return (
@@ -175,6 +203,9 @@ export function DataTable<T extends Record<string, unknown>>({
                       numeric={column?.numeric}
                     >
                       <Inline gap={2} align="center" wrap={false}>
+                        {reorderable && index === 0 ? (
+                          <GripVerticalIcon className="size-4 shrink-0 text-muted-foreground" />
+                        ) : null}
                         {selectable && index === 0 ? (
                           <Checkbox
                             checked={row.getIsSelected()}
@@ -192,10 +223,11 @@ export function DataTable<T extends Record<string, unknown>>({
                     {renderActions(row.original as T)}
                   </TableCell>
                 ) : null}
-              </TableRow>
+              </RowShell>
             ))}
           </TableBody>
         </Table>
+        </ReorderFrame>
       </Box>
       {mobileMode === "cards" ? (
         <Stack gap={3} className="sm:hidden">
@@ -260,6 +292,49 @@ export function DataTable<T extends Record<string, unknown>>({
         </Inline>
       </Inline>
     </Stack>
+  )
+}
+
+function ReorderFrame({
+  enabled,
+  ids,
+  sensors,
+  onDragEnd,
+  children,
+}: {
+  enabled: boolean
+  ids: string[]
+  sensors: ReturnType<typeof useSensors>
+  onDragEnd: (event: DragEndEvent) => void
+  children: ReactNode
+}) {
+  if (!enabled) return children
+  return (
+    <DndContext sensors={sensors} collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+      <SortableContext items={ids} strategy={verticalListSortingStrategy}>
+        {children}
+      </SortableContext>
+    </DndContext>
+  )
+}
+
+function RowShell({ sortable, rowId, children }: { sortable: boolean; rowId: string; children: ReactNode }) {
+  if (!sortable) return <TableRow>{children}</TableRow>
+  return <SortableDataRow rowId={rowId}>{children}</SortableDataRow>
+}
+
+function SortableDataRow({ rowId, children }: { rowId: string; children: ReactNode }) {
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: rowId })
+  return (
+    <TableRow
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      // check-ui-ignore-next-line: dnd-kit đặt transform theo pixel lúc kéo, không có class tĩnh
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+    >
+      {children}
+    </TableRow>
   )
 }
 

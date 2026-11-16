@@ -4,7 +4,7 @@ import { MotionReduceToggle, ThemeToggle } from "@/components/ui/theme-toggle.ts
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
 import { ShowcaseApplication } from "@/pages/showcase-application.tsx"
 import { ShowcaseCards } from "@/pages/showcase/cards/index.tsx"
-import { ShowcaseDashboard } from "@/pages/showcase-dashboard.tsx"
+import { ShowcaseDashboard } from "@/pages/showcase/dashboard/index.tsx"
 
 export function ShowcasePage() {
   const [tab, setTab] = useState("cards")

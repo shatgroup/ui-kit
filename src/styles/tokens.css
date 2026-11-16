@@ -179,6 +179,10 @@
   line-height: var(--text-lg--line-height);
 }
 
+[data-showcase] [data-slot="card"][data-gradient="soft"] {
+  background-image: linear-gradient(to top, color-mix(in oklab, var(--primary) 5%, transparent), var(--card));
+}
+
 [data-slot="select-content"],
 [data-slot="dropdown-menu-content"] {
   width: max-content;
