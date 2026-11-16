@@ -20,6 +20,7 @@ export type AppNavGroup = {
 
 type AppShellProps = {
   logo: ReactNode
+  mark?: ReactNode
   groups: AppNavGroup[]
   activeId: string
   onNavigate: (id: string) => void
@@ -47,7 +48,7 @@ function NavButton({
       variant="ghost"
       className={cn(
         "w-full justify-start",
-        collapsed && "w-10 px-0",
+        collapsed && "size-8! w-8! justify-center p-0!",
         active && "bg-sidebar-accent font-medium text-sidebar-accent-foreground",
       )}
       aria-current={active ? "page" : undefined}
@@ -62,7 +63,7 @@ function NavButton({
   return (
     <Tooltip>
       <TooltipTrigger render={button} />
-      <TooltipContent>{item.label}</TooltipContent>
+      <TooltipContent side="right">{item.label}</TooltipContent>
     </Tooltip>
   )
 }
@@ -102,25 +103,25 @@ function NavGroups({
   )
 }
 
-export function AppShell({ logo, groups, activeId, onNavigate, leading, topbar, footer, maxWidth = true, children }: AppShellProps) {
+export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, topbar, footer, maxWidth = true, children }: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <Box className="min-h-dvh">
       <Inline align="stretch" wrap={false} className="min-h-dvh">
-        <Box slot="sidebar" border className={cn("sticky top-0 hidden h-dvh shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-16" : "w-60")}>
-          <Stack gap={4} className="h-full p-3">
-            <Inline align="center" justify={collapsed ? "center" : "start"}>
-              {logo}
-            </Inline>
+        <Box slot="sidebar" border className={cn("sticky top-0 hidden h-dvh shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-12" : "w-60")}>
+          <Stack gap={4} align={collapsed ? "center" : "stretch"} className={cn("h-full", collapsed ? "p-2" : "p-3")}>
+            <span className={cn("flex items-center whitespace-nowrap", collapsed && "size-8 justify-center overflow-hidden")}>
+              {collapsed ? (mark ?? logo) : logo}
+            </span>
             <Box className="min-h-0 flex-1 overflow-y-auto">
               <NavGroups groups={groups} activeId={activeId} collapsed={collapsed} onNavigate={onNavigate} />
             </Box>
             {footer}
             <Button
               variant="ghost"
-              className={cn("w-full justify-start", collapsed && "w-10 px-0")}
+              className={cn("w-full justify-start", collapsed && "size-8! w-8! justify-center p-0!")}
               aria-label={collapsed ? "Mở sidebar" : "Thu gọn sidebar"}
               onClick={() => setCollapsed((value) => !value)}
             >

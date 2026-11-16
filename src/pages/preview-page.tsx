@@ -204,6 +204,11 @@ export function PreviewPage() {
           POSM
         </Text>
       }
+      mark={
+        <Text as="span" size="sm" weight="bold" tone="primary">
+          PO
+        </Text>
+      }
       groups={GROUPS}
       activeId={menu}
       onNavigate={setMenu}

@@ -46,6 +46,11 @@ export function PreviewMotionPage() {
           Motion
         </Text>
       }
+      mark={
+        <Text as="span" size="sm" weight="bold" tone="primary">
+          MO
+        </Text>
+      }
       groups={[
         {
           label: "Dự án",

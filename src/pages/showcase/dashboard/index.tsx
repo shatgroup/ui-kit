@@ -103,6 +103,7 @@ export function ShowcaseDashboard({ leading, topbar }: { leading: ReactNode; top
   return (
     <AppShell
       logo={<Text weight="semibold">Acme Inc.</Text>}
+      mark={<Text size="sm" weight="semibold">AI</Text>}
       groups={GROUPS}
       activeId={menu}
       onNavigate={setMenu}
