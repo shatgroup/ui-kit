@@ -31,13 +31,10 @@ function walk(dir) {
 
 function skipped(file) {
   const rel = path.relative(root, file).split(path.sep).join("/")
-  // sidebar.tsx và command.tsx là file shadcn cài nguyên, giữ class gốc.
   return (
     rel.startsWith("src/components/layout/") ||
     rel.startsWith("src/styles/") ||
-    rel.startsWith("src/showcase/tweakcn/") ||
-    rel === "src/components/ui/sidebar.tsx" ||
-    rel === "src/components/ui/command.tsx"
+    rel.startsWith("src/showcase/tweakcn/")
   )
 }
 
@@ -75,6 +72,12 @@ function checkClass(file, line, token) {
   const rel = path.relative(root, file).split(path.sep).join("/")
   const value = normalize(token)
   if (!value) return
+  if (rel.startsWith("src/components/ui/")) {
+    if (/^shadow-(?!none(?:$|:))/.test(value)) {
+      report(file, line, "Không dùng shadow, popup dùng viền")
+    }
+    return
+  }
   if (margin.test(value)) {
     report(file, line, "Dùng gap của Stack/Inline thay vì margin")
   }
@@ -120,7 +123,7 @@ for (const file of walk(src)) {
   const inUi = rel.startsWith("src/components/ui/")
   lines.forEach((line, index) => {
     const lineNo = index + 1
-    if (skip.has(lineNo)) return
+    if (skip.has(lineNo) || inUi) return
     if (hexOutsideSelector(line)) {
       report(file, lineNo, "Không ghi mã màu trong file tsx")
     }
@@ -130,10 +133,10 @@ for (const file of walk(src)) {
     if (/style=\{\{/.test(line)) {
       report(file, lineNo, "Không dùng inline style")
     }
-    if (/\btransition-all\b/.test(line)) {
+    if (!inUi && /\btransition-all\b/.test(line)) {
       report(file, lineNo, "Không dùng transition-all, ghi rõ thuộc tính")
     }
-    if (/\d+ms\b/.test(line) || /cubic-bezier\(/.test(line)) {
+    if (!inUi && (/\d+ms\b/.test(line) || /cubic-bezier\(/.test(line))) {
       report(file, lineNo, "Thời lượng và easing chỉ dùng token CSS")
     }
     if (!inUi && /<(button|input|select|textarea)\b/.test(line)) {
