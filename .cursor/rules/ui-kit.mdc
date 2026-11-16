@@ -1,0 +1,13 @@
+---
+description: Luật bố cục và token của UI kit. Chặn chữ lệch, tràn khung, màu và khoảng cách tuỳ ý.
+alwaysApply: true
+---
+
+# UI kit
+
+- Bố cục chỉ dùng `Box`, `Stack`, `Inline`, `Grid`, `Container`. Chữ chỉ dùng `Text` hoặc component của kit.
+- Không margin. Không giá trị tuỳ ý (`w-[13px]`, `text-[#fff]`). Không mã màu trong tsx. Không inline style.
+- Chữ và link màu thương hiệu dùng `text-primary-text`. Không dùng `text-primary` cho chữ.
+- Input, button và select đứng cạnh nhau phải cùng size để cùng chiều cao (`h-control-sm`, `h-control-md`, `h-control-lg`).
+- Thiếu component hoặc token thì dừng và báo. Không tự chế.
+- Xong việc phải chạy `npm run check:ui` và `npm run build`. Cả hai pass mới tính là xong.
