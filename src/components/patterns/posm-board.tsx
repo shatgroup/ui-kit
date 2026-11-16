@@ -252,6 +252,13 @@ export function PosmBoard({ leading, topbar = <ThemeToggle /> }: { leading?: Rea
             selected: (count, total) => `${count} / ${total} dòng đã chọn`,
             rowsPerPage: "Số dòng mỗi trang",
             page: (current, pages) => `Trang ${current} / ${pages}`,
+            first: "Trang đầu",
+            previous: "Trang trước",
+            next: "Trang sau",
+            last: "Trang cuối",
+            selectAll: "Chọn tất cả",
+            selectRow: (id) => `Chọn ${id}`,
+            actions: "Thao tác",
           }}
           bulkActions={(ids) => (
             <Button variant="outline" size="sm" onClick={() => toast.success(`Đã chọn ${ids.length} dòng`)}>
