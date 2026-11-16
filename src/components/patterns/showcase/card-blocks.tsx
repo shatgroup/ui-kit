@@ -387,7 +387,7 @@ export function CardsShare() {
         <Stack gap={3}>
           <Inline gap={2} align="center" wrap={false}>
             <Input readOnly value="http://example.com/link/to/document" aria-label="Link" />
-            <Button variant="outline" size="sm">Copy Link</Button>
+            <Button variant="outline">Copy Link</Button>
           </Inline>
           <Text size="sm" weight="medium">People with access</Text>
           <ShareList

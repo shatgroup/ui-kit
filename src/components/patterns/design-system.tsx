@@ -113,6 +113,8 @@ function Section({ label, children }: { label: string; children: ReactNode }) {
 
 function DesignSystem() {
   const [checked, setChecked] = useState(true)
+  const [unchecked, setUnchecked] = useState(false)
+  const [partial, setPartial] = useState(true)
   const [radio, setRadio] = useState("a")
   const [on, setOn] = useState(true)
   const [segment, setSegment] = useState<string[]>(["list"])
@@ -256,11 +258,11 @@ function DesignSystem() {
             <CardHeader><CardTitle>Control</CardTitle></CardHeader>
             <CardContent>
               <Stack gap={2}>
-                <Inline gap={2}>
+                <Stack gap={2}>
                   <Button ref={controlSm} size="sm">sm</Button>
                   <Button ref={controlMd} size="default">default</Button>
                   <Button ref={controlLg} size="lg">lg</Button>
-                </Inline>
+                </Stack>
                 <Text size="sm">Đo: sm {measured.sm} · default {measured.md} · lg {measured.lg}</Text>
                 <Text size="xs" tone="muted">{standardSection("Control")}</Text>
               </Stack>
@@ -312,8 +314,8 @@ function DesignSystem() {
           <Section label="Checkbox / Radio">
             <Stack gap={2}>
               <Checkbox checked={checked} onCheckedChange={(value) => setChecked(value === true)} aria-label="Đã chọn" />
-              <Checkbox checked={false} aria-label="Chưa chọn" />
-              <Checkbox indeterminate aria-label="Một phần" />
+              <Checkbox checked={unchecked} onCheckedChange={(value) => setUnchecked(value === true)} aria-label="Chưa chọn" />
+              <Checkbox indeterminate={partial} checked={false} onCheckedChange={() => setPartial(false)} aria-label="Một phần" />
               <Checkbox disabled aria-label="Khoá" />
               <RadioGroup value={radio} onValueChange={setRadio} aria-label="Radio">
                 <RadioField value="a" label="Một" />

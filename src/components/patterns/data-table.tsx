@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useRef, useState, type ReactNode } from "react"
 import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon, Columns3Icon, GripVerticalIcon, MoreHorizontalIcon, MoreVerticalIcon } from "lucide-react"
 import {
   closestCenter,
@@ -133,6 +133,7 @@ export function DataTable<T extends object>({
 }: DataTableProps<T>) {
   const [pageSize, setPageSize] = useState(pageSizes[0] ?? "10")
   const [hidden, setHidden] = useState<string[]>([])
+  const scrollLock = useRef<string | null>(null)
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
@@ -155,6 +156,7 @@ export function DataTable<T extends object>({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    autoResetPageIndex: false,
     initialState: { pagination: { pageIndex: 0, pageSize: Number(pageSizes[0] ?? "10") } },
   })
 
@@ -173,7 +175,20 @@ export function DataTable<T extends object>({
     setHidden((current) => (visible ? current.filter((item) => item !== id) : [...current, id]))
   }
 
+  function lockScroll() {
+    if (scrollLock.current !== null) return
+    scrollLock.current = document.documentElement.style.overflow
+    document.documentElement.style.overflow = "hidden"
+  }
+
+  function unlockScroll() {
+    if (scrollLock.current === null) return
+    document.documentElement.style.overflow = scrollLock.current
+    scrollLock.current = null
+  }
+
   function handleReorder(event: DragEndEvent) {
+    unlockScroll()
     if (!onReorder || !event.over || event.active.id === event.over.id) return
     const ids = data.map((row) => getRowId(row))
     const oldIndex = ids.indexOf(String(event.active.id))
@@ -221,7 +236,7 @@ export function DataTable<T extends object>({
         </Inline>
       ) : null}
       <Box className={mobileMode === "cards" ? "hidden sm:block" : undefined}>
-        <ReorderFrame enabled={reorderable} ids={rows.map((row) => row.id)} sensors={sensors} onDragEnd={handleReorder}>
+        <ReorderFrame enabled={reorderable} ids={rows.map((row) => row.id)} sensors={sensors} onDragStart={lockScroll} onDragCancel={unlockScroll} onDragEnd={handleReorder}>
           <Table stickyFirstColumn={stickyFirstColumn}>
             <TableHeader>
               {table.getHeaderGroups().map((group) => (
@@ -558,18 +573,22 @@ function ReorderFrame({
   enabled,
   ids,
   sensors,
+  onDragStart,
+  onDragCancel,
   onDragEnd,
   children,
 }: {
   enabled: boolean
   ids: string[]
   sensors: ReturnType<typeof useSensors>
+  onDragStart: () => void
+  onDragCancel: () => void
   onDragEnd: (event: DragEndEvent) => void
   children: ReactNode
 }) {
   if (!enabled) return children
   return (
-    <DndContext sensors={sensors} collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+    <DndContext sensors={sensors} collisionDetection={closestCenter} modifiers={[restrictToVerticalAxis]} onDragStart={onDragStart} onDragCancel={onDragCancel} onDragEnd={onDragEnd}>
       <SortableContext items={ids} strategy={verticalListSortingStrategy}>
         {children}
       </SortableContext>
@@ -600,17 +619,17 @@ function SortableDataRow({ rowId, children }: { rowId: string; children: ReactNo
 function DragHandle({ label }: { label: string }) {
   const bind = useContext(DragContext)
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="w-8 px-0"
+    <span
+      role="button"
+      tabIndex={0}
       aria-label={label}
+      className="inline-flex size-8 items-center justify-center rounded-md text-muted-foreground"
       ref={bind?.setActivatorNodeRef}
       {...bind?.attributes}
       {...bind?.listeners}
     >
-      <GripVerticalIcon />
-    </Button>
+      <GripVerticalIcon className="pointer-events-none size-4" />
+    </span>
   )
 }
 

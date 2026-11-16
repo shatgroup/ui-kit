@@ -11,6 +11,10 @@
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+html {
+  scrollbar-gutter: stable;
+}
+
 /* Thang khoảng cách được phép: 0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16 (đơn vị Tailwind, bội số 4px). */
 :root {
   --control-sm: 32px;

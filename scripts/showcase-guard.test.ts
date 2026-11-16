@@ -96,7 +96,7 @@ function scan() {
     if (!(el instanceof Element) || hidden(el) || el.matches(":focus, :focus-visible")) return
     const shadow = getComputedStyle(el).boxShadow
     const painted = shadow && shadow !== "none" && !/^rgba\(0,\s*0,\s*0,\s*0\) 0px 0px 0px 0px(?:, rgba\(0,\s*0,\s*0,\s*0\) 0px 0px 0px 0px)*$/.test(shadow)
-    if (painted) failures.push(`còn shadow: ${el.tagName}`)
+    if (painted && !el.closest("[data-force-state=focus]")) failures.push(`còn shadow: ${el.tagName}`)
   })
 
   if (document.documentElement.scrollWidth > window.innerWidth + 2) failures.push("tràn trang")
@@ -213,4 +213,154 @@ describe("kiểm showcase", () => {
     await page.close()
     expect(failures, failures.join("\n")).toEqual([])
   }, 180_000)
+
+  it("popup, trạng thái, xô lệch và DataTable", async () => {
+    const page = await browser.newPage()
+    const failures: string[] = []
+    const slots = ["select-trigger", "dropdown-menu-trigger", "popover-trigger"]
+    for (const width of widths) {
+      await page.setViewportSize({ width, height: 900 })
+      for (const theme of themes) {
+        for (const item of pages) {
+          await page.goto(`${base}${item.path}`, { waitUntil: "networkidle" })
+          await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+          for (const tab of item.tabs) {
+            if (tab) await page.getByRole("tab", { name: tab }).click()
+            const where = `${item.path} ${tab || "-"} ${width} ${theme}`
+            const clickState = async (selector: string, attr: string, message: string) => {
+              const handles = await page.locator(selector).elementHandles()
+              for (const handle of handles) {
+                if (!(await handle.isVisible())) continue
+                const disabled = await handle.evaluate((el) => {
+                  if (!(el instanceof HTMLElement)) return true
+                  return el.hasAttribute("disabled") || el.getAttribute("aria-disabled") === "true" || el.hasAttribute("data-disabled")
+                })
+                if (disabled) continue
+                const before = `${await handle.getAttribute(attr)}|${await handle.getAttribute("data-indeterminate")}`
+                await handle.click({ timeout: 2000 }).catch(() => undefined)
+                const after = `${await handle.getAttribute(attr)}|${await handle.getAttribute("data-indeterminate")}`
+                if (before === after) failures.push(`${where}: ${message}`)
+              }
+            }
+            await clickState("[role=switch]", "data-checked", "Switch không đổi")
+            await clickState("[role=checkbox]", "data-checked", "Checkbox không đổi")
+            await clickState("[role=radio]:not([data-checked])", "data-checked", "Radio không đổi")
+            await clickState("[data-slot=toggle-group-item]:not([data-pressed])", "data-pressed", "Toggle không đổi")
+
+            for (const slot of slots) {
+              const triggers = page.locator(`[data-slot=${slot}]`)
+              const count = await triggers.count()
+              for (let index = 0; index < count; index += 1) {
+                const trigger = triggers.nth(index)
+                if (!(await trigger.isVisible())) continue
+                const already = (await trigger.getAttribute("aria-expanded")) === "true"
+                await trigger.evaluate((el) => el.setAttribute("data-guard-trigger", "true"))
+                if (!already) {
+                  await trigger.click({ timeout: 2000 }).catch(() => failures.push(`${where}: ${slot} không bấm được`))
+                }
+                await page.waitForTimeout(200)
+                const covered = await page.evaluate(() => {
+                  const trigger = document.querySelector("[data-guard-trigger=true]")
+                  trigger?.removeAttribute("data-guard-trigger")
+                  if (!(trigger instanceof HTMLElement)) return "không thấy ô"
+                  const rect = trigger.getBoundingClientRect()
+                  const popup = [...document.querySelectorAll("[data-slot=select-content], [data-slot=dropdown-menu-content], [data-slot=popover-content]")].find((el) => {
+                    const box = el.getBoundingClientRect()
+                    return box.width > 2 && box.height > 2 && !el.hasAttribute("data-starting-style")
+                  })
+                  if (!popup) return "không mở"
+                  const frame = popup.getBoundingClientRect()
+                  const overlap = frame.left < rect.right - 1 && frame.right > rect.left + 1 && frame.top < rect.bottom - 1 && frame.bottom > rect.top + 1
+                  return overlap ? "che ô bấm" : ""
+                })
+                if (covered) failures.push(`${where}: ${slot} ${covered}`)
+                if (!already) await page.keyboard.press("Escape")
+              }
+            }
+
+            if (width !== 768) {
+              await page.keyboard.press("Escape")
+              await page.evaluate(() => {
+                const target = window as Window & { __shift?: number }
+                target.__shift = 0
+                new PerformanceObserver((list) => {
+                  for (const entry of list.getEntries()) target.__shift = (target.__shift ?? 0) + ((entry as PerformanceEntry & { value?: number }).value ?? 0)
+                }).observe({ type: "layout-shift", buffered: false })
+              })
+              for (const name of ["Dialog", "Popover", "Mở menu"]) {
+                const button = page.getByRole("button", { name }).first()
+                if (await button.count() && await button.isVisible()) {
+                  await button.click({ timeout: 2000 }).catch(() => undefined)
+                  await page.keyboard.press("Escape")
+                }
+              }
+              const menu = page.locator("[data-slot=dropdown-menu-trigger]").first()
+              if (await menu.count() && await menu.isVisible()) {
+                await menu.click({ timeout: 2000 }).catch(() => undefined)
+                await page.keyboard.press("Escape")
+              }
+              const select = page.locator("[data-slot=select-trigger]").nth(item.path === "/design-system" ? 1 : 0)
+              if (await select.count() && await select.isVisible()) {
+                await select.click({ timeout: 2000 }).catch(() => undefined)
+                await page.keyboard.press("Escape")
+              }
+              const shift = await page.evaluate(() => (window as Window & { __shift?: number }).__shift ?? 0)
+              if (shift > 0) failures.push(`${where}: layout shift ${shift}`)
+            }
+            const tabNames = (await page.locator("[role=tab]:not([data-active])").allInnerTexts()).map((text) => text.split("\n")[0]?.trim() ?? "").filter(Boolean)
+            for (const name of tabNames) {
+              const current = page.getByRole("tab", { name, exact: true })
+              if (!(await current.count()) || !(await current.isVisible())) continue
+              await current.click({ timeout: 2000 }).catch(() => undefined)
+              if ((await page.getByRole("tab", { name, exact: true }).getAttribute("data-active")) === null) failures.push(`${where}: Tab không đổi`)
+            }
+          }
+        }
+      }
+    }
+
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.goto(`${base}/showcase`, { waitUntil: "networkidle" })
+    await page.getByRole("tab", { name: "Dashboard" }).click()
+    await page.getByRole("button", { name: "Customize Columns" }).click()
+    await page.getByRole("menuitemcheckbox", { name: "Header" }).click()
+    await page.keyboard.press("Escape")
+    const headerGone = await page.getByRole("columnheader", { name: "Header" }).count()
+    if (headerGone !== 0) failures.push("ẩn cột Header không được")
+    await page.getByRole("button", { name: "Customize Columns" }).click()
+    await page.getByRole("menuitemcheckbox", { name: "Header" }).click()
+    await page.keyboard.press("Escape")
+    if (await page.getByRole("columnheader", { name: "Header" }).count() === 0) failures.push("hiện lại cột Header không được")
+    const target = page.getByRole("textbox", { name: "Target Cover page" })
+    await target.fill("99")
+    if (await target.inputValue() !== "99") failures.push("sửa ô số không cập nhật")
+    await page.getByRole("button", { name: "Go to next page" }).click()
+    const pageText = await page.locator("[data-slot=table-pagination]").innerText()
+    if (!pageText.includes("Page 2")) failures.push(`phân trang: ${pageText}`)
+    const firstDrag = page.getByRole("button", { name: "Drag to reorder" }).first()
+    const beforeHeader = await page.getByRole("row").nth(1).innerText()
+    await firstDrag.focus()
+    await page.keyboard.press("Space")
+    await page.waitForTimeout(100)
+    for (let step = 0; step < 4; step += 1) {
+      await page.keyboard.press("ArrowDown")
+      await page.waitForTimeout(80)
+    }
+    await page.keyboard.press("Space")
+    const afterKey = await page.getByRole("row").nth(1).innerText()
+    if (beforeHeader === afterKey) failures.push("kéo hàng bằng bàn phím không đổi")
+    const handle = page.getByRole("button", { name: "Drag to reorder" }).first()
+    const box = await handle.boundingBox()
+    if (box) {
+      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+      await page.mouse.down()
+      await page.mouse.move(box.x + box.width / 2, box.y + 140, { steps: 12 })
+      await page.mouse.up()
+    }
+    const afterMouse = await page.getByRole("row").nth(1).innerText()
+    if (afterMouse === afterKey) failures.push("kéo hàng bằng chuột không đổi")
+
+    await page.close()
+    expect(failures, failures.join("\n")).toEqual([])
+  }, 300_000)
 })

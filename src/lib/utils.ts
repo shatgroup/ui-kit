@@ -50,7 +50,7 @@ const merge = extendTailwindMerge({
       "text-color": [{ text: colors }],
       "bg-color": [{ bg: colors }],
       "border-color": [{ border: colors }],
-      h: [{ h: ["control-sm", "control-md", "control-lg"] }],
+      h: [{ h: ["control-sm", "control-default", "control-lg"] }],
     },
   },
 })
