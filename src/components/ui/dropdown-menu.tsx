@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils.ts"
 import { Truncated } from "./truncated.tsx"
 
 const itemClass =
-  "flex w-full min-w-0 cursor-default items-center gap-2 rounded-md px-2 py-2 text-left text-sm whitespace-normal outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
+  "flex w-full min-w-0 cursor-default items-center gap-2 rounded-md px-2 py-2 text-left text-sm whitespace-normal outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:opacity-50 data-highlighted:bg-accent data-highlighted:text-accent-foreground [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />
@@ -40,7 +40,7 @@ function DropdownMenuContent({
           data-slot="dropdown-menu-content"
           data-side={side}
           className={cn(
-            "z-50 max-h-(--available-height) origin-(--transform-origin) overflow-y-auto rounded-md bg-popover p-1 text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none",
+            "z-50 max-h-(--available-height) origin-(--transform-origin) overflow-y-auto rounded-md border border-border bg-popover p-1 text-popover-foreground outline-none",
             className,
           )}
           {...props}
@@ -105,7 +105,7 @@ function DropdownMenuSubContent({
       <MenuPrimitive.Positioner className="isolate z-50" alignOffset={alignOffset} sideOffset={sideOffset}>
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-sub-content"
-          className={cn("min-w-40 rounded-md bg-popover p-1 shadow-md ring-1 ring-foreground/10 outline-none", className)}
+          className={cn("min-w-40 rounded-md border border-border bg-popover p-1 outline-none", className)}
           {...props}
         />
       </MenuPrimitive.Positioner>

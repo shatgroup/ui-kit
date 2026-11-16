@@ -49,7 +49,7 @@ function ToggleGroupItem({ className, ...props }: TogglePrimitive.Props) {
       data-slot="toggle-group-item"
       className={cn(
         toggleVariants({ size: "sm", variant: "default" }),
-        "h-6 shrink-0 px-2 shadow-none data-pressed:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        "h-6 shrink-0 px-2 data-pressed:border data-pressed:border-border [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         className,
       )}
       {...props}

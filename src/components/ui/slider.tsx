@@ -22,7 +22,7 @@ function Slider({ className, defaultValue, value, min = 0, max = 100, ...props }
           <SliderPrimitive.Thumb
             key={index}
             data-slot="slider-thumb"
-            className="block size-4 rounded-full border border-input bg-background shadow-xs outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="block size-4 rounded-full border border-input bg-background outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         ))}
       </SliderPrimitive.Control>

@@ -22,7 +22,7 @@ function HoverCardContent({
         <PreviewCardPrimitive.Popup
           data-slot="hover-card-content"
           data-side={side}
-          className={cn("w-64 rounded-lg bg-popover p-3 text-sm text-popover-foreground shadow-md outline-none", className)}
+          className={cn("w-64 rounded-lg border border-border bg-popover p-3 text-sm text-popover-foreground outline-none", className)}
           {...props}
         />
       </PreviewCardPrimitive.Positioner>

@@ -36,7 +36,7 @@ function PopoverContent({
           data-side={side}
           data-fit={fit ? "content" : undefined}
           className={cn(
-            "z-50 rounded-md bg-popover p-3 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none",
+            "z-50 rounded-md border border-border bg-popover p-3 text-sm text-popover-foreground outline-none",
             className,
           )}
           {...props}

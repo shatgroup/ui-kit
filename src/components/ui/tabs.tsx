@@ -37,7 +37,7 @@ function TabsTrigger({ className, children, ...props }: TabsPrimitive.Tab.Props)
         "inline-flex h-control-md w-max min-w-0 max-w-full items-center justify-center gap-1 rounded-md px-3 text-sm whitespace-nowrap text-muted-foreground",
         "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
         "outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        "data-active:bg-background data-active:font-medium data-active:text-foreground data-active:shadow-sm",
+        "data-active:border data-active:border-border data-active:bg-background data-active:font-medium data-active:text-foreground",
         className,
       )}
       {...props}

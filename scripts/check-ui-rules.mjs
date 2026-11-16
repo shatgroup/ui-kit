@@ -84,6 +84,9 @@ function checkClass(file, line, token) {
   if (shadedColor.test(value) || plainColor.test(value)) {
     report(file, line, "Dùng token màu, không dùng màu Tailwind mặc định")
   }
+  if (/^shadow-(?!none(?:$|:))/.test(value)) {
+    report(file, line, "Không dùng shadow, popup dùng viền")
+  }
 }
 
 const ignored = new Map()

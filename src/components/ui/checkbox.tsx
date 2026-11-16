@@ -12,7 +12,7 @@ function Checkbox({ className, indeterminate, ...props }: CheckboxPrimitive.Root
       indeterminate={indeterminate}
       className={cn(
         "flex size-4 shrink-0 items-center justify-center rounded-sm border border-input bg-background text-primary-foreground",
-        "data-checked:border-primary data-checked:bg-primary",
+        "data-checked:border-primary data-checked:bg-primary data-indeterminate:border-primary data-indeterminate:bg-primary",
         "disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive",
         focusRing,
         className,

@@ -22,7 +22,7 @@ export const focusRing =
   "outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring"
 
 export const fieldClass = [
-  "box-border w-full min-w-0 rounded-md border border-input bg-background text-foreground shadow-xs",
+  "box-border w-full min-w-0 rounded-md border border-input bg-background text-foreground",
   "placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-50",
   "aria-invalid:border-destructive",
   focusRing,

@@ -44,7 +44,7 @@ function SheetContent({
         data-slot="sheet-content"
         data-side={side}
         className={cn(
-          "fixed z-50 flex h-dvh w-72 max-w-full flex-col gap-4 bg-popover p-4 text-popover-foreground shadow-lg outline-none",
+          "fixed z-50 flex h-dvh w-72 max-w-full flex-col gap-4 border border-border bg-popover p-4 text-popover-foreground outline-none",
           side === "left" && "inset-y-0 left-0 border-r border-border",
           side === "right" && "inset-y-0 right-0 border-l border-border",
           side === "top" && "inset-x-0 top-0 h-auto max-h-dvh w-full border-b border-border",

@@ -70,7 +70,7 @@ function ChartTooltipContent({
   const rows = useMemo(() => payload?.filter((item) => item.value !== undefined) ?? [], [payload])
   if (!active || rows.length === 0) return null
   return (
-    <div className="grid min-w-32 gap-1 rounded-lg border border-border bg-background px-2 py-2 text-sm shadow-md">
+    <div className="grid min-w-32 gap-1 rounded-lg border border-border bg-background px-2 py-2 text-sm">
       {label ? <span className="font-medium">{label}</span> : null}
       {rows.map((item) => (
         <span key={String(item.dataKey)} className="flex items-center justify-between gap-3">

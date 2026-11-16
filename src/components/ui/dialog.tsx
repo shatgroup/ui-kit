@@ -43,7 +43,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(
-          "fixed z-50 flex min-h-0 w-auto flex-col gap-4 overflow-hidden rounded-lg bg-popover p-4 text-popover-foreground shadow-lg outline-none",
+          "fixed z-50 flex min-h-0 w-auto flex-col gap-4 overflow-hidden rounded-lg border border-border bg-popover p-4 text-popover-foreground outline-none",
           "inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:w-full sm:max-w-lg sm:-translate-x-1/2 sm:-translate-y-1/2",
           // check-ui-ignore-next-line: popup cần trần cao theo viewport, không có token chiều cao
           "max-h-[calc(100dvh-2rem)]",
