@@ -37,6 +37,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
 import { Textarea } from "@/components/ui/textarea.tsx"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
+import { KitPatterns } from "@/pages/kit-patterns.tsx"
 import { InboxIcon } from "lucide-react"
 import { toast } from "sonner"
 
@@ -372,6 +373,7 @@ export function KitPage() {
             <AvatarFallback>QT</AvatarFallback>
           </Avatar>
         </Stack>
+        <KitPatterns />
       </Stack>
     </Container>
   )

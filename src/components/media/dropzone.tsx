@@ -74,6 +74,7 @@ export function Dropzone({
     <Stack gap={3}>
       <div
         {...getRootProps({
+          "aria-label": title,
           className: `flex min-h-24 cursor-pointer items-center justify-center rounded-md border border-dashed p-4 outline-none focus-visible:ring-2 focus-visible:ring-ring ${isDragActive ? "bg-accent" : "bg-muted"}`,
         })}
       >

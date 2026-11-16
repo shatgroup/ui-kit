@@ -2,6 +2,7 @@ import { TooltipProvider } from "@/components/ui/tooltip.tsx"
 import { Toaster } from "@/components/ui/sonner.tsx"
 import { Container, Text } from "@/components/layout/index.ts"
 import { KitPage } from "@/pages/kit-page.tsx"
+import { PreviewMotionPage } from "@/pages/preview-motion-page.tsx"
 import { PreviewPage } from "@/pages/preview-page.tsx"
 import { TokensPage } from "@/pages/tokens-page.tsx"
 
@@ -15,6 +16,7 @@ export default function App() {
   if (path === "/" || path === "/tokens") page = <TokensPage />
   if (path === "/kit") page = <KitPage />
   if (path === "/preview") page = <PreviewPage />
+  if (path === "/preview-motion") page = <PreviewMotionPage />
 
   return (
     <TooltipProvider>

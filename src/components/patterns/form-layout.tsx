@@ -1,4 +1,4 @@
-import type { FormEvent, ReactNode } from "react"
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react"
 import { Box, Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
 
@@ -32,8 +32,29 @@ export function FormLayout({
     onSubmit()
   }
 
+  const formRef = useRef<HTMLFormElement>(null)
+  const [pin, setPin] = useState(false)
+
+  useEffect(() => {
+    function update() {
+      const node = formRef.current
+      if (!node) return
+      const rect = node.getBoundingClientRect()
+      const tall = node.offsetHeight > window.innerHeight
+      const onScreen = rect.bottom > 0 && rect.top < window.innerHeight
+      setPin(tall && onScreen && rect.bottom > window.innerHeight)
+    }
+    update()
+    window.addEventListener("scroll", update, { passive: true })
+    window.addEventListener("resize", update)
+    return () => {
+      window.removeEventListener("scroll", update)
+      window.removeEventListener("resize", update)
+    }
+  }, [])
+
   return (
-    <form onSubmit={submit}>
+    <form ref={formRef} onSubmit={submit}>
       <Stack gap={6}>
         {sections.map((section) => (
           <Stack key={section.title} gap={4} className="md:flex-row md:items-start">
@@ -50,7 +71,7 @@ export function FormLayout({
             </Box>
           </Stack>
         ))}
-        <Box tone="background" border className="sticky bottom-0 p-3">
+        <Box tone="background" border className={pin ? "sticky bottom-0 p-3" : "p-3"}>
           <Inline gap={2} justify="end">
             {onCancel ? (
               <Button type="button" variant="outline" onClick={onCancel}>

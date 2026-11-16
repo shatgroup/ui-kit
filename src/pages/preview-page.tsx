@@ -1,5 +1,21 @@
-import { useRef, useState } from "react"
-import { Box, Inline, Stack, Text } from "@/components/layout/index.ts"
+import { useMemo, useState } from "react"
+import {
+  BarChart3Icon,
+  ClipboardListIcon,
+  MoreHorizontalIcon,
+  PackageIcon,
+  SettingsIcon,
+  StoreIcon,
+  WarehouseIcon,
+} from "lucide-react"
+import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
+import { AppShell, type AppNavGroup } from "@/components/patterns/app-shell.tsx"
+import { DataTable, type DataColumn } from "@/components/patterns/data-table.tsx"
+import { FilterBar, type FilterItem } from "@/components/patterns/filter-bar.tsx"
+import { FormLayout } from "@/components/patterns/form-layout.tsx"
+import { PageHeader } from "@/components/patterns/page-header.tsx"
+import { StatCard } from "@/components/patterns/stat-card.tsx"
+import { StatusTimeline } from "@/components/patterns/status-timeline.tsx"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import {
@@ -7,10 +23,8 @@ import {
   DialogBody,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog.tsx"
 import {
   DropdownMenu,
@@ -18,22 +32,18 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx"
-import { EmptyState } from "@/components/ui/empty-state.tsx"
 import { FormField } from "@/components/ui/form-field.tsx"
 import { Input } from "@/components/ui/input.tsx"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx"
 import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet.tsx"
-import { Skeleton } from "@/components/ui/skeleton.tsx"
 import { Switch } from "@/components/ui/switch.tsx"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
 import { Textarea } from "@/components/ui/textarea.tsx"
-import { InboxIcon, MenuIcon } from "lucide-react"
 import { toast } from "sonner"
 
 type Status = "pending" | "doing" | "done"
 
-type Row = {
+type RequestRow = {
+  id: string
   code: string
   store: string
   type: string
@@ -42,63 +52,66 @@ type Row = {
   date: string
 }
 
-const MENUS = ["Yêu cầu", "Cửa hàng", "POSM", "Kho", "Báo cáo", "Cài đặt"]
-const STORES = ["Tất cả", "Shondo Quận 1", "Shondo Quận 12", "Shondo Thủ Đức"]
-const TYPES = ["Tất cả", "Standee", "Wobbler", "Poster"]
-const STATUSES = ["Tất cả", "Chờ duyệt", "Đang làm", "Đã xong"]
+const LONG_STORE = "Shondo 22 Nguyễn Ảnh Thủ – Trung Mỹ Tây, Quận 12, TP. Hồ Chí Minh"
+const STORES = ["Shondo Quận 1", LONG_STORE, "Shondo Thủ Đức"]
+const TYPES = ["Standee", "Wobbler", "Poster"]
+const STATUS_CYCLE: Status[] = ["pending", "doing", "done"]
+const STATUS_LABEL: Record<Status, string> = { pending: "Chờ duyệt", doing: "Đang làm", done: "Đã xong" }
+const STATUS_BADGE = { pending: "warning", doing: "info", done: "success" } as const
 
-const ROWS: Row[] = [
+const ROWS: RequestRow[] = Array.from({ length: 40 }, (_, index) => ({
+  id: String(index + 1),
+  code: `POSM-${2400 + index}`,
+  store: index % 5 === 0 ? LONG_STORE : STORES[index % STORES.length] ?? STORES[0],
+  type: TYPES[index % TYPES.length] ?? "Standee",
+  qty: (index % 9) + 1,
+  status: STATUS_CYCLE[index % STATUS_CYCLE.length] ?? "pending",
+  date: `${String((index % 27) + 1).padStart(2, "0")}/11/2026`,
+}))
+
+const GROUPS: AppNavGroup[] = [
   {
-    code: "POSM-2401",
-    store: "Shondo 22 Nguyễn Ảnh Thủ – Trung Mỹ Tây, Quận 12, TP. Hồ Chí Minh",
-    type: "Standee",
-    qty: 12,
-    status: "pending",
-    date: "12/11/2026",
+    label: "Vận hành",
+    items: [
+      { id: "requests", label: "Yêu cầu", icon: ClipboardListIcon },
+      { id: "stores", label: "Cửa hàng", icon: StoreIcon },
+      { id: "posm", label: "POSM", icon: PackageIcon },
+      { id: "stock", label: "Kho", icon: WarehouseIcon },
+    ],
   },
-  { code: "POSM-2402", store: "Shondo Quận 1", type: "Wobbler", qty: 40, status: "doing", date: "11/11/2026" },
-  { code: "POSM-2403", store: "Shondo Thủ Đức", type: "Poster", qty: 8, status: "pending", date: "10/11/2026" },
-  { code: "POSM-2404", store: "Shondo Quận 12", type: "Standee", qty: 4, status: "doing", date: "09/11/2026" },
-  { code: "POSM-2405", store: "Shondo Quận 1", type: "Poster", qty: 20, status: "done", date: "08/11/2026" },
-  { code: "POSM-2406", store: "Shondo Thủ Đức", type: "Wobbler", qty: 15, status: "pending", date: "07/11/2026" },
-  { code: "POSM-2407", store: "Shondo Quận 12", type: "Poster", qty: 6, status: "doing", date: "06/11/2026" },
-  { code: "POSM-2408", store: "Shondo Quận 1", type: "Standee", qty: 2, status: "done", date: "05/11/2026" },
+  {
+    label: "Hệ thống",
+    items: [
+      { id: "reports", label: "Báo cáo", icon: BarChart3Icon },
+      { id: "settings", label: "Cài đặt", icon: SettingsIcon },
+    ],
+  },
 ]
 
-const STATUS_BADGE = {
-  pending: { variant: "warning", label: "Chờ duyệt" },
-  doing: { variant: "info", label: "Đang làm" },
-  done: { variant: "success", label: "Đã xong" },
-} as const
-
-function MenuList({ current, onPick }: { current: string; onPick: (item: string) => void }) {
-  return (
-    <Stack gap={1}>
-      {MENUS.map((item) => (
-        <Button
-          key={item}
-          variant="ghost"
-          className={item === current ? "w-full justify-start bg-sidebar-primary text-sidebar-primary-foreground" : "w-full justify-start"}
-          aria-current={item === current ? "page" : undefined}
-          onClick={() => onPick(item)}
-        >
-          {item}
-        </Button>
-      ))}
-    </Stack>
-  )
-}
+const COLUMNS: DataColumn<RequestRow>[] = [
+  { id: "code", header: "Mã", accessor: (row) => row.code, minWidth: 120 },
+  { id: "store", header: "Cửa hàng", accessor: (row) => row.store, minWidth: 240, grow: true },
+  { id: "type", header: "Loại POSM", accessor: (row) => row.type, minWidth: 120 },
+  { id: "qty", header: "Số lượng", accessor: (row) => row.qty, minWidth: 96, numeric: true },
+  {
+    id: "status",
+    header: "Trạng thái",
+    accessor: (row) => STATUS_LABEL[row.status],
+    minWidth: 120,
+    cell: (row) => <Badge variant={STATUS_BADGE[row.status]}>{STATUS_LABEL[row.status]}</Badge>,
+  },
+  { id: "date", header: "Ngày", accessor: (row) => row.date, minWidth: 112 },
+]
 
 export function PreviewPage() {
   const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"))
-  const [menu, setMenu] = useState("Yêu cầu")
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [menu, setMenu] = useState("requests")
   const [query, setQuery] = useState("")
-  const [tab, setTab] = useState("all")
-  const [store, setStore] = useState("Tất cả")
-  const [type, setType] = useState("Tất cả")
-  const [status, setStatus] = useState("Tất cả")
-  const [loading, setLoading] = useState(false)
+  const [store, setStore] = useState("all")
+  const [type, setType] = useState("all")
+  const [status, setStatus] = useState("all")
+  const [detail, setDetail] = useState<RequestRow | null>(null)
+  const [deleteRow, setDeleteRow] = useState<RequestRow | null>(null)
   const [createOpen, setCreateOpen] = useState(false)
   const [storeField, setStoreField] = useState("")
   const [typeField, setTypeField] = useState("")
@@ -107,34 +120,67 @@ export function PreviewPage() {
   const [urgent, setUrgent] = useState(false)
   const [storeError, setStoreError] = useState("")
   const [saving, setSaving] = useState(false)
-  const [deleteCode, setDeleteCode] = useState<string | null>(null)
-  const deleteTrigger = useRef<HTMLButtonElement | null>(null)
+
+  const rows = useMemo(
+    () =>
+      ROWS.filter((row) => {
+        const text = `${row.code} ${row.store}`.toLowerCase()
+        if (query && !text.includes(query.trim().toLowerCase())) return false
+        if (store === "q1" && !row.store.includes("Quận 1")) return false
+        if (store === "q12" && !row.store.includes("Quận 12")) return false
+        if (store === "td" && !row.store.includes("Thủ Đức")) return false
+        if (type !== "all" && row.type !== type) return false
+        if (status !== "all" && row.status !== status) return false
+        return true
+      }),
+    [query, store, type, status],
+  )
+
+  const filters: FilterItem[] = [
+    {
+      id: "store",
+      label: "Cửa hàng",
+      value: store,
+      allValue: "all",
+      onChange: setStore,
+      options: [
+        { value: "all", label: "Tất cả" },
+        { value: "q1", label: "Shondo Quận 1" },
+        { value: "q12", label: "Shondo Quận 12" },
+        { value: "td", label: "Shondo Thủ Đức" },
+      ],
+    },
+    {
+      id: "type",
+      label: "Loại POSM",
+      value: type,
+      allValue: "all",
+      onChange: setType,
+      options: [
+        { value: "all", label: "Tất cả" },
+        ...TYPES.map((item) => ({ value: item, label: item })),
+      ],
+    },
+    {
+      id: "status",
+      label: "Trạng thái",
+      value: status,
+      allValue: "all",
+      onChange: setStatus,
+      options: [
+        { value: "all", label: "Tất cả" },
+        { value: "pending", label: "Chờ duyệt" },
+        { value: "doing", label: "Đang làm" },
+        { value: "done", label: "Đã xong" },
+      ],
+    },
+  ]
 
   function toggleTheme() {
     const next = !document.documentElement.classList.contains("dark")
     document.documentElement.classList.toggle("dark", next)
     setDark(next)
   }
-
-  function resetFilters() {
-    setStore("Tất cả")
-    setType("Tất cả")
-    setStatus("Tất cả")
-  }
-
-  const rows = ROWS.filter((row) => {
-    const text = `${row.code} ${row.store}`.toLowerCase()
-    if (query && !text.includes(query.trim().toLowerCase())) return false
-    if (store !== "Tất cả" && !row.store.includes(store.replace("Tất cả", ""))) return false
-    if (store === "Shondo Quận 12" && !row.store.includes("Quận 12")) return false
-    if (store === "Shondo Quận 1" && !row.store.includes("Quận 1")) return false
-    if (store === "Shondo Thủ Đức" && !row.store.includes("Thủ Đức")) return false
-    if (type !== "Tất cả" && row.type !== type) return false
-    if (status !== "Tất cả" && STATUS_BADGE[row.status].label !== status) return false
-    if (tab === "pending" && row.status !== "pending") return false
-    if (tab === "doing" && row.status !== "doing") return false
-    return true
-  })
 
   function save() {
     if (!storeField) {
@@ -147,7 +193,6 @@ export function PreviewPage() {
       setSaving(false)
       setCreateOpen(false)
       setStoreField("")
-      setTypeField("")
       setQty("")
       setNote("")
       setUrgent(false)
@@ -155,288 +200,200 @@ export function PreviewPage() {
     }, 1000)
   }
 
-  function closeDelete(open: boolean) {
-    setDeleteCode(open ? deleteCode : null)
-    if (!open) deleteTrigger.current?.focus()
-  }
-
   return (
-    <Box className="min-h-dvh">
-      <Inline align="stretch" wrap={false} className="min-h-dvh">
-        <Box tone="card" border className="hidden w-60 shrink-0 md:block">
-          <Stack gap={4} className="p-4">
-            <Text as="h1" size="lg" weight="bold" tone="primary">
-              POSM
-            </Text>
-            <MenuList current={menu} onPick={setMenu} />
-          </Stack>
-        </Box>
-        <Stack gap={4} className="min-w-0 flex-1 p-4">
-          <Inline justify="between" align="center" gap={2}>
-            <Inline gap={2} align="center" className="min-w-0">
-              <Button variant="outline" className="w-8 px-0 md:hidden" aria-label="Mở menu" onClick={() => setMenuOpen(true)}>
-                <MenuIcon />
-              </Button>
-              <Text as="h1" size="2xl" weight="semibold" truncate>
-                Yêu cầu POSM
-              </Text>
-            </Inline>
-            <Button variant="secondary" onClick={toggleTheme}>
-              {dark ? "Sáng" : "Tối"}
+    <AppShell
+      logo={
+        <Text as="span" size="lg" weight="bold" tone="primary">
+          POSM
+        </Text>
+      }
+      groups={GROUPS}
+      activeId={menu}
+      onNavigate={setMenu}
+      topbar={
+        <Button variant="secondary" onClick={toggleTheme}>
+          {dark ? "Sáng" : "Tối"}
+        </Button>
+      }
+    >
+      <Stack gap={4}>
+        <PageHeader
+          title="Yêu cầu POSM"
+          description="Theo dõi in ấn và bàn giao POSM cho cửa hàng."
+          crumbs={[{ label: "POSM" }, { label: "Yêu cầu" }]}
+          actions={<Button onClick={() => setCreateOpen(true)}>Tạo yêu cầu</Button>}
+        />
+        <Grid columns={{ base: 1, sm: 2, lg: 4 }} gap={3}>
+          <StatCard label="Đang mở" value="24" delta="+8%" direction="up" description="Chờ duyệt và đang làm" />
+          <StatCard label="Đang làm" value="11" delta="+2" direction="up" description="Xưởng đang in" />
+          <StatCard label="Đã xong" value="16" delta="-3%" direction="down" description="Bảy ngày gần nhất" />
+          <StatCard label="Giá trị" value="1.250.000.000 ₫" description="Tổng đơn đã duyệt" />
+        </Grid>
+        <FilterBar
+          query={query}
+          onQueryChange={setQuery}
+          filters={filters}
+          resultCount={rows.length}
+          onClear={() => {
+            setQuery("")
+            setStore("all")
+            setType("all")
+            setStatus("all")
+          }}
+        />
+        <DataTable
+          data={rows}
+          columns={COLUMNS}
+          getRowId={(row) => row.id}
+          stickyFirstColumn
+          selectable
+          bulkActions={(ids) => (
+            <Button variant="outline" size="sm" onClick={() => toast.success(`Đã chọn ${ids.length} dòng`)}>
+              Thao tác hàng loạt
             </Button>
-          </Inline>
-
-          <Inline gap={2} align="center">
-            <Input
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Tìm mã, cửa hàng"
-              aria-label="Tìm mã, cửa hàng"
-              className="w-60"
-            />
-            <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-              <DialogTrigger render={<Button />}>Tạo yêu cầu</DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Tạo yêu cầu POSM</DialogTitle>
-                  <DialogDescription>Điền cửa hàng trước khi lưu.</DialogDescription>
-                </DialogHeader>
-                <DialogBody>
-                  <Stack gap={3}>
-                    <FormField label="Cửa hàng" required error={storeError}>
-                      {(field) => (
-                        <Select
-                          value={storeField}
-                          onValueChange={(value) => {
-                            setStoreField(value ?? "")
-                            if (value) setStoreError("")
-                          }}
-                        >
-                          <SelectTrigger {...field} className="w-full">
-                            <SelectValue placeholder="Chọn cửa hàng" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="q1">Shondo Quận 1</SelectItem>
-                            <SelectItem value="q12">Shondo Quận 12</SelectItem>
-                            <SelectItem value="td">Shondo Thủ Đức</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    </FormField>
-                    <FormField label="Loại POSM" hint="Standee, wobbler hoặc poster">
-                      {(field) => (
-                        <Select value={typeField} onValueChange={(value) => setTypeField(value ?? "")}>
-                          <SelectTrigger {...field} className="w-full">
-                            <SelectValue placeholder="Chọn loại" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="standee">Standee</SelectItem>
-                            <SelectItem value="wobbler">Wobbler</SelectItem>
-                            <SelectItem value="poster">Poster</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    </FormField>
-                    <FormField label="Số lượng" hint="Số bộ cần in">
-                      {(field) => (
-                        <Input
-                          {...field}
-                          type="number"
-                          inputMode="numeric"
-                          value={qty}
-                          onChange={(event) => setQty(event.target.value)}
-                        />
-                      )}
-                    </FormField>
-                    <FormField label="Ghi chú">
-                      {(field) => <Textarea {...field} value={note} onChange={(event) => setNote(event.target.value)} />}
-                    </FormField>
-                    <FormField label="Gấp" choice>
-                      {(field) => <Switch {...field} checked={urgent} onCheckedChange={setUrgent} />}
-                    </FormField>
-                  </Stack>
-                </DialogBody>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setCreateOpen(false)}>
-                    Huỷ
+          )}
+          renderActions={(row) => (
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                render={
+                  <Button variant="ghost" size="sm" className="w-8 px-0" aria-label={`Thao tác ${row.code}`}>
+                    <MoreHorizontalIcon className="size-4" />
                   </Button>
-                  <Button loading={saving} onClick={save}>
-                    Lưu
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </Inline>
+                }
+              />
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => setDetail(row)}>Xem</DropdownMenuItem>
+                <DropdownMenuItem variant="destructive" onClick={() => setDeleteRow(row)}>
+                  Xoá
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        />
+      </Stack>
 
-          <Tabs value={tab} onValueChange={setTab}>
-            <TabsList>
-              <TabsTrigger value="all">Tất cả</TabsTrigger>
-              <TabsTrigger value="pending">Chờ duyệt</TabsTrigger>
-              <TabsTrigger value="doing">Đang làm</TabsTrigger>
-              <TabsTrigger value="done">Đã xong</TabsTrigger>
-            </TabsList>
-            <TabsContent value={tab}>
-              <Stack gap={3}>
-                <Inline gap={2} align="center">
-                  <Select value={store} onValueChange={(value) => setStore(value ?? "Tất cả")}>
-                    <SelectTrigger className="w-48" aria-label="Cửa hàng">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {STORES.map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={type} onValueChange={(value) => setType(value ?? "Tất cả")}>
-                    <SelectTrigger className="w-48" aria-label="Loại POSM">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TYPES.map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select value={status} onValueChange={(value) => setStatus(value ?? "Tất cả")}>
-                    <SelectTrigger className="w-48" aria-label="Trạng thái">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {STATUSES.map((item) => (
-                        <SelectItem key={item} value={item}>
-                          {item}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" onClick={resetFilters}>
-                    Xoá lọc
-                  </Button>
-                </Inline>
-                <Inline gap={2} align="center">
-                  <Switch checked={loading} onCheckedChange={setLoading} id="loading-toggle" aria-labelledby="loading-label" />
-                  <Text id="loading-label" as="span" size="sm">
-                    Đang tải
-                  </Text>
-                </Inline>
-                {loading ? (
-                  <Stack gap={2}>
-                    {Array.from({ length: 8 }, (_, index) => (
-                      <Skeleton key={index} className="h-control-md w-full" />
-                    ))}
-                  </Stack>
-                ) : tab === "done" || rows.length === 0 ? (
-                  <EmptyState
-                    icon={<InboxIcon className="size-8 text-muted-foreground" />}
-                    title={tab === "done" ? "Chưa có yêu cầu đã xong" : "Không có yêu cầu"}
-                    description={tab === "done" ? "Các yêu cầu hoàn tất sẽ hiện ở đây." : "Đổi bộ lọc hoặc tạo yêu cầu mới."}
-                  />
-                ) : (
-                  <Table stickyFirstColumn>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead minWidth={120}>Mã</TableHead>
-                        <TableHead minWidth={220} grow>
-                          Cửa hàng
-                        </TableHead>
-                        <TableHead minWidth={120}>Loại POSM</TableHead>
-                        <TableHead minWidth={96} numeric>
-                          Số lượng
-                        </TableHead>
-                        <TableHead minWidth={120}>Trạng thái</TableHead>
-                        <TableHead minWidth={112}>Ngày</TableHead>
-                        <TableHead minWidth={64}>Thao tác</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {rows.map((row) => (
-                        <TableRow key={row.code}>
-                          <TableCell minWidth={120}>{row.code}</TableCell>
-                          <TableCell minWidth={220} grow>
-                            {row.store}
-                          </TableCell>
-                          <TableCell minWidth={120}>{row.type}</TableCell>
-                          <TableCell minWidth={96} numeric>
-                            {row.qty}
-                          </TableCell>
-                          <TableCell minWidth={120}>
-                            <Badge variant={STATUS_BADGE[row.status].variant}>{STATUS_BADGE[row.status].label}</Badge>
-                          </TableCell>
-                          <TableCell minWidth={112}>{row.date}</TableCell>
-                          <TableCell minWidth={64} wrap>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger
-                                render={<Button variant="ghost" size="sm" className="w-8 px-0" aria-label={`Thao tác ${row.code}`} />}
-                                onClick={(event) => {
-                                  deleteTrigger.current = event.currentTarget
-                                }}
-                              >
-                                ···
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent>
-                                <DropdownMenuItem>Xem</DropdownMenuItem>
-                                <DropdownMenuItem>Sửa</DropdownMenuItem>
-                                <DropdownMenuItem variant="destructive" onClick={() => setDeleteCode(row.code)}>
-                                  Xoá
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </Stack>
-            </TabsContent>
-          </Tabs>
-        </Stack>
-      </Inline>
-
-      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-        <SheetContent side="left">
+      <Sheet open={detail !== null} onOpenChange={(open) => !open && setDetail(null)}>
+        <SheetContent>
           <SheetHeader>
-            <SheetTitle>POSM</SheetTitle>
+            <SheetTitle>{detail?.code}</SheetTitle>
           </SheetHeader>
           <SheetBody>
-            <MenuList
-              current={menu}
-              onPick={(item) => {
-                setMenu(item)
-                setMenuOpen(false)
-              }}
-            />
+            <Stack gap={4}>
+              <Text>{detail?.store}</Text>
+              <StatusTimeline
+                items={[
+                  { id: "created", title: "Tạo yêu cầu", time: detail?.date ?? "", note: detail?.type, state: "done" },
+                  {
+                    id: "work",
+                    title: "Đang sản xuất",
+                    time: "Hôm nay",
+                    note: "Xưởng in standee và đóng gói theo cửa hàng.",
+                    state: detail?.status === "pending" ? "todo" : "current",
+                  },
+                  { id: "done", title: "Bàn giao", time: "Chưa tới", state: detail?.status === "done" ? "done" : "todo" },
+                ]}
+              />
+            </Stack>
           </SheetBody>
         </SheetContent>
       </Sheet>
 
-      <Dialog open={deleteCode !== null} onOpenChange={closeDelete}>
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Tạo yêu cầu POSM</DialogTitle>
+            <DialogDescription>Cửa hàng là bắt buộc.</DialogDescription>
+          </DialogHeader>
+          <DialogBody>
+            <FormLayout
+              columns={1}
+              saving={saving}
+              onSubmit={save}
+              onCancel={() => setCreateOpen(false)}
+              sections={[
+                {
+                  title: "Nội dung",
+                  description: "Điền đủ trước khi gửi xưởng.",
+                  children: (
+                    <Stack gap={3}>
+                      <FormField label="Cửa hàng" required error={storeError}>
+                        {(field) => (
+                          <Select
+                            value={storeField}
+                            onValueChange={(value) => {
+                              setStoreField(value ?? "")
+                              if (value) setStoreError("")
+                            }}
+                          >
+                            <SelectTrigger {...field}>
+                              <SelectValue placeholder="Chọn cửa hàng" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="q1">Shondo Quận 1</SelectItem>
+                              <SelectItem value="q12">Shondo Quận 12</SelectItem>
+                              <SelectItem value="td">Shondo Thủ Đức</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </FormField>
+                      <FormField label="Loại POSM" hint="Standee, wobbler hoặc poster">
+                        {(field) => (
+                          <Select value={typeField} onValueChange={(value) => setTypeField(value ?? "")}>
+                            <SelectTrigger {...field}>
+                              <SelectValue placeholder="Chọn loại" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {TYPES.map((item) => (
+                                <SelectItem key={item} value={item}>
+                                  {item}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
+                      </FormField>
+                      <FormField label="Số lượng">
+                        {(field) => (
+                          <Input {...field} type="number" value={qty} onChange={(event) => setQty(event.target.value)} />
+                        )}
+                      </FormField>
+                      <FormField label="Ghi chú">
+                        {(field) => <Textarea {...field} value={note} onChange={(event) => setNote(event.target.value)} />}
+                      </FormField>
+                      <FormField label="Gấp" choice>
+                        {(field) => <Switch {...field} checked={urgent} onCheckedChange={setUrgent} />}
+                      </FormField>
+                    </Stack>
+                  ),
+                },
+              ]}
+            />
+          </DialogBody>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={deleteRow !== null} onOpenChange={(open) => !open && setDeleteRow(null)}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Xoá yêu cầu</DialogTitle>
-            <DialogDescription>Xoá {deleteCode}. Thao tác không hoàn tác.</DialogDescription>
+            <DialogDescription>Xoá {deleteRow?.code}. Thao tác không hoàn tác.</DialogDescription>
           </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => closeDelete(false)}>
+          <Inline gap={2} justify="end">
+            <Button variant="outline" onClick={() => setDeleteRow(null)}>
               Huỷ
             </Button>
             <Button
               variant="destructive"
               onClick={() => {
-                toast.success(`Đã xoá ${deleteCode}`)
-                closeDelete(false)
+                toast.success(`Đã xoá ${deleteRow?.code}`)
+                setDeleteRow(null)
               }}
             >
               Xoá
             </Button>
-          </DialogFooter>
+          </Inline>
         </DialogContent>
       </Dialog>
-    </Box>
+    </AppShell>
   )
 }
