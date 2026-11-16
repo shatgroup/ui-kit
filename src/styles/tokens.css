@@ -107,3 +107,19 @@
 @utility max-w-page {
   max-width: 1440px;
 }
+
+[data-slot="switch"] {
+  width: 32px;
+  height: 18px;
+  padding: 2px;
+}
+
+[data-slot="switch-thumb"] {
+  width: 14px;
+  height: 14px;
+  transform: translateX(0);
+}
+
+[data-slot="switch"][data-checked] [data-slot="switch-thumb"] {
+  transform: translateX(14px);
+}

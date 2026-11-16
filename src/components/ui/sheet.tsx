@@ -2,6 +2,7 @@ import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { XIcon } from "lucide-react"
 import type { ComponentProps } from "react"
 import { cn } from "@/lib/utils.ts"
+import { FormSurface } from "@/components/patterns/form-layout.tsx"
 import { Button } from "./button.tsx"
 
 function Sheet({ ...props }: SheetPrimitive.Root.Props) {
@@ -70,8 +71,12 @@ function SheetHeader({ className, ...props }: ComponentProps<"div">) {
   return <div data-slot="sheet-header" className={cn("flex shrink-0 flex-col gap-1 pr-8", className)} {...props} />
 }
 
-function SheetBody({ className, ...props }: ComponentProps<"div">) {
-  return <div data-slot="sheet-body" className={cn("min-h-0 flex-1 overflow-y-auto", className)} {...props} />
+function SheetBody({ className, children, ...props }: ComponentProps<"div">) {
+  return (
+    <div data-slot="sheet-body" className={cn("min-h-0 flex-1 overflow-y-auto", className)} {...props}>
+      <FormSurface>{children}</FormSurface>
+    </div>
+  )
 }
 
 function SheetFooter({ className, ...props }: ComponentProps<"div">) {

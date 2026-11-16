@@ -2,6 +2,7 @@ import { Dialog as DialogPrimitive } from "@base-ui/react/dialog"
 import { XIcon } from "lucide-react"
 import type { ComponentProps } from "react"
 import { cn } from "@/lib/utils.ts"
+import { FormSurface } from "@/components/patterns/form-layout.tsx"
 import { Button } from "./button.tsx"
 
 function Dialog({ ...props }: DialogPrimitive.Root.Props) {
@@ -68,8 +69,12 @@ function DialogHeader({ className, ...props }: ComponentProps<"div">) {
   return <div data-slot="dialog-header" className={cn("flex shrink-0 flex-col gap-1 pr-8", className)} {...props} />
 }
 
-function DialogBody({ className, ...props }: ComponentProps<"div">) {
-  return <div data-slot="dialog-body" className={cn("min-h-0 flex-1 overflow-y-auto", className)} {...props} />
+function DialogBody({ className, children, ...props }: ComponentProps<"div">) {
+  return (
+    <div data-slot="dialog-body" className={cn("min-h-0 flex-1 overflow-y-auto", className)} {...props}>
+      <FormSurface>{children}</FormSurface>
+    </div>
+  )
 }
 
 function DialogFooter({ className, ...props }: ComponentProps<"div">) {

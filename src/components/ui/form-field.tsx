@@ -5,7 +5,7 @@ import { Label } from "./label.tsx"
 type Wired = {
   id: string
   "aria-invalid"?: boolean
-  "aria-describedby": string
+  "aria-describedby"?: string
 }
 
 type FormFieldProps = {
@@ -20,13 +20,13 @@ type FormFieldProps = {
 function FormField({ label, required = false, hint, error, choice = false, children }: FormFieldProps) {
   const id = useId()
   const messageId = `${id}-message`
+  const message = error || hint || ""
   const field: Wired = {
     id,
-    "aria-describedby": messageId,
+    "aria-describedby": message ? messageId : undefined,
     "aria-invalid": error ? true : undefined,
   }
   const control = typeof children === "function" ? children(field) : isValidElement(children) ? cloneElement(children, field) : children
-  const message = error || hint || ""
   const labelNode = (
     <Label htmlFor={id}>
       {label}
@@ -39,7 +39,7 @@ function FormField({ label, required = false, hint, error, choice = false, child
   )
 
   return (
-    <Stack gap={1} className="w-full min-w-0">
+    <Stack slot="form-field" gap={1} className="w-full min-w-0">
       {choice ? (
         <Inline gap={2} align="center">
           {control}
@@ -51,9 +51,11 @@ function FormField({ label, required = false, hint, error, choice = false, child
           {control}
         </>
       )}
-      <Text id={messageId} as="p" size="sm" tone={error ? "destructive" : "muted"} className="min-h-5">
-        {message}
-      </Text>
+      {message ? (
+        <Text id={messageId} as="p" size="sm" tone={error ? "destructive" : "muted"}>
+          {message}
+        </Text>
+      ) : null}
     </Stack>
   )
 }
