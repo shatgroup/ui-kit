@@ -20,6 +20,8 @@ type Row = {
   ratio: number
 }
 
+const INTENTIONAL = new Set(["primary / primary-foreground", "sidebar-primary / sidebar-primary-foreground"])
+
 const PAIRS: Pair[] = [
   { name: "background / foreground", bg: "bg-background", fg: "bg-foreground" },
   { name: "card / card-foreground", bg: "bg-card", fg: "bg-card-foreground" },
@@ -267,6 +269,9 @@ export function TokensPage() {
 
 function ColorRow({ row }: { row: Row }) {
   const pass = row.ratio >= 4.5
+  const exception = INTENTIONAL.has(row.name) && !pass
+  const tone = exception ? "warning" : pass ? "success" : "destructive"
+  const label = exception ? "NGOẠI LỆ (chủ ý)" : pass ? "ĐẠT" : "KHÔNG ĐẠT"
   return (
     <Box padding={3} tone="card" border radius="md">
       <Stack gap={2}>
@@ -280,8 +285,8 @@ function ColorRow({ row }: { row: Row }) {
         <Text size="xs" tone="muted">
           {row.bgHex} / {row.fgHex}
         </Text>
-        <Text size="sm" weight="semibold" tone={pass ? "success" : "destructive"}>
-          {row.ratio.toFixed(2)}:1 — {pass ? "ĐẠT" : "KHÔNG ĐẠT"}
+        <Text size="sm" weight="semibold" tone={tone}>
+          {row.ratio.toFixed(2)}:1 — {label}
         </Text>
       </Stack>
     </Box>

@@ -88,8 +88,8 @@
   /* fix: lệch tông tím */
   --popover-foreground: var(--foreground);
   --primary: oklch(0.704 0.14 182.503);
-  /* fix: chữ trắng trên teal không đủ tương phản */
-  --primary-foreground: #031a1e;
+  /* chủ ý: #FFFFFF giống tweakcn Future Teal. Tương phản với primary dưới 4.5:1, /tokens ghi NGOẠI LỆ (chủ ý). */
+  --primary-foreground: #FFFFFF;
   --secondary: oklch(0.9507 0.0148 196.9072);
   --secondary-foreground: oklch(0.4011 0.0399 210.3561);
   --muted: oklch(0.9604 0.0096 196.9971);
@@ -118,8 +118,8 @@
   --sidebar-foreground: oklch(0.2514 0.0307 209.677);
   /* fix: sidebar-primary phải cùng primary */
   --sidebar-primary: var(--primary);
-  /* fix: chữ trắng trên teal không đủ tương phản */
-  --sidebar-primary-foreground: #031a1e;
+  /* chủ ý: #FFFFFF giống tweakcn Future Teal. Tương phản với primary dưới 4.5:1, /tokens ghi NGOẠI LỆ (chủ ý). */
+  --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: oklch(0.9104 0.046 174.0259);
   /* fix: lệch tông tím */
   --sidebar-accent-foreground: var(--foreground);
@@ -180,8 +180,8 @@
   /* fix: lệch tông tím */
   --popover-foreground: var(--foreground);
   --primary: oklch(0.704 0.14 182.503);
-  /* fix: chữ trắng trên teal không đủ tương phản */
-  --primary-foreground: #031a1e;
+  /* chủ ý: #FFFFFF giống tweakcn Future Teal. Tương phản với primary dưới 4.5:1, /tokens ghi NGOẠI LỆ (chủ ý). */
+  --primary-foreground: #FFFFFF;
   --secondary: oklch(0.2413 0.0307 198.8697);
   --secondary-foreground: oklch(0.8496 0.0299 199.2418);
   --muted: oklch(0.2185 0.0195 201.5676);
@@ -210,8 +210,8 @@
   --sidebar-foreground: oklch(0.9396 0.0097 204.9127);
   /* fix: sidebar-primary phải cùng primary */
   --sidebar-primary: var(--primary);
-  /* fix: chữ trắng trên teal không đủ tương phản */
-  --sidebar-primary-foreground: #031a1e;
+  /* chủ ý: #FFFFFF giống tweakcn Future Teal. Tương phản với primary dưới 4.5:1, /tokens ghi NGOẠI LỆ (chủ ý). */
+  --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: oklch(0.437 0.078 188.216);
   /* fix: lệch tông tím */
   --sidebar-accent-foreground: var(--foreground);
