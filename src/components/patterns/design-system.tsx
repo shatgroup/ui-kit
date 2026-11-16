@@ -20,7 +20,7 @@ import { Alert } from "@/components/ui/alert.tsx"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
-import { CheckboxField } from "@/components/ui/checkbox.tsx"
+import { CheckboxField } from "@/components/ui/checkbox-field.tsx"
 import { DateInput } from "@/components/ui/date-input.tsx"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog.tsx"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx"
@@ -31,11 +31,12 @@ import { NumberInput } from "@/components/ui/number-input.tsx"
 import { PasswordInput } from "@/components/ui/password-input.tsx"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx"
 import { Progress } from "@/components/ui/progress.tsx"
-import { RadioField, RadioGroup } from "@/components/ui/radio-group.tsx"
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.tsx"
+import { RadioGroup } from "@/components/ui/radio-group.tsx"
+import { RadioField } from "@/components/ui/radio-field.tsx"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx"
 import { Slider } from "@/components/ui/slider.tsx"
 import { Spinner } from "@/components/ui/spinner.tsx"
-import { SwitchField } from "@/components/ui/switch.tsx"
+import { SwitchField } from "@/components/ui/switch-field.tsx"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx"
 import { TagsInput } from "@/components/ui/tags-input.tsx"
 import { useThemeTransition } from "@/components/ui/theme-toggle.tsx"
@@ -63,7 +64,7 @@ const TYPE_ROWS = [
   { name: "Caption", weight: "medium" as const, size: "sm" as const },
   { name: "Micro", weight: "medium" as const, size: "xs" as const },
 ]
-const BUTTON_VARIANTS = ["primary", "secondary", "outline", "ghost", "destructive", "link"] as const
+const BUTTON_VARIANTS = ["default", "secondary", "outline", "ghost", "destructive", "link"] as const
 const BUTTON_STATES = ["default", "hover", "pressed", "focus", "disabled", "loading"] as const
 const SPACES = [1, 2, 3, 4, 6, 8] as const
 const RADII = ["sm", "md", "lg", "xl", "full"] as const
@@ -293,9 +294,9 @@ function DesignSystem() {
                       <Button
                         variant={variant}
                         forceState={state === "hover" || state === "pressed" || state === "focus" ? state : undefined}
-                        disabled={state === "disabled"}
-                        loading={state === "loading"}
+                        disabled={state === "disabled" || state === "loading"}
                       >
+                        {state === "loading" ? <Spinner /> : null}
                         {variant}
                       </Button>
                       <Note>{state === "default" ? "Default" : state[0]?.toUpperCase() + state.slice(1)}</Note>
@@ -325,9 +326,9 @@ function DesignSystem() {
 
           <KitCard title="Dropdown">
             <Stack gap={2} className="min-h-72">
-              <Select open modal={false} value="figma" onOpenChange={() => undefined}>
-                <SelectTrigger aria-label="Dropdown"><span>Figma</span></SelectTrigger>
-                <SelectContent side="bottom" collisionAvoidance={{ side: "none", align: "shift", fallbackAxisSide: "none" }}>
+              <Select defaultValue="figma">
+                <SelectTrigger aria-label="Dropdown"><SelectValue /></SelectTrigger>
+                <SelectContent side="bottom">
                   <SelectItem value="framer">Framer</SelectItem>
                   <SelectItem value="sketch">Sketch</SelectItem>
                   <SelectItem value="invision">InVision Studio</SelectItem>
@@ -387,8 +388,8 @@ function DesignSystem() {
           <KitCard title="Tags & Badges">
             <Inline gap={2} wrap>
               <Badge>Paid</Badge>
-              <Badge variant="neutral">Unpaid</Badge>
-              <Badge variant="warning">Overdue</Badge>
+              <Badge className="border-transparent bg-badge-neutral text-badge-neutral-foreground">Unpaid</Badge>
+              <Badge className="border-transparent bg-badge-warning text-badge-warning-foreground">Overdue</Badge>
               <Badge variant="outline">Draft</Badge>
             </Inline>
           </KitCard>
@@ -407,7 +408,7 @@ function DesignSystem() {
           <KitCard title="Spinner">
             <Inline gap={3} align="center">
               <Spinner />
-              <Button loading>Loading</Button>
+              <Button disabled><Spinner />Loading</Button>
             </Inline>
           </KitCard>
 
@@ -440,21 +441,21 @@ function DesignSystem() {
           <KitCard title="Popup">
             <Inline gap={2} wrap>
               <Dialog>
-                <DialogTrigger render={<Button variant="outline" size="sm">Dialog</Button>} />
+                <DialogTrigger asChild><Button variant="outline" size="sm">Dialog</Button></DialogTrigger>
                 <DialogContent>
                   <DialogHeader><DialogTitle>Hộp thoại</DialogTitle></DialogHeader>
                   <Text size="sm">Nội dung nằm trong khung, không đè nút mở.</Text>
                 </DialogContent>
               </Dialog>
               <DropdownMenu>
-                <DropdownMenuTrigger render={<Button variant="outline" size="sm">Menu</Button>} />
+                <DropdownMenuTrigger asChild><Button variant="outline" size="sm">Menu</Button></DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem>Sửa</DropdownMenuItem>
                   <DropdownMenuItem>Xoá</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               <Popover>
-                <PopoverTrigger render={<Button variant="outline" size="sm">Popover</Button>} />
+                <PopoverTrigger asChild><Button variant="outline" size="sm">Popover</Button></PopoverTrigger>
                 <PopoverContent>Nội dung phụ.</PopoverContent>
               </Popover>
             </Inline>
@@ -465,17 +466,17 @@ function DesignSystem() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Tên</TableHead>
-                  <TableHead numeric>Số</TableHead>
+                  <TableHead className="text-right tabular-nums">Số</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 <TableRow>
                   <TableCell>Cover page</TableCell>
-                  <TableCell numeric>18</TableCell>
+                  <TableCell className="text-right tabular-nums">18</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell>Executive summary</TableCell>
-                  <TableCell numeric>29</TableCell>
+                  <TableCell className="text-right tabular-nums">29</TableCell>
                 </TableRow>
               </TableBody>
             </Table>

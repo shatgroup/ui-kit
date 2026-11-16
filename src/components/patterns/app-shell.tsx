@@ -5,7 +5,8 @@ import { Box, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx"
 import { Separator } from "@/components/ui/separator.tsx"
-import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet.tsx"
+import { FormSurface } from "@/components/patterns/form-layout.tsx"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet.tsx"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
 import { cn } from "@/lib/utils.ts"
 
@@ -68,7 +69,7 @@ function NavButton({
   if (!collapsed) return button
   return (
     <Tooltip>
-      <TooltipTrigger render={button} />
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
       <TooltipContent side="right">{item.label}</TooltipContent>
     </Tooltip>
   )
@@ -133,8 +134,10 @@ export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, to
                   <Text size="xs" tone="muted">{account.email}</Text>
                 </Stack>
                 <DropdownMenu>
-                  <DropdownMenuTrigger render={<Button variant="ghost" size="sm" className="size-8 p-0" aria-label={`Menu ${account.name}`} />}>
-                    <MoreVerticalIcon />
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="size-8 p-0" aria-label={`Menu ${account.name}`}>
+                      <MoreVerticalIcon />
+                    </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuItem>Account</DropdownMenuItem>
@@ -196,17 +199,19 @@ export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, to
           <SheetHeader>
             <SheetTitle>Menu</SheetTitle>
           </SheetHeader>
-          <SheetBody>
-            <NavGroups
-              groups={groups}
-              activeId={activeId}
-              collapsed={false}
-              onNavigate={(id) => {
-                onNavigate(id)
-                setMenuOpen(false)
-              }}
-            />
-          </SheetBody>
+          <div className="min-h-0 flex-1 overflow-y-auto">
+            <FormSurface>
+              <NavGroups
+                groups={groups}
+                activeId={activeId}
+                collapsed={false}
+                onNavigate={(id) => {
+                  onNavigate(id)
+                  setMenuOpen(false)
+                }}
+              />
+            </FormSurface>
+          </div>
         </SheetContent>
       </Sheet>
     </Box>

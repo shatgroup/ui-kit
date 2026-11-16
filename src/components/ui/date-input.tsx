@@ -21,20 +21,18 @@ function DateInput({
   const [open, setOpen] = useState(false)
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
-        render={
-          <span>
-            <InputGroup
-              size={size}
-              readOnly
-              value={value ? format(value, "dd/MM/yyyy") : ""}
-              placeholder={placeholder}
-              aria-label={placeholder}
-              suffix={<CalendarIcon className="size-4" />}
-            />
-          </span>
-        }
-      />
+      <PopoverTrigger asChild>
+        <span>
+          <InputGroup
+            size={size}
+            readOnly
+            value={value ? format(value, "dd/MM/yyyy") : ""}
+            placeholder={placeholder}
+            aria-label={placeholder}
+            suffix={<CalendarIcon className="size-4" />}
+          />
+        </span>
+      </PopoverTrigger>
       <PopoverContent>
         <Calendar
           mode="single"

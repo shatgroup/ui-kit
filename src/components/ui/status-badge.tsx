@@ -2,11 +2,11 @@ import type { ReactNode } from "react"
 import { Badge } from "./badge.tsx"
 
 const STATUS = {
-  pending: "warning",
-  in_progress: "info",
-  done: "success",
-  failed: "destructive",
-  draft: "neutral",
+  pending: "border-transparent bg-badge-warning text-badge-warning-foreground",
+  in_progress: "border-transparent bg-badge-info text-badge-info-foreground",
+  done: "border-transparent bg-badge-success text-badge-success-foreground",
+  failed: "border-transparent bg-badge-destructive text-badge-destructive-foreground",
+  draft: "border-transparent bg-badge-neutral text-badge-neutral-foreground",
 } as const
 
 type Status = keyof typeof STATUS
@@ -21,7 +21,7 @@ const LABEL: Record<Status, string> = {
 
 function StatusBadge({ status, label, icon }: { status: Status; label?: string; icon?: ReactNode }) {
   return (
-    <Badge variant={STATUS[status]}>
+    <Badge className={STATUS[status]}>
       {icon}
       {label ?? LABEL[status]}
     </Badge>

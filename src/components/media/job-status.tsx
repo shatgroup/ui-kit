@@ -7,11 +7,11 @@ import { Meter } from "./meter.tsx"
 export type JobState = "queued" | "running" | "done" | "failed" | "cancelled"
 
 const BADGE = {
-  queued: { variant: "neutral", label: "Chờ" },
-  running: { variant: "info", label: "Đang chạy" },
-  done: { variant: "success", label: "Xong" },
-  failed: { variant: "destructive", label: "Lỗi" },
-  cancelled: { variant: "warning", label: "Đã huỷ" },
+  queued: { className: "border-transparent bg-badge-neutral text-badge-neutral-foreground", label: "Chờ" },
+  running: { className: "border-transparent bg-badge-info text-badge-info-foreground", label: "Đang chạy" },
+  done: { className: "border-transparent bg-badge-success text-badge-success-foreground", label: "Xong" },
+  failed: { className: "border-transparent bg-badge-destructive text-badge-destructive-foreground", label: "Lỗi" },
+  cancelled: { className: "border-transparent bg-badge-warning text-badge-warning-foreground", label: "Đã huỷ" },
 } as const
 
 type JobStatusProps = {
@@ -54,7 +54,7 @@ export function JobStatus({
   if (compact) {
     return (
       <Inline gap={2} align="center" className="min-w-0">
-        <Badge variant={badge.variant}>{badge.label}</Badge>
+        <Badge className={badge.className}>{badge.label}</Badge>
         <Text size="sm" truncate className="min-w-0 flex-1">
           {name}
         </Text>
@@ -71,7 +71,7 @@ export function JobStatus({
     <Stack gap={2} className="rounded-md border border-border p-3">
       <Inline gap={2} align="center" justify="between">
         <Inline gap={2} align="center" className="min-w-0">
-          <Badge variant={badge.variant}>{badge.label}</Badge>
+          <Badge className={badge.className}>{badge.label}</Badge>
           <Text weight="medium" truncate>
             {name}
           </Text>

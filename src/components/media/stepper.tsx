@@ -34,8 +34,10 @@ export function Stepper({ steps, onSelect }: StepperProps) {
               {index + 1}
             </span>
             <Tooltip>
-              <TooltipTrigger render={<span className="block min-w-0" />}>
-                <Truncated>{step.label}</Truncated>
+              <TooltipTrigger asChild>
+                <span className="block min-w-0">
+                  <Truncated>{step.label}</Truncated>
+                </span>
               </TooltipTrigger>
               <TooltipContent>{step.label}</TooltipContent>
             </Tooltip>

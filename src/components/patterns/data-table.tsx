@@ -22,6 +22,7 @@ import {
   type LegacyColumnDef,
 } from "@tanstack/react-table/legacy"
 import { Box, Inline, Stack, Text } from "@/components/layout/index.ts"
+import { cn } from "@/lib/utils.ts"
 import { Button } from "@/components/ui/button.tsx"
 import { Card, CardContent } from "@/components/ui/card.tsx"
 import { Checkbox } from "@/components/ui/checkbox.tsx"
@@ -34,7 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu.tsx"
 import { EmptyState } from "@/components/ui/empty-state.tsx"
 import { Input } from "@/components/ui/input.tsx"
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.tsx"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx"
 import { Skeleton } from "@/components/ui/skeleton.tsx"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx"
 
@@ -105,6 +106,25 @@ type DataTableProps<T> = {
 const DEFAULT_PAGE_SIZES = ["10", "20", "50"]
 
 const DragContext = createContext<Pick<ReturnType<typeof useSortable>, "attributes" | "listeners" | "setActivatorNodeRef"> | null>(null)
+
+function cellLayout({
+  minWidth,
+  numeric,
+  grow,
+  wrap,
+}: {
+  minWidth: number
+  numeric?: boolean
+  grow?: boolean
+  wrap?: boolean
+}) {
+  return {
+    "data-col": grow ? "grow" : "fit",
+    className: cn(numeric && "text-right tabular-nums", wrap && "whitespace-normal wrap-anywhere"),
+    // check-ui-ignore-next-line: minWidth là số pixel của từng cột, không có class tĩnh
+    style: { minWidth },
+  }
+}
 
 export function DataTable<T extends object>({
   data,
@@ -240,16 +260,15 @@ export function DataTable<T extends object>({
       <Box className={mobileMode === "cards" ? "hidden sm:block" : undefined}>
         <div className={framed ? "overflow-hidden rounded-xl border border-border" : undefined}>
         <ReorderFrame enabled={reorderable} ids={rows.map((row) => row.id)} sensors={sensors} onDragStart={lockScroll} onDragCancel={unlockScroll} onDragEnd={handleReorder}>
-          <Table stickyFirstColumn={stickyFirstColumn}>
+          <Table data-sticky-first={stickyFirstColumn ? "true" : undefined}>
             <TableHeader className={framed ? "bg-muted" : undefined}>
               {table.getHeaderGroups().map((group) => (
                 <TableRow key={group.id}>
-                  {reorderable ? <TableHead wrap minWidth={48}> </TableHead> : null}
+                  {reorderable ? <TableHead {...cellLayout({ minWidth: 48, wrap: true })}> </TableHead> : null}
                   {selectable && selectColumn ? (
-                    <TableHead wrap minWidth={48}>
+                    <TableHead {...cellLayout({ minWidth: 48, wrap: true })}>
                       <Checkbox
-                        checked={allSelected}
-                        indeterminate={someSelected && !allSelected}
+                        checked={someSelected && !allSelected ? "indeterminate" : allSelected}
                         aria-label={labels?.selectAll ?? "Select all"}
                         onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked === true)}
                       />
@@ -260,15 +279,16 @@ export function DataTable<T extends object>({
                     return (
                       <TableHead
                         key={header.id}
-                        minWidth={column?.minWidth ?? (index === 0 ? 120 : 96)}
-                        grow={column?.grow}
-                        numeric={column?.numeric}
+                        {...cellLayout({
+                          minWidth: column?.minWidth ?? (index === 0 ? 120 : 96),
+                          grow: column?.grow,
+                          numeric: column?.numeric,
+                        })}
                       >
                         {index === 0 && selectable && !selectColumn ? (
                           <Inline gap={2} align="center" wrap={false}>
                             <Checkbox
-                              checked={allSelected}
-                              indeterminate={someSelected && !allSelected}
+                              checked={someSelected && !allSelected ? "indeterminate" : allSelected}
                               aria-label={labels?.selectAll ?? "Select all"}
                               onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked === true)}
                             />
@@ -280,7 +300,7 @@ export function DataTable<T extends object>({
                       </TableHead>
                     )
                   })}
-                  {hasActions ? <TableHead wrap minWidth={64}> </TableHead> : null}
+                  {hasActions ? <TableHead {...cellLayout({ minWidth: 64, wrap: true })}> </TableHead> : null}
                 </TableRow>
               ))}
             </TableHeader>
@@ -288,12 +308,12 @@ export function DataTable<T extends object>({
               {rows.map((row) => (
                 <RowShell key={row.id} sortable={reorderable} rowId={row.id}>
                   {reorderable ? (
-                    <TableCell wrap minWidth={48}>
+                    <TableCell {...cellLayout({ minWidth: 48, wrap: true })}>
                       <DragHandle label={labels?.drag ?? "Drag to reorder"} />
                     </TableCell>
                   ) : null}
                   {selectable && selectColumn ? (
-                    <TableCell wrap minWidth={48}>
+                    <TableCell {...cellLayout({ minWidth: 48, wrap: true })}>
                       <Checkbox
                         checked={row.getIsSelected()}
                         aria-label={(labels?.selectRow ?? ((id) => `Select ${id}`))(row.id)}
@@ -306,10 +326,12 @@ export function DataTable<T extends object>({
                     return (
                       <TableCell
                         key={cell.id}
-                        minWidth={column?.minWidth ?? (index === 0 ? 120 : 96)}
-                        grow={column?.grow}
-                        numeric={column?.numeric}
-                        wrap={Boolean(column?.editable)}
+                        {...cellLayout({
+                          minWidth: column?.minWidth ?? (index === 0 ? 120 : 96),
+                          grow: column?.grow,
+                          numeric: column?.numeric,
+                          wrap: Boolean(column?.editable),
+                        })}
                       >
                         <Inline gap={2} align="center" wrap={false}>
                           {selectable && !selectColumn && index === 0 ? (
@@ -325,7 +347,7 @@ export function DataTable<T extends object>({
                     )
                   })}
                   {hasActions ? (
-                    <TableCell minWidth={64} wrap>
+                    <TableCell {...cellLayout({ minWidth: 64, wrap: true })}>
                       {rowActions ? (
                         <RowMenu row={row.original} actions={rowActions(row.original)} icon={rowActionIcon} label={actionLabel?.(row.original) ?? labels?.actions ?? "Actions"} />
                       ) : renderActions ? (
@@ -416,7 +438,7 @@ function CellEditor<T>({
     return (
       <Select value={value} onValueChange={(next) => onCellChange(row, column.id, next ?? value)}>
         <SelectTrigger size="sm" className="w-40" aria-label={label}>
-          <span>{value}</span>
+          <SelectValue />
         </SelectTrigger>
         <SelectContent>
           {(column.options ?? []).map((option) => (
@@ -430,11 +452,10 @@ function CellEditor<T>({
   }
   return (
     <Input
-      size="sm"
       aria-label={label}
+      className={cn("h-8", column.numeric && "w-16 text-right")}
       value={value}
       inputMode={column.editable === "number" ? "numeric" : undefined}
-      className={column.numeric ? "w-16 text-right" : undefined}
       onChange={(event) => onCellChange(row, column.id, event.target.value)}
     />
   )
@@ -453,10 +474,12 @@ function ColumnsButton({
 }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="outline" size="sm" />}>
-        <Columns3Icon />
-        {label}
-        <ChevronDownIcon />
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm">
+          <Columns3Icon />
+          {label}
+          <ChevronDownIcon />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {columns.map((column) => (
@@ -487,8 +510,10 @@ function RowMenu<T>({
   const Icon = icon === "horizontal" ? MoreHorizontalIcon : MoreVerticalIcon
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="sm" className="w-8 px-0" aria-label={label} />}>
-        <Icon />
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="sm" className="w-8 px-0" aria-label={label}>
+          <Icon />
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         {actions.map((action) => (

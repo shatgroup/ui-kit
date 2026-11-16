@@ -26,7 +26,9 @@ export function PageHeader({ title, description, crumbs, actions }: PageHeaderPr
                 {index > 0 ? <BreadcrumbSeparator /> : null}
                 <BreadcrumbItem>
                   {crumb.onClick ? (
-                    <BreadcrumbLink render={<Button variant="link" size="sm" onClick={crumb.onClick} />}>{crumb.label}</BreadcrumbLink>
+                    <BreadcrumbLink asChild>
+                      <Button variant="link" size="sm" onClick={crumb.onClick}>{crumb.label}</Button>
+                    </BreadcrumbLink>
                   ) : index === crumbs.length - 1 ? (
                     <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                   ) : (
