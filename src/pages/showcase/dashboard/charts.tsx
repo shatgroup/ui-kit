@@ -155,6 +155,9 @@ export function PieDonut() {
 }
 
 export function BarMixed() {
+  const tickMargin = 10
+  const longest = Math.max(...barData.map((item) => (browserConfig[item.browser as keyof typeof browserConfig]?.label ?? item.browser).length))
+  const yAxisWidth = longest * 8 + tickMargin
   return (
     <Card className="h-full">
       <CardHeader>
@@ -170,6 +173,7 @@ export function BarMixed() {
               tickLine={false}
               tickMargin={10}
               axisLine={false}
+              width={yAxisWidth}
               tickFormatter={(value) => browserConfig[value as keyof typeof browserConfig]?.label}
             />
             <XAxis dataKey="visitors" type="number" hide />
