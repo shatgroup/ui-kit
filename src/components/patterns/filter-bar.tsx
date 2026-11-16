@@ -35,7 +35,7 @@ export function FilterBar({ query, onQueryChange, filters, onClear, resultCount 
         <Box className="relative w-60">
           <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            size="md"
+            size="default"
             value={query}
             placeholder="Tìm kiếm"
             aria-label="Tìm kiếm"
@@ -47,7 +47,7 @@ export function FilterBar({ query, onQueryChange, filters, onClear, resultCount 
           const current = filter.options.find((option) => option.value === filter.value)
           return (
             <Select key={filter.id} value={filter.value} onValueChange={(value) => filter.onChange(value ?? filter.allValue ?? "all")}>
-              <SelectTrigger size="md" className="w-48" aria-label={filter.label}>
+              <SelectTrigger size="default" className="w-48" aria-label={filter.label}>
                 <span className="block min-w-0 truncate">
                   {filter.label}: {current?.label ?? filter.value}
                 </span>
@@ -62,7 +62,7 @@ export function FilterBar({ query, onQueryChange, filters, onClear, resultCount 
             </Select>
           )
         })}
-        <Button variant="outline" size="md" onClick={onClear}>
+        <Button variant="outline" size="default" onClick={onClear}>
           Xoá lọc
         </Button>
       </Inline>

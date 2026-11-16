@@ -186,7 +186,7 @@ export function DataTable<T extends object>({
     return (
       <Stack gap={2}>
         {Array.from({ length: 6 }, (_, index) => (
-          <Skeleton key={index} className="h-control-md w-full" />
+          <Skeleton key={index} className="h-control-default w-full" />
         ))}
       </Stack>
     )

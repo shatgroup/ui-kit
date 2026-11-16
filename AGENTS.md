@@ -159,7 +159,7 @@ BÁO CÁO CHO CLAUDE
 1. Bố cục chỉ dùng `Box`, `Stack`, `Inline`, `Grid`, `Container`. Chữ chỉ dùng `Text` hoặc component của kit.
 2. Không margin. Không giá trị tuỳ ý. Không mã màu. Không inline style.
 3. Chữ và link màu thương hiệu dùng `text-primary-text`, không dùng `text-primary`.
-4. Control (input, button, select) trong cùng một hàng phải cùng `size` (`sm` | `md` | `lg`).
+4. Control (input, button, select) trong cùng một hàng phải cùng `size` (`sm` | `default` | `lg`). Chỉ dùng giá trị trong `docs/STANDARD.md`. Cần mức mới thì dừng lại hỏi, không tự thêm.
 5. Form luôn dùng `FormField`. Không tự xếp label và input.
 6. Danh sách trống luôn dùng `EmptyState`.
 7. Thiếu component hoặc token thì dừng và báo, không tự chế.

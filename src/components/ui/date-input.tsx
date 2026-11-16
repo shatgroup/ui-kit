@@ -10,7 +10,7 @@ import type { ControlSize } from "./control.ts"
 function DateInput({
   value,
   onValueChange,
-  size = "md",
+  size = "default",
   placeholder = "Chọn ngày",
 }: {
   value?: Date

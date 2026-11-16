@@ -5,7 +5,7 @@ import { CONTROL_SIZE, fieldClass, type ControlSize } from "./control.ts"
 function InputGroup({
   prefix,
   suffix,
-  size = "md",
+  size = "default",
   className,
   ...props
 }: Omit<React.ComponentProps<"input">, "size" | "prefix"> & { prefix?: ReactNode; suffix?: ReactNode; size?: ControlSize }) {

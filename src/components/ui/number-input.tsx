@@ -4,7 +4,7 @@ import { InputGroup } from "./input-group.tsx"
 import type { ControlSize } from "./control.ts"
 
 function NumberInput({
-  size = "md",
+  size = "default",
   value,
   onValueChange,
   min,

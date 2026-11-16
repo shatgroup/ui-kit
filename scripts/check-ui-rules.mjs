@@ -3,6 +3,7 @@ import path from "node:path"
 
 const root = process.cwd()
 const src = path.join(root, "src")
+// Khớp docs/STANDARD.md. Không thêm mức nếu chưa được duyệt.
 const scale = new Set(["0", "1", "2", "3", "4", "5", "6", "8", "10", "12", "16"])
 const palette =
   "slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose"

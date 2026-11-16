@@ -12,7 +12,7 @@ const iconMd = "[&_svg]:size-4"
 // check-ui-ignore-next-line: selector con của Tailwind cần ngoặc để khoá cỡ icon lucide
 const iconLg = "[&_svg]:size-4.5"
 
-const iconClass = { sm: iconSm, md: iconMd, lg: iconLg }
+const iconClass = { sm: iconSm, default: iconMd, lg: iconLg }
 
 const hoverForce = {
   primary: "bg-primary/90",
@@ -52,13 +52,13 @@ const buttonVariants = cva(
       },
       size: {
         sm: BUTTON_SIZE.sm,
-        md: BUTTON_SIZE.md,
+        default: BUTTON_SIZE.default,
         lg: BUTTON_SIZE.lg,
       },
     },
     defaultVariants: {
       variant: "primary",
-      size: "md",
+      size: "default",
     },
   },
 )
@@ -73,7 +73,7 @@ type ButtonProps = ButtonPrimitive.Props &
 function Button({
   className,
   variant = "primary",
-  size = "md",
+  size = "default",
   loading = false,
   forceState,
   disabled,

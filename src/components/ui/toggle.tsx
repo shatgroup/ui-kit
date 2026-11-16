@@ -12,7 +12,7 @@ const toggleVariants = cva(
       },
       size: {
         sm: "h-control-sm px-2",
-        md: "h-control-md px-3",
+        default: "h-control-default px-3",
         lg: "h-control-lg px-4",
       },
     },

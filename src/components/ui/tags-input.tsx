@@ -7,7 +7,7 @@ import type { ControlSize } from "./control.ts"
 function TagsInput({
   value,
   onValueChange,
-  size = "md",
+  size = "default",
   placeholder = "Thêm tag",
 }: {
   value: string[]

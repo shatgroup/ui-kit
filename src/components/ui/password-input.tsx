@@ -4,7 +4,7 @@ import { Button } from "./button.tsx"
 import { InputGroup } from "./input-group.tsx"
 import type { ControlSize } from "./control.ts"
 
-function PasswordInput({ size = "md", ...props }: Omit<React.ComponentProps<"input">, "size"> & { size?: ControlSize }) {
+function PasswordInput({ size = "default", ...props }: Omit<React.ComponentProps<"input">, "size"> & { size?: ControlSize }) {
   const [shown, setShown] = useState(false)
   return (
     <InputGroup

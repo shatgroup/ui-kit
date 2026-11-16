@@ -7,7 +7,7 @@ type InputProps = Omit<ComponentProps<typeof InputPrimitive>, "size"> & {
   size?: ControlSize
 }
 
-function Input({ className, size = "md", type, ...props }: InputProps) {
+function Input({ className, size = "default", type, ...props }: InputProps) {
   const range = type === "range"
   return (
     <InputPrimitive

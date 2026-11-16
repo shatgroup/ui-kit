@@ -258,10 +258,10 @@ function DesignSystem() {
               <Stack gap={2}>
                 <Inline gap={2}>
                   <Button ref={controlSm} size="sm">sm</Button>
-                  <Button ref={controlMd} size="md">md</Button>
+                  <Button ref={controlMd} size="default">default</Button>
                   <Button ref={controlLg} size="lg">lg</Button>
                 </Inline>
-                <Text size="sm">Đo: sm {measured.sm} · md {measured.md} · lg {measured.lg}</Text>
+                <Text size="sm">Đo: sm {measured.sm} · default {measured.md} · lg {measured.lg}</Text>
                 <Text size="xs" tone="muted">{standardSection("Control")}</Text>
               </Stack>
             </CardContent>

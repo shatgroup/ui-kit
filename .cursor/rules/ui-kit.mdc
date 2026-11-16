@@ -10,7 +10,7 @@ alwaysApply: true
 - `src/pages/` chỉ ráp component. Không `bg-*`, `border-*`, `rounded-*`, `shadow-*`, màu chữ, giá trị tuỳ ý.
 - Không `shadow-*` trừ `shadow-none`. Popup dùng viền `border-border`. Không sửa `--shadow-*`.
 - Chữ và link màu thương hiệu dùng `text-primary-text`. Không dùng `text-primary` cho chữ.
-- Control trong cùng một hàng phải cùng `size` (`sm` | `md` | `lg`).
+- Control trong cùng một hàng phải cùng `size` (`sm` | `default` | `lg`). Chỉ dùng giá trị trong `docs/STANDARD.md`. Cần mức mới thì dừng lại hỏi, không tự thêm.
 - Form luôn dùng `FormField`. Danh sách trống luôn dùng `EmptyState`.
 - Trang danh sách dùng `AppShell` + `PageHeader` + `FilterBar` + `DataTable`. Trang form dùng `FormLayout`.
 - Không tự dựng bảng phân trang, thanh bước, khung kéo, upload, trình phát hay trạng thái tác vụ.
