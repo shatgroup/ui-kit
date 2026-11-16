@@ -64,7 +64,7 @@ const STATS = [
 
 const REVIEWERS = ["Eddie Lake", "Jamik Tashpulatov", "Assign reviewer"]
 
-export function ShowcaseDashboard({ leading, topbar }: { leading: ReactNode; topbar: ReactNode }) {
+export function ShowcaseDashboard({ leading, topbar }: { leading: ReactNode; topbar?: ReactNode }) {
   const [menu, setMenu] = useState("dashboard")
   return (
     <AppShell

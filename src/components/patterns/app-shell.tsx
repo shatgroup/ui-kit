@@ -114,7 +114,7 @@ export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, to
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <Box className={cn(inset ? "flex h-dvh bg-muted p-2" : "min-h-dvh")}>
+    <Box className={cn(inset ? "flex h-full bg-muted p-2" : "min-h-dvh")}>
       <Inline align="stretch" wrap={false} className={cn(inset ? "min-h-0 min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-background" : "min-h-dvh")}>
         <Box slot="sidebar" border className={cn("sticky top-0 hidden shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-12" : "w-60", inset ? "h-full" : "h-dvh")}>
           <Stack gap={4} align={collapsed ? "center" : "stretch"} className={cn("h-full", collapsed ? "p-2" : "p-3")}>

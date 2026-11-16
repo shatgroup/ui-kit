@@ -1,11 +1,10 @@
 import { useState, type ReactNode } from "react"
-import { Box, Inline, Stack } from "@/components/layout/index.ts"
+import { Box, Stack } from "@/components/layout/index.ts"
 import { MotionBoard } from "@/components/patterns/motion-board.tsx"
 import { PosmBoard } from "@/components/patterns/posm-board.tsx"
 import { ShowcaseApplication } from "@/components/patterns/showcase/application.tsx"
 import { ShowcaseCards } from "@/components/patterns/showcase/cards/index.tsx"
 import { ShowcaseDashboard } from "@/components/patterns/showcase/dashboard/index.tsx"
-import { MotionReduceToggle, ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
 
 const TABS = ["cards", "dashboard", "application", "posm", "motion"] as const
@@ -39,25 +38,14 @@ export function ShowcasePage() {
       </TabsList>
     </Tabs>
   )
-  const theme = (
-    <Inline gap={2} align="center">
-      <MotionReduceToggle />
-      <ThemeToggle lightLabel="Light" darkLabel="Dark" />
-    </Inline>
-  )
 
-  if (tab === "dashboard") return <ShowcaseDashboard leading={tabs} topbar={theme} />
-  if (tab === "posm") return <PosmBoard leading={tabs} topbar={theme} />
-  if (tab === "motion") return <MotionBoard leading={tabs} topbar={theme} />
+  if (tab === "dashboard") return <ShowcaseDashboard leading={tabs} />
+  if (tab === "posm") return <PosmBoard leading={tabs} topbar={null} />
+  if (tab === "motion") return <MotionBoard leading={tabs} topbar={null} />
 
   return (
     <Stack gap={4}>
-      <Frame>
-        <Inline gap={2} align="center" justify="between">
-          {tabs}
-          {theme}
-        </Inline>
-      </Frame>
+      <Frame>{tabs}</Frame>
       <Frame>{tab === "application" ? <ShowcaseApplication /> : <ShowcaseCards />}</Frame>
     </Stack>
   )
