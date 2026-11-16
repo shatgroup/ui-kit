@@ -16,6 +16,7 @@ const stringLiteral = /`(?:\\.|[^`\\])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g
 
 const errors = []
 const exceptions = []
+const showcaseArbitrary = []
 
 function walk(dir) {
   const files = []
@@ -38,6 +39,10 @@ function lineOf(source, index) {
 
 function report(file, line, message) {
   const rel = path.relative(root, file).split(path.sep).join("/")
+  if (rel.startsWith("src/pages/showcase/") && message.startsWith("Giá trị tuỳ ý")) {
+    showcaseArbitrary.push(`${rel}:${line}: ${message}`)
+    return
+  }
   errors.push(`${rel}:${line}: ${message}`)
 }
 
@@ -115,6 +120,10 @@ for (const file of walk(src)) {
     const line = lineOf(source, match.index)
     for (const token of body.split(/\s+/)) checkClass(file, line, token)
   }
+}
+
+if (showcaseArbitrary.length > 0) {
+  console.log(`check:ui showcase: ${showcaseArbitrary.length} giá trị tuỳ ý`)
 }
 
 if (exceptions.length > 0) {

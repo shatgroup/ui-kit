@@ -12,13 +12,16 @@ function PopoverTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
 
 function PopoverContent({
   className,
-  align = "center",
+  align = "start",
   alignOffset = 0,
   side = "bottom",
   sideOffset = 4,
+  fit = false,
   ...props
 }: PopoverPrimitive.Popup.Props &
-  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset">) {
+  Pick<PopoverPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset"> & {
+    fit?: boolean
+  }) {
   return (
     <PopoverPrimitive.Portal>
       <PopoverPrimitive.Positioner
@@ -31,8 +34,9 @@ function PopoverContent({
         <PopoverPrimitive.Popup
           data-slot="popover-content"
           data-side={side}
+          data-fit={fit ? "content" : undefined}
           className={cn(
-            "z-50 w-60 max-w-full rounded-md bg-popover p-3 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none",
+            "z-50 rounded-md bg-popover p-3 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none",
             className,
           )}
           {...props}

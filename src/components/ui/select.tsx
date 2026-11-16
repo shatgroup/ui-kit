@@ -45,9 +45,9 @@ function SelectContent({
   children,
   side = "bottom",
   sideOffset = 4,
-  align = "center",
+  align = "start",
   alignOffset = 0,
-  alignItemWithTrigger = true,
+  alignItemWithTrigger = false,
   ...props
 }: SelectPrimitive.Popup.Props &
   Pick<SelectPrimitive.Positioner.Props, "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger">) {
@@ -65,7 +65,7 @@ function SelectContent({
           data-slot="select-content"
           data-side={side}
           className={cn(
-            "max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-y-auto rounded-md bg-popover p-1 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none",
+            "max-h-(--available-height) origin-(--transform-origin) overflow-y-auto rounded-md bg-popover p-1 text-sm text-popover-foreground shadow-md ring-1 ring-foreground/10 outline-none",
             className,
           )}
           {...props}
@@ -92,14 +92,12 @@ function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Prop
     <SelectPrimitive.Item
       data-slot="select-item"
       className={cn(
-        "relative flex w-full min-w-0 cursor-default items-center rounded-md py-2 pr-8 pl-2 text-left text-sm outline-none select-none focus:bg-accent focus:text-accent-foreground data-disabled:opacity-50",
+        "relative flex w-full min-w-0 cursor-default items-center rounded-md py-2 pr-8 pl-2 text-left text-sm whitespace-normal outline-none select-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-disabled:opacity-50",
         className,
       )}
       {...props}
     >
-      <SelectPrimitive.ItemText className="block min-w-0 flex-1">
-        <Truncated>{children}</Truncated>
-      </SelectPrimitive.ItemText>
+      <SelectPrimitive.ItemText className="block min-w-0 flex-1">{children}</SelectPrimitive.ItemText>
       <SelectPrimitive.ItemIndicator
         render={<span className="pointer-events-none absolute right-2 flex size-4 items-center justify-center" />}
       >
