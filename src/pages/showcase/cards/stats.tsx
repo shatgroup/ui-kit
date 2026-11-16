@@ -53,7 +53,7 @@ const chartConfig = {
 
 export function CardsStats() {
   return (
-    <div className="grid gap-4 @xl:grid-cols-2 @5xl:grid-cols-1 @7xl:grid-cols-2">
+    <div className="grid items-start gap-4 @xl:grid-cols-2 @5xl:grid-cols-1 @7xl:grid-cols-2">
       <Card>
         <CardHeader>
           <CardDescription>Total Revenue</CardDescription>
@@ -83,7 +83,7 @@ export function CardsStats() {
           </ChartContainer>
         </CardContent>
       </Card>
-      <Card className="relative flex flex-col overflow-hidden pb-0 @5xl:hidden @7xl:flex">
+      <Card className="relative flex flex-col overflow-hidden pb-0">
         <CardHeader>
           <CardDescription>Subscriptions</CardDescription>
           <CardTitle className="text-3xl">+2,350</CardTitle>

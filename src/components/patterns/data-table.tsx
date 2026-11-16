@@ -11,7 +11,7 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core"
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import { flexRender } from "@tanstack/react-table"
 import {
@@ -79,7 +79,11 @@ export function DataTable<T extends Record<string, unknown>>({
   onReorder,
 }: DataTableProps<T>) {
   const [pageSize, setPageSize] = useState("10")
-  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor), useSensor(KeyboardSensor))
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
   const defs: LegacyColumnDef<T>[] = columns.map((column) => ({
     id: column.id,
     accessorFn: column.accessor,

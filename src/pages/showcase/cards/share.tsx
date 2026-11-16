@@ -49,7 +49,7 @@ export function CardsShare() {
             Link
           </Label>
           <Input id="link" value="http://example.com/link/to/document" className="h-8" readOnly />
-          <Button size="sm" variant="outline" className="shadow-none">
+          <Button size="sm" variant="outline" className="shrink-0 shadow-none">
             Copy Link
           </Button>
         </div>

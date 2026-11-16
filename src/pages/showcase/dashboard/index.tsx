@@ -13,7 +13,7 @@ import {
   type DragEndEvent,
 } from "@dnd-kit/core"
 import { restrictToVerticalAxis } from "@dnd-kit/modifiers"
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable"
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
 import {
   BarChart3Icon,
@@ -154,7 +154,11 @@ function DocumentTable() {
   const [selected, setSelected] = useState<number[]>([])
   const [hidden, setHidden] = useState<string[]>([])
   const [tab, setTab] = useState("outline")
-  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor), useSensor(KeyboardSensor))
+  const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  )
   const pageCount = Math.max(1, Math.ceil(rows.length / pageSize))
   const visible = rows.slice(page * pageSize, page * pageSize + pageSize)
   const ids = visible.map((row) => row.id)
@@ -181,8 +185,9 @@ function DocumentTable() {
   return (
     <Tabs value={tab} onValueChange={setTab}>
       <Inline gap={2} align="center" justify="between">
+        <div className="lg:hidden">
         <Select value={tab} onValueChange={(value) => setTab(value ?? "outline")}>
-          <SelectTrigger size="sm" className="w-44 md:hidden" aria-label="View">
+          <SelectTrigger size="sm" className="w-44" aria-label="View">
             <span>{tab}</span>
           </SelectTrigger>
           <SelectContent>
@@ -192,7 +197,9 @@ function DocumentTable() {
             <SelectItem value="focus-documents">Focus Documents</SelectItem>
           </SelectContent>
         </Select>
-        <TabsList className="hidden md:flex">
+        </div>
+        <div className="hidden lg:block">
+        <TabsList>
           <TabsTrigger value="outline">Outline</TabsTrigger>
           <TabsTrigger value="past-performance">
             Past Performance <Badge variant="neutral">3</Badge>
@@ -202,6 +209,7 @@ function DocumentTable() {
           </TabsTrigger>
           <TabsTrigger value="focus-documents">Focus Documents</TabsTrigger>
         </TabsList>
+        </div>
         <Inline gap={2} align="center">
           <DropdownMenu>
             <DropdownMenuTrigger render={<Button variant="outline" size="sm" />}>

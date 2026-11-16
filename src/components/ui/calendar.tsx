@@ -20,7 +20,7 @@ function Calendar({ className, weekStartsOn = 1, locale, ...props }: CalendarPro
       classNames={{
         root: "w-full",
         months: "flex w-full flex-col gap-4 md:flex-row",
-        month: "calendar-month flex w-full flex-col gap-2",
+        month: "calendar-month w-full",
         month_caption: "calendar-caption",
         caption_label: "text-sm font-medium",
         nav: "calendar-nav",

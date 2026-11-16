@@ -205,13 +205,17 @@
 }
 
 [data-slot="calendar"] .calendar-month {
-  position: relative;
+  display: grid;
+  gap: 8px;
+}
+
+[data-slot="calendar"] .calendar-nav,
+[data-slot="calendar"] .calendar-caption {
+  grid-area: 1 / 1;
 }
 
 [data-slot="calendar"] .calendar-nav {
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
+  position: relative;
   z-index: 1;
   display: flex;
   height: var(--calendar-cell);

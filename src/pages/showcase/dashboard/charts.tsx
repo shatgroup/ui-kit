@@ -56,17 +56,20 @@ export function VisitorsChart() {
           <CardTitle>Total Visitors</CardTitle>
           <CardDescription>Total for the last 3 months</CardDescription>
         </div>
+        <div className="hidden md:block">
         <ToggleGroup
           value={[timeRange]}
           onValueChange={(value) => setTimeRange(value[0] ?? "90d")}
-          className="hidden border border-input bg-transparent md:inline-flex"
+          className="border border-input bg-transparent"
         >
           <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
           <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
           <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
         </ToggleGroup>
+        </div>
+        <div className="md:hidden">
         <Select value={timeRange} onValueChange={(value) => setTimeRange(value ?? "90d")}>
-          <SelectTrigger size="sm" className="w-40 md:hidden" aria-label="Select a value">
+          <SelectTrigger size="sm" className="w-40" aria-label="Select a value">
             <span>{label}</span>
           </SelectTrigger>
           <SelectContent>
@@ -75,6 +78,7 @@ export function VisitorsChart() {
             <SelectItem value="7d">Last 7 days</SelectItem>
           </SelectContent>
         </Select>
+        </div>
       </CardHeader>
       <CardContent>
         <ChartContainer config={areaConfig} className="aspect-auto h-[250px] w-full">
