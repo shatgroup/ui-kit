@@ -6,7 +6,9 @@ alwaysApply: true
 # UI kit
 
 - Bố cục chỉ dùng `Box`, `Stack`, `Inline`, `Grid`, `Container`. Chữ chỉ dùng `Text` hoặc component của kit.
-- Không margin. Không giá trị tuỳ ý (`w-[13px]`, `text-[#fff]`). Không mã màu trong tsx. Không inline style.
+- Không margin. Không giá trị tuỳ ý (`w-[13px]`, `text-[#fff]`) ngoài `src/components/ui/`. Không mã màu trong tsx. Không inline style.
+- `src/pages/` chỉ ráp component. Không `bg-*`, `border-*`, `rounded-*`, `shadow-*`, màu chữ, giá trị tuỳ ý.
+- Không `shadow-*` trừ `shadow-none`. Popup dùng viền `border-border`. Không sửa `--shadow-*`.
 - Chữ và link màu thương hiệu dùng `text-primary-text`. Không dùng `text-primary` cho chữ.
 - Control trong cùng một hàng phải cùng `size` (`sm` | `md` | `lg`).
 - Form luôn dùng `FormField`. Danh sách trống luôn dùng `EmptyState`.
@@ -16,8 +18,8 @@ alwaysApply: true
 - Xong việc phải chạy `npm run check:ui` và `npm run build`. Cả hai pass mới tính là xong.
 - Chuyển động chỉ dùng `opacity`, `transform`, `clip-path`, màu, bóng. Không chuyển động width, height, top, left, margin, padding, trừ sidebar. Không `transition-all`. Thời lượng và easing chỉ lấy token `--duration-*` và `--ease-*`.
 
-Component: `Button` hành động · `Input` một dòng · `Textarea` nhiều dòng · `Label` nhãn · `Select` chọn một mục · `Checkbox`/`CheckboxField` bật tắt có label · `RadioGroup`/`RadioField` chọn một mục có label · `Switch`/`SwitchField` bật tắt ngay có label · `Badge` trạng thái ngắn · `Card` khối có viền · `Table` bảng thô, cột số `numeric`, cột xuống dòng `wrap` · `Dialog` hộp giữa màn hình, nội dung dài trong `DialogBody` · `Sheet` bảng từ mép, nội dung dài trong `SheetBody` · `Tabs` đổi nhóm nội dung, mặc định co theo chữ, `fullWidth` khi cần trải · `DropdownMenu` menu một dòng · `Tooltip` chú thích khi rê chuột · `Popover` nội dung phụ khi bấm · `Avatar` ảnh hoặc chữ viết tắt · `Skeleton` chỗ chờ khi tải · `Separator` đường kẻ · `Toaster` gắn một lần, gọi `toast` để báo kết quả · `FormField` label + control + ghi chú hoặc lỗi · `EmptyState` danh sách trống · `Spinner` vòng xoay khi nút đang xử lý.
+Component: `Button` hành động · `Input` một dòng · `Textarea` nhiều dòng · `Label` nhãn · `Select` chọn một mục · `Checkbox`/`CheckboxField` bật tắt có label · `RadioGroup`/`RadioField` chọn một mục có label · `Switch`/`SwitchField` bật tắt ngay có label · `Badge` trạng thái ngắn · `StatusBadge` trạng thái nền nhạt · `Alert` thông báo · `InputGroup` tiền tố/hậu tố · `PasswordInput` mật khẩu · `DateInput` ngày · `NumberInput` số · `TagsInput` tag · `Card` khối có viền · `Table` bảng thô, cột số `numeric`, cột xuống dòng `wrap` · `Dialog` hộp giữa màn hình, nội dung dài trong `DialogBody` · `Sheet` bảng từ mép, nội dung dài trong `SheetBody` · `Tabs` đổi nhóm nội dung, mặc định co theo chữ, `fullWidth` khi cần trải · `DropdownMenu` menu một dòng · `Tooltip` chú thích khi rê chuột · `Popover` nội dung phụ khi bấm · `Avatar` ảnh hoặc chữ viết tắt · `Skeleton` chỗ chờ khi tải · `Separator` đường kẻ · `Toaster` gắn một lần, gọi `toast` để báo kết quả · `FormField` label + control + ghi chú hoặc lỗi · `EmptyState` danh sách trống · `Spinner` vòng xoay khi nút đang xử lý.
 
-Pattern: `AppShell` khung app · `PageHeader` đầu trang · `FilterBar` thanh lọc · `DataTable` bảng có sắp xếp và phân trang · `FormLayout` form theo section · `StatCard` số liệu · `StatusTimeline` mốc trạng thái.
+Pattern: `AppShell` khung app · `PageHeader` đầu trang · `FilterBar` thanh lọc · `DataTable` bảng có sắp xếp và phân trang · `FormLayout` form theo section · `StatCard` số liệu · `ChartCard` biểu đồ · `Ticker` mã giá · `ActivityTimeline` hoạt động · `ChatPanel` hội thoại · `TransactionList` giao dịch · `RepoCard` kho mã · `ShareList` chia sẻ · `StatusTimeline` mốc trạng thái.
 
 Media: `Stepper` các bước · `SplitPane` hai vùng kéo · `MediaPreview` ảnh/video · `AudioPlayer` phát tiếng · `Dropzone` thả file · `JobStatus` trạng thái tác vụ.
