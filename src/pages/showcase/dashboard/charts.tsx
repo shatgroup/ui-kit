@@ -82,7 +82,7 @@ export function VisitorsChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={areaConfig} className="aspect-auto h-[250px] w-full">
-          <AreaChart data={filtered}>
+          <AreaChart data={filtered} margin={{ left: 16, right: 16, top: 8 }}>
             <defs>
               <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-desktop)" stopOpacity={1} />
@@ -157,7 +157,7 @@ export function PieDonut() {
 export function BarMixed() {
   const tickMargin = 10
   const longest = Math.max(...barData.map((item) => (browserConfig[item.browser as keyof typeof browserConfig]?.label ?? item.browser).length))
-  const yAxisWidth = longest * 8 + tickMargin
+  const yAxisWidth = longest * 9 + tickMargin
   return (
     <Card className="h-full">
       <CardHeader>
