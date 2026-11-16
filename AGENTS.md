@@ -62,6 +62,9 @@ Trao đổi và giải thích với người dùng bằng **tiếng Việt**.
 | C14 | Báo "đã hoàn thành" khi chưa chạy thử thực tế | Sai sự thật |
 | C15 | Xoá file người dùng tải lên (ảnh, video, tài liệu) khi thay thế | Mất file gốc — muốn dọn thì hỏi |
 | C16 | Đưa mật khẩu, token, key vào code, chat hay commit | Chỉ đặt ở biến môi trường của nơi deploy |
+| C17 | Ghi đè `theme.css` bằng theme từ nguồn ngoài (tweakcn, shadcn, block) | Màu đã duyệt nằm trong `src/styles/theme.lock.json`. Muốn đổi màu phải sửa file khoá và được người dùng duyệt |
+
+KHÔNG ghi đè `theme.css` bằng theme từ nguồn ngoài (tweakcn, shadcn, block). Muốn đổi màu phải sửa `theme.lock.json` và được tôi duyệt.
 
 ---
 
