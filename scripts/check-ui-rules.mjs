@@ -105,6 +105,18 @@ function ignoredLine(file, line) {
   return ignored.get(file)?.has(line) ?? false
 }
 
+const stylesDir = path.join(src, "styles")
+for (const name of readdirSync(stylesDir)) {
+  if (!name.endsWith(".css")) continue
+  const file = path.join(stylesDir, name)
+  const lines = readFileSync(file, "utf8").split("\n")
+  lines.forEach((line, index) => {
+    if (/\[data-slot(?:=|])/.test(line)) {
+      report(file, index + 1, "Style component phải nằm trong file component, không dùng [data-slot] trong CSS")
+    }
+  })
+}
+
 for (const file of walk(src)) {
   if (skipped(file)) continue
   const source = readFileSync(file, "utf8")

@@ -511,4 +511,94 @@ describe("kiểm showcase", () => {
     await page.close()
     expect(failures, failures.join("\n")).toEqual([])
   }, 240_000)
+
+  it("switch bật nền primary chấm phải, tắt nền input chấm trái", async () => {
+    const page = await browser.newPage()
+    const failures: string[] = []
+    await page.setViewportSize({ width: 1440, height: 900 })
+    const near = (a: number[], b: number[]) => a.every((item, index) => Math.abs(item - b[index]!) <= 3)
+    const read = (name: string) => page.getByRole("switch", { name, exact: true }).evaluate((el) => {
+      const paint = (color: string) => {
+        const canvas = document.createElement("canvas")
+        canvas.width = 1
+        canvas.height = 1
+        const ctx = canvas.getContext("2d")
+        if (!ctx) return [0, 0, 0, 0]
+        ctx.clearRect(0, 0, 1, 1)
+        ctx.fillStyle = color
+        ctx.fillRect(0, 0, 1, 1)
+        return [...ctx.getImageData(0, 0, 1, 1).data]
+      }
+      const thumb = el.querySelector("[data-slot=switch-thumb]")
+      if (!(thumb instanceof HTMLElement)) return null
+      const root = el.getBoundingClientRect()
+      const box = thumb.getBoundingClientRect()
+      const center = box.left + box.width / 2
+      const bg = getComputedStyle(el).backgroundColor
+      return {
+        bg,
+        paint: paint(bg),
+        side: center < root.left + root.width / 2 ? "left" : "right",
+        state: el.getAttribute("data-state"),
+      }
+    })
+    for (const theme of themes) {
+      await page.goto(`${base}/design-system`, { waitUntil: "networkidle" })
+      await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+      await page.waitForTimeout(400)
+      const colors = await page.evaluate((dark) => {
+        const sample = (value: string) => {
+          const node = document.createElement("div")
+          node.style.backgroundColor = value
+          document.body.appendChild(node)
+          const color = getComputedStyle(node).backgroundColor
+          node.remove()
+          return color
+        }
+        const paint = (color: string) => {
+          const canvas = document.createElement("canvas")
+          canvas.width = 1
+          canvas.height = 1
+          const ctx = canvas.getContext("2d")
+          if (!ctx) return [0, 0, 0, 0]
+          ctx.clearRect(0, 0, 1, 1)
+          ctx.fillStyle = color
+          ctx.fillRect(0, 0, 1, 1)
+          return [...ctx.getImageData(0, 0, 1, 1).data]
+        }
+        const primary = sample("var(--primary)")
+        const off = dark ? sample("color-mix(in oklab, var(--input) 80%, transparent)") : sample("var(--input)")
+        return { primary, off, primaryPaint: paint(primary), inputPaint: paint(off) }
+      }, theme === "dark")
+      const off = await read("Light")
+      const on = await read("Dark")
+      if (!off || !on) {
+        failures.push(`${theme}: không thấy switch`)
+        continue
+      }
+      if (off.state !== "unchecked" || off.side !== "left" || !near(off.paint, colors.inputPaint)) {
+        failures.push(`${theme}: tắt sai ${off.state} ${off.side} nền ${off.bg} (kỳ vọng ${colors.off})`)
+      }
+      if (on.state !== "checked" || on.side !== "right" || !near(on.paint, colors.primaryPaint)) {
+        failures.push(`${theme}: bật sai ${on.state} ${on.side} nền ${on.bg} (kỳ vọng ${colors.primary})`)
+      }
+      await page.getByRole("switch", { name: "Light", exact: true }).click()
+      await page.getByRole("switch", { name: "Dark", exact: true }).click()
+      await page.waitForTimeout(400)
+      const offAfter = await read("Light")
+      const onAfter = await read("Dark")
+      if (!offAfter || !onAfter) {
+        failures.push(`${theme}: mất switch sau click`)
+        continue
+      }
+      if (offAfter.side === off.side || offAfter.side !== "right" || !near(offAfter.paint, colors.primaryPaint)) {
+        failures.push(`${theme}: click bật không đổi nền và chấm (${off.bg}/${off.side} → ${offAfter.bg}/${offAfter.side})`)
+      }
+      if (onAfter.side === on.side || onAfter.side !== "left" || !near(onAfter.paint, colors.inputPaint)) {
+        failures.push(`${theme}: click tắt không đổi nền và chấm (${on.bg}/${on.side} → ${onAfter.bg}/${onAfter.side})`)
+      }
+    }
+    await page.close()
+    expect(failures, failures.join("\n")).toEqual([])
+  }, 60_000)
 })
