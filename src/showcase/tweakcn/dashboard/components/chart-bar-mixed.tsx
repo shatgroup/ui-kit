@@ -1,8 +1,3 @@
-/* Nguồn: https://github.com/jnsahaj/tweakcn — components/examples/dashboard/components/chart-bar-mixed.tsx
-   Apache License 2.0. Xem src/showcase/tweakcn/LICENSE.
-   Bản đối chiếu gốc: không sửa giao diện.
-*/
-
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, XAxis, YAxis } from "recharts"
 
@@ -15,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  type ChartConfig,
+  ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,

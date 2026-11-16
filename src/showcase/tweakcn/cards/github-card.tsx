@@ -1,8 +1,3 @@
-/* Nguồn: https://github.com/jnsahaj/tweakcn — components/examples/cards/github-card.tsx
-   Apache License 2.0. Xem src/showcase/tweakcn/LICENSE.
-   Bản đối chiếu gốc: không sửa giao diện.
-*/
-
 import { Circle, Star } from "lucide-react";
 
 import { Button } from "@/components/ui/button";

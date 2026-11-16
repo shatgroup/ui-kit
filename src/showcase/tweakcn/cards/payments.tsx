@@ -1,19 +1,14 @@
-/* Nguồn: https://github.com/jnsahaj/tweakcn — components/examples/cards/payments.tsx
-   Apache License 2.0. Xem src/showcase/tweakcn/LICENSE.
-   Bản đối chiếu gốc: không sửa giao diện.
-*/
-
 import {
-  type ColumnDef,
-  type ColumnFiltersState,
+  ColumnDef,
+  ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
-  type SortingState,
+  SortingState,
   useReactTable,
-  type VisibilityState,
+  VisibilityState,
 } from "@tanstack/react-table-v8";
 import { MoreHorizontalIcon } from "lucide-react";
 import * as React from "react";

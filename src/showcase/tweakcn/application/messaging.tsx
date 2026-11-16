@@ -1,8 +1,3 @@
-/* Nguồn: https://github.com/jnsahaj/tweakcn — components/examples/application/messaging.tsx
-   Apache License 2.0. Xem src/showcase/tweakcn/LICENSE.
-   Bản đối chiếu gốc: không sửa giao diện.
-*/
-
 import { FeaturedIcon } from "@/showcase/tweakcn/application/featured-icon";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";

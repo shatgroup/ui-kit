@@ -1,8 +1,3 @@
-/* Nguồn: https://github.com/jnsahaj/tweakcn — components/examples/cards/chat.tsx
-   Apache License 2.0. Xem src/showcase/tweakcn/LICENSE.
-   Bản đối chiếu gốc: không sửa giao diện.
-*/
-
 import * as React from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -18,13 +13,13 @@ import {
 } from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import {
-  Dialog as ResponsiveDialog,
-  DialogContent as ResponsiveDialogContent,
-  DialogDescription as ResponsiveDialogDescription,
-  DialogFooter as ResponsiveDialogFooter,
-  DialogHeader as ResponsiveDialogHeader,
-  DialogTitle as ResponsiveDialogTitle,
-} from "@/components/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogFooter,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@/components/ui/responsive-dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { ArrowUpIcon, CheckIcon, PlusIcon } from "lucide-react";

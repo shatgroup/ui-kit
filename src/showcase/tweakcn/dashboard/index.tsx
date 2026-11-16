@@ -1,8 +1,3 @@
-/* Nguồn: https://github.com/jnsahaj/tweakcn — components/examples/dashboard/index.tsx
-   Apache License 2.0. Xem src/showcase/tweakcn/LICENSE.
-   Bản đối chiếu gốc: không sửa giao diện.
-*/
-
 import { AppSidebar } from "@/showcase/tweakcn/dashboard/components/app-sidebar";
 import { ChartAreaInteractive } from "@/showcase/tweakcn/dashboard/components/chart-area-interactive";
 import { DataTable } from "@/showcase/tweakcn/dashboard/components/data-table";

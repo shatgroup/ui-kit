@@ -1,8 +1,3 @@
-/* Nguồn: https://github.com/jnsahaj/tweakcn — components/examples/application/index.tsx
-   Apache License 2.0. Xem src/showcase/tweakcn/LICENSE.
-   Bản đối chiếu gốc: không sửa giao diện.
-*/
-
 import { ActivityFeed } from "@/showcase/tweakcn/application/activity-feed";
 import { MessagingPanel } from "@/showcase/tweakcn/application/messaging";
 import { StockMarket } from "@/showcase/tweakcn/application/stock-market";

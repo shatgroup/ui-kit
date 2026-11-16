@@ -1,10 +1,5 @@
-/* Nguồn: https://github.com/jnsahaj/tweakcn — components/examples/dashboard/components/nav-secondary.tsx
-   Apache License 2.0. Xem src/showcase/tweakcn/LICENSE.
-   Bản đối chiếu gốc: không sửa giao diện.
-*/
-
 import * as React from "react";
-import { type LucideIcon } from "lucide-react";
+import { LucideIcon } from "lucide-react";
 
 import {
   SidebarGroup,

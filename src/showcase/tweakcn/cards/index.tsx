@@ -1,8 +1,3 @@
-/* Nguồn: https://github.com/jnsahaj/tweakcn — components/examples/cards/index.tsx
-   Apache License 2.0. Xem src/showcase/tweakcn/LICENSE.
-   Bản đối chiếu gốc: không sửa giao diện.
-*/
-
 import { CardsActivityGoal } from "@/showcase/tweakcn/cards/activity-goal";
 import { CardsCalendar } from "@/showcase/tweakcn/cards/calendar";
 import { CardsChat } from "@/showcase/tweakcn/cards/chat";
