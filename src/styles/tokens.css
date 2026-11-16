@@ -52,8 +52,3 @@
 @utility h-control-lg {
   height: var(--control-lg);
 }
-
-[data-ui-text] {
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}

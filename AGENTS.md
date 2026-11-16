@@ -100,7 +100,7 @@ Câu hỏi phải **cụ thể và có 2–3 phương án**, không hỏi kiểu
 - Chữ chỉ dùng `Text` hoặc component của kit.
 - Không margin. Không giá trị tuỳ ý. Không mã màu trong file `.tsx`. Không inline style.
 - Chữ và link màu thương hiệu dùng `text-primary-text`. Không dùng `text-primary` cho chữ.
-- Input, button và select đứng cạnh nhau phải cùng size, tức cùng chiều cao control.
+- Control trong cùng một hàng phải cùng `size`. Form luôn dùng `FormField`. Danh sách trống luôn dùng `EmptyState`.
 - Wireframe/thiết kế đã duyệt là nguồn sự thật. Thiếu gì → dừng và hỏi.
 - Viền focus chỉ hiện với `:focus-visible`.
 
@@ -147,6 +147,35 @@ BÁO CÁO CHO CLAUDE
 1. Bố cục chỉ dùng `Box`, `Stack`, `Inline`, `Grid`, `Container`. Chữ chỉ dùng `Text` hoặc component của kit.
 2. Không margin. Không giá trị tuỳ ý. Không mã màu. Không inline style.
 3. Chữ và link màu thương hiệu dùng `text-primary-text`, không dùng `text-primary`.
-4. Control (input, button, select) cạnh nhau phải cùng size để cùng chiều cao.
-5. Thiếu component hoặc token thì dừng và báo, không tự chế.
-6. Xong việc phải chạy `npm run check:ui` và `npm run build`. Cả hai pass mới tính là xong.
+4. Control (input, button, select) trong cùng một hàng phải cùng `size` (`sm` | `md` | `lg`).
+5. Form luôn dùng `FormField`. Không tự xếp label và input.
+6. Danh sách trống luôn dùng `EmptyState`.
+7. Thiếu component hoặc token thì dừng và báo, không tự chế.
+8. Xong việc phải chạy `npm run check:ui` và `npm run build`. Cả hai pass mới tính là xong.
+
+Component kit, mỗi cái một việc:
+
+- `Button` — hành động. Cạnh input/select thì cùng `size`.
+- `Input` — một dòng chữ hoặc số.
+- `Textarea` — nhiều dòng.
+- `Label` — nhãn của control, thường nằm trong `FormField`.
+- `Select` — chọn một mục trong danh sách.
+- `Checkbox` / `CheckboxField` — chọn bật tắt, luôn có label cạnh ô.
+- `RadioGroup` / `RadioField` — chọn một trong vài mục, mỗi mục có label.
+- `Switch` / `SwitchField` — bật tắt ngay, luôn có label cạnh nút.
+- `Badge` — trạng thái ngắn, một dòng.
+- `Card` — khối nội dung có viền.
+- `Table` — bảng dữ liệu. Cột số dùng `numeric`. Cột cần xuống dòng dùng `wrap`.
+- `Dialog` — hộp thoại giữa màn hình. Nội dung dài để trong `DialogBody`.
+- `Sheet` — bảng trượt từ mép màn hình. Nội dung dài để trong `SheetBody`.
+- `Tabs` — chuyển nhóm nội dung trên cùng một trang.
+- `DropdownMenu` — menu thao tác của một dòng.
+- `Tooltip` — chú thích khi đưa chuột vào.
+- `Popover` — nội dung phụ khi bấm.
+- `Avatar` — ảnh hoặc chữ viết tắt người dùng.
+- `Skeleton` — chỗ chờ khi đang tải.
+- `Separator` — đường kẻ ngăn vùng.
+- `Toaster` — gắn một lần ở gốc app. Gọi `toast` khi cần báo kết quả.
+- `FormField` — label, control, ghi chú hoặc lỗi.
+- `EmptyState` — danh sách hoặc tab không có dữ liệu.
+- `Spinner` — vòng xoay trong nút đang xử lý.

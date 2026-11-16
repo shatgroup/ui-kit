@@ -53,6 +53,7 @@ type TextProps = {
   tone?: Tone
   truncate?: boolean
   lineClamp?: 1 | 2 | 3
+  id?: string
   className?: string
   children?: ReactNode
 }
@@ -64,6 +65,7 @@ export function Text({
   tone = "default",
   truncate = false,
   lineClamp,
+  id,
   className,
   children,
 }: TextProps) {
@@ -72,9 +74,9 @@ export function Text({
 
   return (
     <Tag
-      data-ui-text=""
+      id={id}
       className={cn(
-        "min-w-0 max-w-full",
+        "min-w-0 max-w-full wrap-anywhere",
         SIZE[size],
         WEIGHT[weight],
         TONE[tone],

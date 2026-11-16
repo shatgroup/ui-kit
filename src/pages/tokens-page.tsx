@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState } from "react"
 import { Box, Container, Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
+import { Button } from "@/components/ui/button.tsx"
 import type { Space } from "@/components/layout/index.ts"
 
 type Mode = "light" | "dark"
@@ -149,15 +150,13 @@ export function TokensPage() {
           <Text as="h1" size="3xl" weight="semibold">
             Token
           </Text>
-          <button
+          <Button
             type="button"
-            className="h-control-md rounded-md bg-secondary px-4 text-secondary-foreground"
+            variant="secondary"
             onClick={() => setMode((current) => (current === "light" ? "dark" : "light"))}
           >
-            <Text as="span" size="sm" weight="medium">
-              {mode === "light" ? "Tối" : "Sáng"}
-            </Text>
-          </button>
+            {mode === "light" ? "Tối" : "Sáng"}
+          </Button>
         </Inline>
 
         <Stack gap={4}>
@@ -173,7 +172,7 @@ export function TokensPage() {
             {charts.map((chart) => (
               <Box key={chart.name} padding={3} tone="card" border radius="md">
                 <Inline gap={3} align="center">
-                  <Box radius="md" className={`h-12 w-12 ${chart.bg}`} />
+                  <Box border radius="md" className={`h-12 w-12 ${chart.bg}`} />
                   <Stack gap={1}>
                     <Text size="sm" weight="medium">
                       {chart.name}
@@ -272,8 +271,8 @@ function ColorRow({ row }: { row: Row }) {
     <Box padding={3} tone="card" border radius="md">
       <Stack gap={2}>
         <Inline gap={3} align="center">
-          <Box radius="md" className={`h-12 w-12 ${row.bg}`} />
-          <Box radius="md" className={`h-12 w-12 ${row.fg}`} />
+          <Box border radius="md" className={`h-12 w-12 ${row.bg}`} />
+          <Box border radius="md" className={`h-12 w-12 ${row.fg}`} />
         </Inline>
         <Text size="sm" weight="medium">
           {row.name}

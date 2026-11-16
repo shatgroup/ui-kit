@@ -15,6 +15,7 @@ const margin = /^-?m[trblxy]?-/
 const stringLiteral = /`(?:\\.|[^`\\])*`|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/g
 
 const errors = []
+const exceptions = []
 
 function walk(dir) {
   const files = []
@@ -46,6 +47,7 @@ function normalize(token) {
 }
 
 function checkClass(file, line, token) {
+  if (ignoredLine(file, line)) return
   const value = normalize(token)
   if (!value) return
   if (margin.test(value)) {
@@ -63,12 +65,31 @@ function checkClass(file, line, token) {
   }
 }
 
+const ignored = new Map()
+
+function ignoredLine(file, line) {
+  return ignored.get(file)?.has(line) ?? false
+}
+
 for (const file of walk(src)) {
   if (skipped(file)) continue
   const source = readFileSync(file, "utf8")
   const lines = source.split("\n")
+  const rel = path.relative(root, file).split(path.sep).join("/")
+  const skip = new Set()
+  lines.forEach((line, index) => {
+    const mark = line.match(/check-ui-ignore-next-line:\s*(.*)$/)
+    if (!mark) return
+    const target = index + 2
+    skip.add(target)
+    exceptions.push(`${rel}:${target}: ${mark[1].trim() || "không ghi lý do"}`)
+  })
+  ignored.set(file, skip)
+
+  const inUi = rel.startsWith("src/components/ui/")
   lines.forEach((line, index) => {
     const lineNo = index + 1
+    if (skip.has(lineNo)) return
     if (/#[0-9A-Fa-f]{3,8}\b/.test(line)) {
       report(file, lineNo, "Không ghi mã màu trong file tsx")
     }
@@ -77,6 +98,9 @@ for (const file of walk(src)) {
     }
     if (/style=\{\{/.test(line)) {
       report(file, lineNo, "Không dùng inline style")
+    }
+    if (!inUi && /<(button|input|select|textarea)\b/.test(line)) {
+      report(file, lineNo, "Dùng component kit, không dùng phần tử HTML thô")
     }
   })
 
@@ -87,9 +111,15 @@ for (const file of walk(src)) {
   }
 }
 
+if (exceptions.length > 0) {
+  console.log(`check:ui: ${exceptions.length} ngoại lệ`)
+  console.log(exceptions.join("\n"))
+}
+
 if (errors.length > 0) {
   console.error(errors.join("\n"))
+  console.error(`check:ui: ${errors.length} lỗi, ${exceptions.length} ngoại lệ`)
   process.exit(1)
 }
 
-console.log("check:ui: 0 lỗi")
+console.log(`check:ui: 0 lỗi, ${exceptions.length} ngoại lệ`)
