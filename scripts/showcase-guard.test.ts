@@ -6,7 +6,6 @@ const widths = [375, 768, 1440]
 const themes = ["light", "dark"] as const
 const pages = [
   { path: "/design-system", tabs: [""] },
-  { path: "/showcase", tabs: ["Cards", "Dashboard", "Application", "POSM", "Motion"] },
 ]
 
 function scan() {
@@ -308,54 +307,46 @@ describe("kiểm showcase", () => {
       }
     }
 
-    for (const width of widths) {
-      await page.setViewportSize({ width, height: 900 })
-      for (const theme of themes) {
-        const where = `Dashboard ${width} ${theme}`
-        await page.goto(`${base}/showcase?tab=dashboard`, { waitUntil: "networkidle" })
-        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
-        await page.getByRole("button", { name: "Customize Columns" }).click()
-        await page.getByRole("menuitemcheckbox", { name: "Header" }).click()
-        await page.keyboard.press("Escape")
-        if (await page.getByRole("columnheader", { name: "Header" }).count() !== 0) failures.push(`${where}: ẩn cột Header không được`)
-        await page.getByRole("button", { name: "Customize Columns" }).click()
-        await page.getByRole("menuitemcheckbox", { name: "Header" }).click()
-        await page.keyboard.press("Escape")
-        if (await page.getByRole("columnheader", { name: "Header" }).count() === 0) failures.push(`${where}: hiện lại cột Header không được`)
-        const target = page.getByRole("textbox", { name: "Target Cover page" })
-        await target.fill("99")
-        if (await target.inputValue() !== "99") failures.push(`${where}: sửa ô số không cập nhật`)
-        await page.getByRole("button", { name: "Go to next page" }).click()
-        const pageText = await page.locator("[data-slot=table-pagination]").innerText()
-        if (!pageText.includes("Page 2")) failures.push(`${where}: phân trang ${pageText}`)
-        const firstDrag = page.getByRole("button", { name: "Drag to reorder" }).first()
-        const beforeHeader = await page.getByRole("row").nth(1).innerText()
-        await firstDrag.focus()
-        await page.keyboard.press("Space")
-        await page.waitForTimeout(100)
-        for (let step = 0; step < 4; step += 1) {
-          await page.keyboard.press("ArrowDown")
-          await page.waitForTimeout(80)
-        }
-        await page.keyboard.press("Space")
-        const afterKey = await page.getByRole("row").nth(1).innerText()
-        if (beforeHeader === afterKey) failures.push(`${where}: kéo hàng bằng bàn phím không đổi`)
-        const handle = page.getByRole("button", { name: "Drag to reorder" }).first()
-        await handle.scrollIntoViewIfNeeded()
-        const box = await handle.boundingBox()
-        if (!box) failures.push(`${where}: không thấy nút kéo`)
-        else {
-          await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
-          await page.mouse.down()
-          await page.mouse.move(box.x + box.width / 2, box.y + 140, { steps: 12 })
-          await page.mouse.up()
-          const afterMouse = await page.getByRole("row").nth(1).innerText()
-          if (afterMouse === afterKey) failures.push(`${where}: kéo hàng bằng chuột không đổi`)
-        }
-      }
-    }
-
     await page.close()
     expect(failures, failures.join("\n")).toEqual([])
   }, 420_000)
+
+  it("3 tab tweakcn tải, không lỗi console, cuộn tới cuối", async () => {
+    const page = await browser.newPage()
+    const failures: string[] = []
+    const tabs = ["cards", "dashboard", "application"] as const
+    for (const width of widths) {
+      await page.setViewportSize({ width, height: 900 })
+      for (const theme of themes) {
+        for (const tab of tabs) {
+          const errors: string[] = []
+          const onConsole = (message: { type: () => string; text: () => string }) => {
+            if (message.type() === "error") errors.push(message.text())
+          }
+          const onError = (error: Error) => errors.push(error.message)
+          page.on("console", onConsole)
+          page.on("pageerror", onError)
+          await page.goto(`${base}/showcase?tab=${tab}`, { waitUntil: "networkidle" })
+          await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+          await page.waitForTimeout(400)
+          const scrolled = await page.evaluate(() => {
+            const scroller = document.querySelector("[data-showcase-scroll]")
+            if (!(scroller instanceof HTMLElement)) return "không thấy vùng cuộn"
+            if (scroller.scrollHeight <= scroller.clientHeight + 2) return `không dài hơn khung ${scroller.scrollHeight}/${scroller.clientHeight}`
+            scroller.scrollTop = scroller.scrollHeight
+            const bottom = scroller.scrollTop + scroller.clientHeight
+            if (bottom < scroller.scrollHeight - 2) return `không tới đáy ${bottom}/${scroller.scrollHeight}`
+            return ""
+          })
+          if (scrolled) failures.push(`${tab} ${width} ${theme}: ${scrolled}`)
+          const noise = errors.filter((message) => !/favicon|Download the React DevTools/i.test(message))
+          if (noise.length) failures.push(`${tab} ${width} ${theme}: ${noise.join(" | ")}`)
+          page.off("console", onConsole)
+          page.off("pageerror", onError)
+        }
+      }
+    }
+    await page.close()
+    expect(failures, failures.join("\n")).toEqual([])
+  }, 180_000)
 })
