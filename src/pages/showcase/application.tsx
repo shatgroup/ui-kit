@@ -230,10 +230,10 @@ export function ShowcaseApplication() {
                         <span className="font-semibold">{item.lead}</span>
                         {item.rest}
                       </Text>
-                      <Inline gap={2} align="center" className="w-fit rounded-md border border-border px-2 py-1">
-                        <item.icon className="size-3" />
-                        <Text size="xs">{item.chip}</Text>
-                      </Inline>
+                      <Badge variant="outline">
+                        <item.icon />
+                        {item.chip}
+                      </Badge>
                     </Stack>
                   </Inline>
                 ))}

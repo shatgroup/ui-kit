@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react"
+import { Badge } from "@/components/ui/badge.tsx"
 import { Card, CardContent } from "@/components/ui/card.tsx"
 import { Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
@@ -34,12 +35,10 @@ export function StatCard({ label, value, delta, direction, description, action }
             <TooltipContent>{value}</TooltipContent>
           </Tooltip>
           {delta ? (
-            <Inline gap={1} align="center">
-              <Icon className={direction === "down" ? "size-4 text-destructive" : "size-4 text-success"} />
-              <Text as="span" size="sm" tone={direction === "down" ? "destructive" : "success"}>
-                {delta}
-              </Text>
-            </Inline>
+            <Badge variant="outline">
+              <Icon />
+              {delta}
+            </Badge>
           ) : null}
           {description ? (
             <Text size="sm" tone="muted">
