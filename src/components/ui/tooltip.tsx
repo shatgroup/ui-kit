@@ -1,16 +1,30 @@
 import { Tooltip as TooltipPrimitive } from "@base-ui/react/tooltip"
+import { isValidElement, type ReactNode } from "react"
 import { cn } from "@/lib/utils.ts"
 
-function TooltipProvider({ delay = 300, ...props }: TooltipPrimitive.Provider.Props) {
-  return <TooltipPrimitive.Provider data-slot="tooltip-provider" delay={delay} {...props} />
+function TooltipProvider({
+  delay = 300,
+  delayDuration,
+  ...props
+}: TooltipPrimitive.Provider.Props & { delayDuration?: number }) {
+  return <TooltipPrimitive.Provider data-slot="tooltip-provider" delay={delayDuration ?? delay} {...props} />
 }
 
 function Tooltip({ ...props }: TooltipPrimitive.Root.Props) {
   return <TooltipPrimitive.Root data-slot="tooltip" {...props} />
 }
 
-function TooltipTrigger({ ...props }: TooltipPrimitive.Trigger.Props) {
-  return <TooltipPrimitive.Trigger data-slot="tooltip-trigger" {...props} />
+function TooltipTrigger({
+  asChild,
+  children,
+  ...props
+}: TooltipPrimitive.Trigger.Props & { asChild?: boolean; children?: ReactNode }) {
+  const render = asChild && isValidElement(children) ? children : undefined
+  return (
+    <TooltipPrimitive.Trigger data-slot="tooltip-trigger" render={render} {...props}>
+      {render ? undefined : children}
+    </TooltipPrimitive.Trigger>
+  )
 }
 
 function TooltipContent({

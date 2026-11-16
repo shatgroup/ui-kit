@@ -42,7 +42,7 @@ function ChartContainer({
       data-chart={chartId}
       data-draw={draw ? "true" : undefined}
       className={cn(
-        "flex w-full min-w-0 justify-center text-sm",
+        "flex aspect-video w-full min-w-0 justify-center text-sm",
         "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/50 [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-hidden [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border [&_.recharts-radial-bar-background-sector]:fill-muted [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border [&_.recharts-sector]:outline-hidden [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-hidden",
         className,
       )}
@@ -62,16 +62,22 @@ function ChartTooltipContent({
   active,
   payload,
   label,
+  hideLabel,
+  labelFormatter,
 }: {
   active?: boolean
   payload?: Array<{ name?: string; value?: number | string; color?: string; dataKey?: string | number }>
-  label?: string
+  label?: string | number
+  hideLabel?: boolean
+  indicator?: string
+  labelFormatter?: (value: string | number) => ReactNode
 }) {
   const rows = useMemo(() => payload?.filter((item) => item.value !== undefined) ?? [], [payload])
+  const caption = hideLabel || label == null ? null : labelFormatter ? labelFormatter(label) : label
   if (!active || rows.length === 0) return null
   return (
     <div className="grid min-w-32 gap-1 rounded-lg border border-border bg-background px-2 py-2 text-sm">
-      {label ? <span className="font-medium">{label}</span> : null}
+      {caption ? <span className="font-medium">{caption}</span> : null}
       {rows.map((item) => (
         <span key={String(item.dataKey)} className="flex items-center justify-between gap-3">
           <span className="text-muted-foreground">{item.name}</span>

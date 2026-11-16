@@ -44,6 +44,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: "border-primary bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
+        default: "border-primary bg-primary text-primary-foreground hover:bg-primary/90 active:bg-primary/80",
         secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 active:bg-secondary/70",
         outline: "border-input bg-background hover:bg-muted active:bg-accent",
         ghost: "hover:bg-muted active:bg-accent",
@@ -54,6 +55,8 @@ const buttonVariants = cva(
         sm: BUTTON_SIZE.sm,
         default: BUTTON_SIZE.default,
         lg: BUTTON_SIZE.lg,
+        icon: "size-8 p-0",
+        "icon-sm": "size-7 p-0",
       },
     },
     defaultVariants: {
@@ -66,7 +69,8 @@ const buttonVariants = cva(
 type ButtonProps = ButtonPrimitive.Props &
   VariantProps<typeof buttonVariants> & {
     loading?: boolean
-    size?: ControlSize
+    variant?: VariantProps<typeof buttonVariants>["variant"] | "default"
+    size?: ControlSize | "icon" | "icon-sm"
     forceState?: "hover" | "pressed" | "focus"
   }
 
@@ -80,7 +84,8 @@ function Button({
   children,
   ...props
 }: ButtonProps) {
-  const shown = variant ?? "primary"
+  const shown = variant === "default" ? "primary" : (variant ?? "primary")
+  const controlSize: ControlSize = size === "icon" ? "default" : size === "icon-sm" ? "sm" : size
   return (
     <ButtonPrimitive
       data-slot="button"
@@ -88,8 +93,8 @@ function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cn(
-        buttonVariants({ variant, size }),
-        iconClass[size],
+        buttonVariants({ variant: shown, size }),
+        iconClass[controlSize],
         "relative",
         forceState === "hover" && hoverForce[shown],
         forceState === "pressed" && pressedForce[shown],
@@ -103,7 +108,7 @@ function Button({
       </Truncated>
       {loading ? (
         <span className="absolute inset-0 flex items-center justify-center">
-          <Spinner className={ICON_SIZE[size]} />
+          <Spinner className={ICON_SIZE[controlSize]} />
         </span>
       ) : null}
     </ButtonPrimitive>

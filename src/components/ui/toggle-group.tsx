@@ -4,7 +4,36 @@ import { ToggleGroup as ToggleGroupPrimitive } from "@base-ui/react/toggle-group
 import { cn } from "@/lib/utils.ts"
 import { toggleVariants } from "./toggle.tsx"
 
-function ToggleGroup({ className, children, value, ...props }: ToggleGroupPrimitive.Props) {
+type ToggleCommon = Omit<ToggleGroupPrimitive.Props, "value" | "defaultValue" | "onValueChange"> & {
+  variant?: string
+}
+
+type ToggleSingle = ToggleCommon & {
+  type: "single"
+  value?: string
+  defaultValue?: string
+  onValueChange?: (value: string) => void
+}
+
+type ToggleMany = ToggleCommon & {
+  type?: "multiple"
+  value?: readonly string[]
+  defaultValue?: readonly string[]
+  onValueChange?: (value: string[]) => void
+}
+
+function ToggleGroup(props: ToggleSingle): ReturnType<typeof ToggleGroupPrimitive>
+function ToggleGroup(props: ToggleMany): ReturnType<typeof ToggleGroupPrimitive>
+function ToggleGroup({
+  className,
+  children,
+  value,
+  defaultValue,
+  onValueChange,
+  type,
+  variant: _variant,
+  ...props
+}: ToggleSingle | ToggleMany) {
   const ref = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
@@ -34,7 +63,16 @@ function ToggleGroup({ className, children, value, ...props }: ToggleGroupPrimit
       ref={ref}
       data-slot="toggle-group"
       className={cn("inline-flex max-w-full flex-wrap items-center gap-1 rounded-md bg-muted p-1", className)}
-      value={value}
+      value={typeof value === "string" ? [value] : value}
+      defaultValue={typeof defaultValue === "string" ? [defaultValue] : defaultValue}
+      onValueChange={(next) => {
+        if (type === "single" || typeof value === "string") {
+          const picked = next[next.length - 1] ?? (typeof value === "string" ? value : "")
+          ;(onValueChange as ((value: string) => void) | undefined)?.(picked)
+          return
+        }
+        ;(onValueChange as ((value: string[]) => void) | undefined)?.([...next])
+      }}
       {...props}
     >
       <span data-slot="toggle-indicator" />

@@ -5,11 +5,18 @@ import { cn } from "@/lib/utils.ts"
 import { focusRing } from "./control.ts"
 import { Label } from "./label.tsx"
 
-function Checkbox({ className, indeterminate, ...props }: CheckboxPrimitive.Root.Props) {
+function Checkbox({
+  className,
+  indeterminate,
+  checked,
+  ...props
+}: Omit<CheckboxPrimitive.Root.Props, "checked"> & { checked?: boolean | "indeterminate" }) {
+  const mixed = indeterminate || checked === "indeterminate"
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
-      indeterminate={indeterminate}
+      indeterminate={mixed}
+      checked={mixed ? false : checked}
       className={cn(
         "flex size-4 shrink-0 items-center justify-center rounded-sm border border-input bg-background text-primary-foreground",
         "data-checked:border-primary data-checked:bg-primary data-indeterminate:border-primary data-indeterminate:bg-primary",

@@ -1,0 +1,45 @@
+/* Nguồn: https://github.com/jnsahaj/tweakcn — components/examples/dashboard/index.tsx
+   Apache License 2.0. Xem src/showcase/tweakcn/LICENSE.
+   Bản đối chiếu gốc: không sửa giao diện.
+*/
+
+import { AppSidebar } from "@/showcase/tweakcn/dashboard/components/app-sidebar";
+import { ChartAreaInteractive } from "@/showcase/tweakcn/dashboard/components/chart-area-interactive";
+import { DataTable } from "@/showcase/tweakcn/dashboard/components/data-table";
+import { SectionCards } from "@/showcase/tweakcn/dashboard/components/section-cards";
+import { SiteHeader } from "@/showcase/tweakcn/dashboard/components/site-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { ChartBarMixed } from "./components/chart-bar-mixed";
+import { ChartPieDonut } from "./components/chart-pie-donut";
+
+import data from "./data.json";
+
+export default function Dashboard() {
+  return (
+    <SidebarProvider>
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <SiteHeader />
+        <div className="flex flex-1 flex-col">
+          <div className="@container/main flex flex-1 flex-col gap-2">
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+              <SectionCards />
+              <div className="px-4 lg:px-6">
+                <ChartAreaInteractive />
+              </div>
+              <DataTable data={data} />
+              <div className="flex gap-4 px-4 lg:px-6">
+                <div className="basis-1/2">
+                  <ChartPieDonut />
+                </div>
+                <div className="basis-1/2">
+                  <ChartBarMixed />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
+  );
+}

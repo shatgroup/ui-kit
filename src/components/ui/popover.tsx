@@ -1,13 +1,22 @@
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover"
-import type { ComponentProps } from "react"
+import { isValidElement, type ComponentProps, type ReactNode } from "react"
 import { cn } from "@/lib/utils.ts"
 
 function Popover({ ...props }: PopoverPrimitive.Root.Props) {
   return <PopoverPrimitive.Root data-slot="popover" {...props} />
 }
 
-function PopoverTrigger({ ...props }: PopoverPrimitive.Trigger.Props) {
-  return <PopoverPrimitive.Trigger data-slot="popover-trigger" {...props} />
+function PopoverTrigger({
+  asChild,
+  children,
+  ...props
+}: PopoverPrimitive.Trigger.Props & { asChild?: boolean; children?: ReactNode }) {
+  const render = asChild && isValidElement(children) ? children : undefined
+  return (
+    <PopoverPrimitive.Trigger data-slot="popover-trigger" render={render} {...props}>
+      {render ? undefined : children}
+    </PopoverPrimitive.Trigger>
+  )
 }
 
 function PopoverContent({

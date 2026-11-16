@@ -5,7 +5,21 @@ import { cn } from "@/lib/utils.ts"
 import { CONTROL_SIZE, fieldClass, ICON_SIZE, type ControlSize } from "./control.ts"
 import { Truncated } from "./truncated.tsx"
 
-const Select = SelectPrimitive.Root
+function Select({
+  onValueChange,
+  ...props
+}: Omit<SelectPrimitive.Root.Props<string>, "onValueChange"> & {
+  onValueChange?: (value: string) => void
+}) {
+  return (
+    <SelectPrimitive.Root
+      {...props}
+      onValueChange={(value) => {
+        if (typeof value === "string") onValueChange?.(value)
+      }}
+    />
+  )
+}
 
 function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
   return <SelectPrimitive.Group data-slot="select-group" className={cn("p-1", className)} {...props} />

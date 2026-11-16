@@ -1,6 +1,6 @@
 import { Dialog as SheetPrimitive } from "@base-ui/react/dialog"
 import { XIcon } from "lucide-react"
-import type { ComponentProps } from "react"
+import { isValidElement, type ComponentProps, type ReactNode } from "react"
 import { cn } from "@/lib/utils.ts"
 import { FormSurface } from "@/components/patterns/form-layout.tsx"
 import { Button } from "./button.tsx"
@@ -9,16 +9,34 @@ function Sheet({ ...props }: SheetPrimitive.Root.Props) {
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
 }
 
-function SheetTrigger({ ...props }: SheetPrimitive.Trigger.Props) {
-  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />
+function SheetTrigger({
+  asChild,
+  children,
+  ...props
+}: SheetPrimitive.Trigger.Props & { asChild?: boolean; children?: ReactNode }) {
+  const render = asChild && isValidElement(children) ? children : undefined
+  return (
+    <SheetPrimitive.Trigger data-slot="sheet-trigger" render={render} {...props}>
+      {render ? undefined : children}
+    </SheetPrimitive.Trigger>
+  )
 }
 
 function SheetPortal({ ...props }: SheetPrimitive.Portal.Props) {
   return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />
 }
 
-function SheetClose({ ...props }: SheetPrimitive.Close.Props) {
-  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />
+function SheetClose({
+  asChild,
+  children,
+  ...props
+}: SheetPrimitive.Close.Props & { asChild?: boolean; children?: ReactNode }) {
+  const render = asChild && isValidElement(children) ? children : undefined
+  return (
+    <SheetPrimitive.Close data-slot="sheet-close" render={render} {...props}>
+      {render ? undefined : children}
+    </SheetPrimitive.Close>
+  )
 }
 
 function SheetOverlay({ className, ...props }: SheetPrimitive.Backdrop.Props) {

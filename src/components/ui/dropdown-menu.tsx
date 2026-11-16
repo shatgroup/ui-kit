@@ -1,6 +1,6 @@
 import { Menu as MenuPrimitive } from "@base-ui/react/menu"
 import { CheckIcon, ChevronRightIcon } from "lucide-react"
-import type { ComponentProps } from "react"
+import { isValidElement, type ComponentProps, type ReactNode } from "react"
 import { cn } from "@/lib/utils.ts"
 import { Truncated } from "./truncated.tsx"
 
@@ -15,8 +15,17 @@ function DropdownMenuPortal({ ...props }: MenuPrimitive.Portal.Props) {
   return <MenuPrimitive.Portal data-slot="dropdown-menu-portal" {...props} />
 }
 
-function DropdownMenuTrigger({ ...props }: MenuPrimitive.Trigger.Props) {
-  return <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" {...props} />
+function DropdownMenuTrigger({
+  asChild,
+  children,
+  ...props
+}: MenuPrimitive.Trigger.Props & { asChild?: boolean; children?: ReactNode }) {
+  const render = asChild && isValidElement(children) ? children : undefined
+  return (
+    <MenuPrimitive.Trigger data-slot="dropdown-menu-trigger" render={render} {...props}>
+      {render ? undefined : children}
+    </MenuPrimitive.Trigger>
+  )
 }
 
 function DropdownMenuContent({
@@ -56,11 +65,13 @@ function DropdownMenuGroup({ ...props }: MenuPrimitive.Group.Props) {
 
 function DropdownMenuLabel({ className, ...props }: MenuPrimitive.GroupLabel.Props) {
   return (
-    <MenuPrimitive.GroupLabel
-      data-slot="dropdown-menu-label"
-      className={cn("px-2 py-1 text-xs text-muted-foreground", className)}
-      {...props}
-    />
+    <MenuPrimitive.Group>
+      <MenuPrimitive.GroupLabel
+        data-slot="dropdown-menu-label"
+        className={cn("px-2 py-1 text-xs text-muted-foreground", className)}
+        {...props}
+      />
+    </MenuPrimitive.Group>
   )
 }
 
