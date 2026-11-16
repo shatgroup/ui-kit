@@ -14,12 +14,12 @@ type StatCardProps = {
   action?: ReactNode
 }
 
-function StatCard({ label, value, delta, direction = "up", line, note, description, action }: StatCardProps) {
+function StatCard({ label, value, delta, direction = "up", line, note, description, action, wash = false }: StatCardProps & { wash?: boolean }) {
   const Icon = direction === "down" ? TrendingDownIcon : TrendingUpIcon
   const detail = note ?? description
   return (
     <div data-stat="true" className="@container min-w-0">
-      <Card>
+      <Card className={wash ? "bg-gradient-to-b from-card to-muted" : undefined}>
         <CardHeader className="flex-row items-start justify-between gap-2">
           <div className="flex min-w-0 flex-col gap-1">
             <CardDescription>{label}</CardDescription>

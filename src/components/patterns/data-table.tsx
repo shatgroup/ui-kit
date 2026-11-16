@@ -99,6 +99,7 @@ type DataTableProps<T> = {
   toolbar?: (controls: { columnsButton: ReactNode }) => ReactNode
   actionLabel?: (row: T) => string
   labels?: TableLabels
+  framed?: boolean
 }
 
 const DEFAULT_PAGE_SIZES = ["10", "20", "50"]
@@ -130,6 +131,7 @@ export function DataTable<T extends object>({
   toolbar,
   actionLabel,
   labels,
+  framed = false,
 }: DataTableProps<T>) {
   const [pageSize, setPageSize] = useState(pageSizes[0] ?? "10")
   const [hidden, setHidden] = useState<string[]>([])
@@ -236,9 +238,10 @@ export function DataTable<T extends object>({
         </Inline>
       ) : null}
       <Box className={mobileMode === "cards" ? "hidden sm:block" : undefined}>
+        <div className={framed ? "overflow-hidden rounded-xl border border-border" : undefined}>
         <ReorderFrame enabled={reorderable} ids={rows.map((row) => row.id)} sensors={sensors} onDragStart={lockScroll} onDragCancel={unlockScroll} onDragEnd={handleReorder}>
           <Table stickyFirstColumn={stickyFirstColumn}>
-            <TableHeader>
+            <TableHeader className={framed ? "bg-muted" : undefined}>
               {table.getHeaderGroups().map((group) => (
                 <TableRow key={group.id}>
                   {reorderable ? <TableHead wrap minWidth={48}> </TableHead> : null}
@@ -335,6 +338,7 @@ export function DataTable<T extends object>({
             </TableBody>
           </Table>
         </ReorderFrame>
+        </div>
       </Box>
       {mobileMode === "cards" ? (
         <Stack gap={3} className="sm:hidden">

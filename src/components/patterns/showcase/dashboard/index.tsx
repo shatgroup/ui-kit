@@ -4,14 +4,12 @@
 import { useMemo, useState, type ReactNode } from "react"
 import {
   BarChart3Icon,
-  CircleCheckIcon,
   DatabaseIcon,
   FileTextIcon,
   FolderIcon,
   LayoutDashboardIcon,
   LifeBuoyIcon,
   ListIcon,
-  LoaderIcon,
   PlusIcon,
   SearchIcon,
   SettingsIcon,
@@ -24,7 +22,6 @@ import { StatCard } from "@/components/patterns/stat-card.tsx"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.tsx"
-import { StatusBadge } from "@/components/ui/status-badge.tsx"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
 import { BarMixed, PieDonut, VisitorsChart } from "./charts.tsx"
 import { documents, type DocumentRow } from "@/fixtures/documents.ts"
@@ -79,6 +76,15 @@ export function ShowcaseDashboard({ leading, topbar }: { leading: ReactNode; top
       leading={leading}
       topbar={topbar}
       maxWidth={false}
+      inset
+      title="Documents"
+      account={{ name: "shadcn", email: "m@example.com" }}
+      sidebarAction={
+        <Button className="w-full">
+          <PlusIcon />
+          Quick Create
+        </Button>
+      }
     >
       <div data-showcase="">
       <Stack gap={4} className="@container py-4">
@@ -92,6 +98,7 @@ export function ShowcaseDashboard({ leading, topbar }: { leading: ReactNode; top
               direction={item.trend}
               line={item.line}
               note={item.note}
+              wash
             />
           ))}
         </Grid>
@@ -113,19 +120,6 @@ function DocumentTable() {
   const columns = useMemo<DataColumn<DocumentRow>[]>(() => [
     { id: "header", header: "Header", accessor: (row) => row.header, minWidth: 180, grow: true },
     { id: "type", header: "Section Type", accessor: (row) => row.type, minWidth: 140, cell: (row) => <Badge variant="outline">{row.type}</Badge> },
-    {
-      id: "status",
-      header: "Status",
-      accessor: (row) => row.status,
-      minWidth: 140,
-      cell: (row) => (
-        <StatusBadge
-          status={row.status === "Done" ? "done" : "in_progress"}
-          label={row.status}
-          icon={row.status === "Done" ? <CircleCheckIcon /> : <LoaderIcon />}
-        />
-      ),
-    },
     {
       id: "target",
       header: "Target",
@@ -149,9 +143,28 @@ function DocumentTable() {
       header: "Reviewer",
       accessor: (row) => row.reviewer,
       minWidth: 180,
-      editable: "select",
-      options: REVIEWERS,
-      editLabel: (row) => `Reviewer ${row.header}`,
+      cell: (row) =>
+        row.reviewer === "Assign reviewer" ? (
+          <Select
+            value={row.reviewer}
+            onValueChange={(value) =>
+              setRows((current) => current.map((item) => (item.id === row.id ? { ...item, reviewer: value ?? item.reviewer } : item)))
+            }
+          >
+            <SelectTrigger size="sm" className="w-40" aria-label={`Reviewer ${row.header}`}>
+              <span>Assign reviewer</span>
+            </SelectTrigger>
+            <SelectContent>
+              {REVIEWERS.map((option) => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          row.reviewer
+        ),
     },
   ], [])
 
@@ -165,6 +178,7 @@ function DocumentTable() {
           selectColumn
           reorderable
           columnVisibility
+          framed
           pageSizes={["10", "20", "30", "40", "50"]}
           onReorder={(ids) => {
             setRows((current) => {

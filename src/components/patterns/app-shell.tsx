@@ -1,8 +1,10 @@
 import { useState, type ReactNode } from "react"
 import type { LucideIcon } from "lucide-react"
-import { MenuIcon, PanelLeftIcon } from "lucide-react"
+import { MenuIcon, MoreVerticalIcon, PanelLeftIcon } from "lucide-react"
 import { Box, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx"
+import { Separator } from "@/components/ui/separator.tsx"
 import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet.tsx"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
 import { cn } from "@/lib/utils.ts"
@@ -27,6 +29,10 @@ type AppShellProps = {
   leading?: ReactNode
   topbar?: ReactNode
   footer?: ReactNode
+  sidebarAction?: ReactNode
+  account?: { name: string; email: string }
+  title?: string
+  inset?: boolean
   maxWidth?: boolean
   children?: ReactNode
 }
@@ -103,31 +109,51 @@ function NavGroups({
   )
 }
 
-export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, topbar, footer, maxWidth = true, children }: AppShellProps) {
+export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, topbar, footer, sidebarAction, account, title, inset = false, maxWidth = true, children }: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
-    <Box className="min-h-dvh">
-      <Inline align="stretch" wrap={false} className="min-h-dvh">
-        <Box slot="sidebar" border className={cn("sticky top-0 hidden h-dvh shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-12" : "w-60")}>
+    <Box className={cn(inset ? "flex h-dvh bg-muted p-2" : "min-h-dvh")}>
+      <Inline align="stretch" wrap={false} className={cn(inset ? "min-h-0 min-w-0 flex-1 overflow-hidden rounded-xl border border-border bg-background" : "min-h-dvh")}>
+        <Box slot="sidebar" border className={cn("sticky top-0 hidden shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-12" : "w-60", inset ? "h-full" : "h-dvh")}>
           <Stack gap={4} align={collapsed ? "center" : "stretch"} className={cn("h-full", collapsed ? "p-2" : "p-3")}>
             <span className={cn("flex items-center whitespace-nowrap", collapsed && "size-8 justify-center overflow-hidden")}>
               {collapsed ? (mark ?? logo) : logo}
             </span>
+            {sidebarAction}
             <Box className="min-h-0 flex-1 overflow-y-auto">
               <NavGroups groups={groups} activeId={activeId} collapsed={collapsed} onNavigate={onNavigate} />
             </Box>
             {footer}
-            <Button
-              variant="ghost"
-              className={cn("w-full justify-start", collapsed && "size-8! w-8! justify-center p-0!")}
-              aria-label={collapsed ? "Mở sidebar" : "Thu gọn sidebar"}
-              onClick={() => setCollapsed((value) => !value)}
-            >
-              <PanelLeftIcon className="size-4" />
-              {collapsed ? null : "Thu gọn"}
-            </Button>
+            {account && !collapsed ? (
+              <Inline gap={2} align="center" justify="between" wrap={false}>
+                <Stack gap={0} className="min-w-0">
+                  <Text size="sm" weight="medium">{account.name}</Text>
+                  <Text size="xs" tone="muted">{account.email}</Text>
+                </Stack>
+                <DropdownMenu>
+                  <DropdownMenuTrigger render={<Button variant="ghost" size="sm" className="size-8 p-0" aria-label={`Menu ${account.name}`} />}>
+                    <MoreVerticalIcon />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuItem>Account</DropdownMenuItem>
+                    <DropdownMenuItem>Log out</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </Inline>
+            ) : null}
+            {inset ? null : (
+              <Button
+                variant="ghost"
+                className={cn("w-full justify-start", collapsed && "size-8! w-8! justify-center p-0!")}
+                aria-label={collapsed ? "Mở sidebar" : "Thu gọn sidebar"}
+                onClick={() => setCollapsed((value) => !value)}
+              >
+                <PanelLeftIcon className="size-4" />
+                {collapsed ? null : "Thu gọn"}
+              </Button>
+            )}
           </Stack>
         </Box>
         <Box className="flex min-w-0 flex-1 justify-center">
@@ -142,6 +168,21 @@ export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, to
                 >
                   <MenuIcon className="size-4" />
                 </Button>
+                {inset ? (
+                  <Inline gap={2} align="center" className="hidden md:flex">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="size-8 p-0"
+                      aria-label={collapsed ? "Mở sidebar" : "Thu gọn sidebar"}
+                      onClick={() => setCollapsed((value) => !value)}
+                    >
+                      <PanelLeftIcon className="size-4" />
+                    </Button>
+                    <Separator orientation="vertical" className="h-4" />
+                    <Text weight="medium">{title}</Text>
+                  </Inline>
+                ) : null}
                 {leading}
               </Inline>
               {topbar}
