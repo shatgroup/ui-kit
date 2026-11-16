@@ -26,10 +26,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.t
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx"
 
 const ticker = [
-  { symbol: "SHOP", avatar: "SH", price: "128.40", change: "+2.41%", up: true },
-  { symbol: "ACME", avatar: "AC", price: "86.15", change: "-1.12%", up: false },
-  { symbol: "TWEAK", avatar: "TW", price: "54.02", change: "+0.84%", up: true },
-  { symbol: "VEGA", avatar: "VG", price: "19.77", change: "-3.20%", up: false },
+  { symbol: "SDCN", avatar: "SH", price: "$120,748.00", change: "1.25%", up: true },
+  { symbol: "ACME", avatar: "AC", price: "$84,231.50", change: "-0.42%", up: false },
+  { symbol: "TWKN", avatar: "TW", price: "$45,019.75", change: "2.18%", up: true },
+  { symbol: "VEGA", avatar: "VE", price: "$9,874.20", change: "-1.07%", up: false },
 ]
 
 const prices = [118, 121, 119, 124, 123, 128, 126, 131, 129, 134, 132, 128].map((price, index) => ({ day: index + 1, price }))
@@ -69,29 +69,30 @@ export function ShowcaseApplication() {
 
   return (
     <Stack gap={4}>
-      <Card>
-        <CardContent>
-          <div data-scroll-x="true">
-            <Inline gap={0} align="center" wrap={false}>
-              {ticker.map((item, index) => (
-                <Inline key={item.symbol} gap={3} align="center" wrap={false} className="px-4">
-                  {index > 0 ? <span className="h-8 w-px bg-border" /> : null}
-                  <Avatar>
-                    <AvatarFallback>{item.avatar}</AvatarFallback>
-                  </Avatar>
-                  <Stack gap={1}>
-                    <Text size="sm" weight="semibold">{item.symbol}</Text>
-                    <Text size="sm" className="tabular-nums">{item.price}</Text>
-                  </Stack>
-                  <Inline gap={1} align="center" className={item.up ? "text-success" : "text-destructive"}>
-                    <TriangleIcon className={item.up ? "size-3 fill-current" : "size-3 rotate-180 fill-current"} />
-                    <Text size="sm">{item.change}</Text>
-                  </Inline>
+      <Card className="gap-2 py-2">
+        <div data-scroll-x="true" className="overflow-x-auto">
+          <Inline gap={0} align="center" wrap={false}>
+            {ticker.map((item, index) => (
+              <Inline
+                key={item.symbol}
+                gap={2}
+                align="center"
+                wrap={false}
+                className={index > 0 ? "shrink-0 border-l border-border px-3" : "shrink-0 px-3"}
+              >
+                <Avatar size="sm">
+                  <AvatarFallback>{item.avatar}</AvatarFallback>
+                </Avatar>
+                <Text size="sm" weight="semibold" className="whitespace-nowrap">{item.symbol}</Text>
+                <Text size="sm" tone="muted" className="whitespace-nowrap tabular-nums">{item.price}</Text>
+                <Inline gap={1} align="center" wrap={false} className="shrink-0">
+                  <TriangleIcon className={item.up ? "size-3 fill-chart-1 text-chart-1" : "size-3 rotate-180 fill-destructive text-destructive"} />
+                  <Text size="sm" className={item.up ? "whitespace-nowrap text-chart-1" : "whitespace-nowrap text-destructive"}>{item.change}</Text>
                 </Inline>
-              ))}
-            </Inline>
-          </div>
-        </CardContent>
+              </Inline>
+            ))}
+          </Inline>
+        </div>
       </Card>
       <Grid columns={{ base: 1, lg: 2 }} gap={4}>
         <Card>
