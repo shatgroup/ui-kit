@@ -12,9 +12,18 @@ import { PageHeader } from "@/components/patterns/page-header.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import { toast } from "sonner"
-import { motionClips } from "@/fixtures/motion.ts"
 
-const CLIPS = motionClips
+const LONG = "Cảnh khai trương Shondo Nguyễn Ảnh Thủ, máy quay đi ngang quầy"
+
+const STATUSES: JobState[] = ["queued", "running", "done", "failed", "cancelled"]
+
+const CLIPS = Array.from({ length: 12 }, (_, index) => ({
+  id: String(index + 1),
+  name: index === 2 ? LONG : `Đoạn ${index + 1}`,
+  duration: `0:${String(8 + index).padStart(2, "0")}`,
+  status: STATUSES[index % STATUSES.length] ?? "queued",
+  progress: 20 + index * 5,
+}))
 
 export function MotionBoard({ leading, topbar = <ThemeToggle /> }: { leading?: ReactNode; topbar?: ReactNode }) {
   const [menu, setMenu] = useState("project")
