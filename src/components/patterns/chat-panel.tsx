@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import { Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx"
 import { Button } from "@/components/ui/button.tsx"
@@ -11,24 +11,29 @@ function ChatPanel({
   status,
   photo,
   messages,
+  actions,
 }: {
   name: string
   status: string
   photo?: string
   messages: ChatMessage[]
+  actions?: ReactNode
 }) {
   const [draft, setDraft] = useState("")
   return (
     <Stack gap={3}>
-      <Inline gap={3} align="center">
-        <Avatar>
-          {photo ? <AvatarImage src={photo} alt="" /> : null}
-          <AvatarFallback>{name.slice(0, 1)}</AvatarFallback>
-        </Avatar>
-        <Stack gap={1}>
-          <Text size="sm" weight="medium">{name}</Text>
-          <Text size="xs" tone="success">{status}</Text>
-        </Stack>
+      <Inline gap={3} align="center" justify="between" wrap={false}>
+        <Inline gap={3} align="center" wrap={false}>
+          <Avatar>
+            {photo ? <AvatarImage src={photo} alt="" /> : null}
+            <AvatarFallback>{name.slice(0, 1)}</AvatarFallback>
+          </Avatar>
+          <Stack gap={1}>
+            <Text size="sm" weight="medium">{name}</Text>
+            <Text size="xs" tone="success">{status}</Text>
+          </Stack>
+        </Inline>
+        {actions}
       </Inline>
       <Stack gap={2}>
         {messages.map((message) => (

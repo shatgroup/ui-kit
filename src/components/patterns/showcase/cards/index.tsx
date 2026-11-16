@@ -1,19 +1,19 @@
 /* Nguồn: github.com/jnsahaj/tweakcn components/examples/cards (Apache-2.0).
    Bố cục, class và số liệu giữ từ bản gốc. Import đổi sang component của kit. */
-import { CardsActivityGoal } from "./activity-goal.tsx";
-import { CardsCalendar } from "./calendar.tsx";
-import { CardsChat } from "./chat.tsx";
-import { CardsCookieSettings } from "./cookie-settings.tsx";
-import { CardsCreateAccount } from "./create-account.tsx";
-import { CardsExerciseMinutes } from "./exercise-minutes.tsx";
-import { CardsForms } from "./forms.tsx";
-import { CardsPayments } from "./payments.tsx";
-import { CardsReportIssue } from "./report-issue.tsx";
-import { CardsShare } from "./share.tsx";
-import { CardsStats } from "./stats.tsx";
-import { CardsTeamMembers } from "./team-members.tsx";
-import { DatePickerWithRange } from "./date-picker-with-range.tsx";
-import { GithubCard } from "./github-card.tsx";
+import { CardsActivityGoal } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsCalendar } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsChat } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsCookieSettings } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsCreateAccount } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsExerciseMinutes } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsForms } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsPayments } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsReportIssue } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsShare } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsStats } from "@/components/patterns/showcase/card-blocks.tsx"
+import { CardsTeamMembers } from "@/components/patterns/showcase/card-blocks.tsx"
+import { DatePickerWithRange } from "@/components/patterns/showcase/card-blocks.tsx"
+import { GithubCard } from "@/components/patterns/showcase/card-blocks.tsx"
 
 export function ShowcaseCards() {
   return <CardsDemo />
