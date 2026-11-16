@@ -41,6 +41,18 @@ Bỏ mọi class `shadow-*` trừ `shadow-none`. Popup đã có `border` sẵn (
 
 `button.tsx` — thêm prop `forceState?: "hover" | "pressed" | "focus"`. Chỉ `/design-system` dùng, để xem trạng thái khi không rê chuột. Class gắn thêm trùng màu hover của variant; `pressed` đậm hơn một nấc; `focus` dùng cùng ring với `focus-visible`.
 
+## Checkbox
+
+`checkbox.tsx` — khi `checked="indeterminate"` hiện `MinusIcon` thay vì dấu tick. Radix không có icon riêng cho trạng thái này. DataTable và `/design-system` dùng cho ô chọn cả trang.
+
+## Chart
+
+`chart.tsx` — thêm `overflow-visible` cho `svg` của Recharts. Bản gốc để svg `overflow: hidden`, nhãn trục (ví dụ Chrome) bị cắt khoảng 3px ở mép trái.
+
+## Select
+
+`select.tsx` — `SelectContent` mặc định `position="popper"` thay vì `item-aligned`. Bản gốc căn mục đang chọn đè lên ô bấm. Popper đặt danh sách bên cạnh ô, đúng luật popup không che control.
+
 ## Calendar
 
 `calendar.tsx` — không đổi hành vi tuần. Mặc định Chủ nhật, đúng react-day-picker. `weekStartsOn` và `locale` chỉ có hiệu lực khi nơi gọi truyền vào props (DayPicker nhận qua `{...props}`). Tiếng Việt và Thứ 2 không bị ép.
