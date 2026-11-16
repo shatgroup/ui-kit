@@ -165,6 +165,7 @@ BÁO CÁO CHO CLAUDE
 7. Thiếu component hoặc token thì dừng và báo, không tự chế.
 8. Xong việc phải chạy `npm run check:ui` và `npm run build`. Cả hai pass mới tính là xong.
 9. Chuyển động chỉ dùng `opacity`, `transform`, `clip-path`, màu, bóng. Không chuyển động width, height, top, left, margin, padding, trừ sidebar. Không `transition-all`. Thời lượng và easing chỉ lấy token CSS.
+10. Không sửa giao diện file trong `src/showcase/tweakcn/`, đây là bản đối chiếu gốc.
 
 Component kit, mỗi cái một việc:
 

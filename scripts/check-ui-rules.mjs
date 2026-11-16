@@ -31,7 +31,14 @@ function walk(dir) {
 
 function skipped(file) {
   const rel = path.relative(root, file).split(path.sep).join("/")
-  return rel.startsWith("src/components/layout/") || rel.startsWith("src/styles/")
+  // sidebar.tsx và command.tsx là file shadcn cài nguyên, giữ class gốc.
+  return (
+    rel.startsWith("src/components/layout/") ||
+    rel.startsWith("src/styles/") ||
+    rel.startsWith("src/showcase/tweakcn/") ||
+    rel === "src/components/ui/sidebar.tsx" ||
+    rel === "src/components/ui/command.tsx"
+  )
 }
 
 function lineOf(source, index) {

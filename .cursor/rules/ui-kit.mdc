@@ -23,3 +23,5 @@ Component: `Button` hành động · `Input` một dòng · `Textarea` nhiều d
 Pattern: `AppShell` khung app · `PageHeader` đầu trang · `FilterBar` thanh lọc · `DataTable` bảng có sắp xếp và phân trang · `FormLayout` form theo section · `StatCard` số liệu · `ChartCard` biểu đồ · `Ticker` mã giá · `ActivityTimeline` hoạt động · `ChatPanel` hội thoại · `TransactionList` giao dịch · `RepoCard` kho mã · `ShareList` chia sẻ · `StatusTimeline` mốc trạng thái.
 
 Media: `Stepper` các bước · `SplitPane` hai vùng kéo · `MediaPreview` ảnh/video · `AudioPlayer` phát tiếng · `Dropzone` thả file · `JobStatus` trạng thái tác vụ.
+
+Không sửa giao diện file trong `src/showcase/tweakcn/`, đây là bản đối chiếu gốc.
