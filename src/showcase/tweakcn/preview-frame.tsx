@@ -4,7 +4,7 @@ export function PreviewFrame({ children, wide = false }: { children: ReactNode; 
   return (
     <div className="@container size-full min-h-0 flex-1 [transform:translateZ(0)]">
       <div data-showcase-scroll className="size-full overflow-auto">
-        {wide ? <div className="size-full min-w-[1400px]">{children}</div> : children}
+        {wide ? <div className="size-full min-w-[1400px] **:data-[slot=card]:shadow-none">{children}</div> : children}
       </div>
     </div>
   )

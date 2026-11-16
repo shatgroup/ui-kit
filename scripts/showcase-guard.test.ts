@@ -113,8 +113,9 @@ function scan() {
     const shadow = getComputedStyle(el).boxShadow
     const lengths = shadow.match(/-?[\d.]+px/g) ?? []
     const painted = shadow !== "none" && lengths.some((item) => Math.abs(Number.parseFloat(item)) > 0.5)
-    const exampleCard = el.closest("[data-showcase-scroll] [data-slot=card]")
-    if (painted && !el.closest("[data-force-state=focus]") && !exampleCard) failures.push(`còn shadow: ${el.tagName}`)
+    // Chính thẻ card phải hết bóng. Ring bên trong example tweakcn không tính.
+    const exampleInner = el.closest("[data-showcase-scroll] [data-slot=card]") && !el.matches("[data-slot=card]")
+    if (painted && !el.closest("[data-force-state=focus]") && !exampleInner) failures.push(`còn shadow: ${el.tagName} ${el.getAttribute("data-slot") ?? ""}`)
   })
 
   if (document.documentElement.scrollWidth > window.innerWidth + 2) failures.push("tràn trang")
@@ -372,114 +373,142 @@ describe("kiểm showcase", () => {
   it("calendar, khoảng ngày, badge tab, select, sidebar, chart", async () => {
     const page = await browser.newPage()
     const failures: string[] = []
-    await page.setViewportSize({ width: 1440, height: 900 })
-    await page.goto(`${base}/showcase?tab=cards`, { waitUntil: "networkidle" })
-    const calendar = await page.evaluate(() => {
-      const notes: string[] = []
-      const roots = [...document.querySelectorAll(".rdp-root")].filter((el) => {
-        const box = el.getBoundingClientRect()
-        return box.width > 2 && box.height > 2
-      })
-      if (!roots.length) return ["không thấy lịch"]
-      for (const root of roots) {
-        const previous = root.querySelector(".rdp-button_previous")
-        const next = root.querySelector(".rdp-button_next")
-        const label = root.querySelector(".rdp-caption_label")
-        if (!(previous instanceof HTMLElement) || !(next instanceof HTMLElement) || !(label instanceof HTMLElement)) {
-          notes.push("thiếu mũi tên hoặc tên tháng")
-          continue
-        }
-        const a = previous.getBoundingClientRect()
-        const b = label.getBoundingClientRect()
-        const c = next.getBoundingClientRect()
-        const mid = (box: DOMRect) => box.top + box.height / 2
-        if (Math.abs(mid(a) - mid(b)) > 2 || Math.abs(mid(c) - mid(b)) > 2) {
-          notes.push(`tên tháng lệch mũi tên ${Math.abs(mid(a) - mid(b)).toFixed(1)}/${Math.abs(mid(c) - mid(b)).toFixed(1)}`)
+    const ranges = ["Last 3 months", "Last 30 days", "Last 7 days"]
+    for (const width of widths) {
+      await page.setViewportSize({ width, height: 900 })
+      for (const theme of themes) {
+        const where = `${width} ${theme}`
+        await page.goto(`${base}/showcase?tab=cards`, { waitUntil: "networkidle" })
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+        await page.waitForTimeout(200)
+        const calendar = await page.evaluate((wide) => {
+          const notes: string[] = []
+          const roots = [...document.querySelectorAll(".rdp-root")].filter((el) => {
+            const box = el.getBoundingClientRect()
+            return box.width > 2 && box.height > 2
+          })
+          if (!roots.length) return wide ? ["không thấy lịch"] : []
+          for (const root of roots) {
+            const previous = root.querySelector(".rdp-button_previous")
+            const next = root.querySelector(".rdp-button_next")
+            const label = root.querySelector(".rdp-caption_label")
+            if (!(previous instanceof HTMLElement) || !(next instanceof HTMLElement) || !(label instanceof HTMLElement)) {
+              notes.push("thiếu mũi tên hoặc tên tháng")
+              continue
+            }
+            const a = previous.getBoundingClientRect()
+            const b = label.getBoundingClientRect()
+            const c = next.getBoundingClientRect()
+            const mid = (box: DOMRect) => box.top + box.height / 2
+            if (Math.abs(mid(a) - mid(b)) > 2 || Math.abs(mid(c) - mid(b)) > 2) {
+              notes.push(`tên tháng lệch mũi tên ${Math.abs(mid(a) - mid(b)).toFixed(1)}/${Math.abs(mid(c) - mid(b)).toFixed(1)}`)
+            }
+          }
+          return notes
+        }, width >= 768)
+        for (const note of calendar) failures.push(`${where} calendar: ${note}`)
+
+        const rangeButton = page.getByRole("button", { name: /Jan|Pick a date/ }).first()
+        await rangeButton.click()
+        await page.waitForTimeout(300)
+        const range = await page.evaluate((wide) => {
+          const popup = document.querySelector("[data-slot=popover-content]")
+          if (!(popup instanceof HTMLElement)) return ["popup khoảng ngày không mở"]
+          const frame = popup.getBoundingClientRect()
+          const days = [...popup.querySelectorAll(".rdp-day")].filter((el) => el.getBoundingClientRect().width > 2)
+          if (days.length < 20) return [`ô ngày quá ít ${days.length}`]
+          const outside = days.filter((el) => {
+            const box = el.getBoundingClientRect()
+            return box.left < frame.left - 1 || box.right > frame.right + 1 || box.top < frame.top - 1 || box.bottom > frame.bottom + 1
+          })
+          const months = [...popup.querySelectorAll(".rdp-month")].map((el) => el.getBoundingClientRect()).filter((box) => box.width > 2)
+          const sideBySide = months.length >= 2 && Math.abs(months[0]!.top - months[1]!.top) < 8 && months[1]!.left > months[0]!.right - 4
+          const notes: string[] = []
+          if (outside.length) notes.push(`${outside.length} ô ngày tràn popup`)
+          if (wide && !sideBySide) notes.push("2 tháng không xếp cạnh nhau")
+          return notes
+        }, width >= 768)
+        for (const note of range) failures.push(`${where} khoảng ngày: ${note}`)
+        await page.keyboard.press("Escape")
+
+        const selects = await page.evaluate(() => {
+          const expected = ["Can edit", "Billing", "Severity 2"]
+          const triggers = [...document.querySelectorAll("[data-slot=select-trigger]")].filter((el) => el.getBoundingClientRect().width > 2)
+          const texts = triggers.map((el) => el.textContent?.replace(/\s+/g, " ").trim() ?? "")
+          return expected.filter((label) => !texts.some((text) => text.includes(label))).map((label) => `thiếu nhãn ${label} (đang có: ${texts.join(" | ")})`)
+        })
+        for (const note of selects) failures.push(`${where} select: ${note}`)
+
+        await page.goto(`${base}/showcase?tab=dashboard`, { waitUntil: "networkidle" })
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+        await page.waitForTimeout(400)
+        const sidebar = await page.evaluate(() => {
+          const bar = [...document.querySelectorAll("a, button")].find((el) => el.textContent?.trim() === "Design System")
+          if (!(bar instanceof HTMLElement)) return "không thấy thanh trên"
+          const top = bar.getBoundingClientRect()
+          const sides = [...document.querySelectorAll("[data-slot=sidebar-container], [data-mobile=true][data-slot=sidebar]")].filter((el) => {
+            const style = getComputedStyle(el)
+            if (style.display === "none" || style.visibility === "hidden") return false
+            const box = el.getBoundingClientRect()
+            return box.width > 2 && box.height > 2
+          })
+          for (const side of sides) {
+            const box = side.getBoundingClientRect()
+            const overlap = box.top < top.bottom - 1 && box.bottom > top.top + 1 && box.left < top.right - 1 && box.right > top.left + 1
+            if (overlap) return `sidebar đè thanh trên (${box.top.toFixed(0)} < ${top.bottom.toFixed(0)})`
+          }
+          return ""
+        })
+        if (sidebar) failures.push(`${where} ${sidebar}`)
+
+        const badge = await page.evaluate(() => {
+          const tab = [...document.querySelectorAll("[role=tab]")].find((el) => el.textContent?.includes("Past Performance") && el.getBoundingClientRect().width > 2)
+          if (!(tab instanceof HTMLElement)) return "không thấy tab Past Performance"
+          const mark = tab.querySelector("[data-slot=badge]")
+          const text = [...tab.childNodes].find((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
+          if (!(mark instanceof HTMLElement) || !text) return "tab không có badge hoặc chữ"
+          const range = document.createRange()
+          range.selectNodeContents(text)
+          const label = range.getBoundingClientRect()
+          const chip = mark.getBoundingClientRect()
+          const delta = Math.abs(chip.top + chip.height / 2 - (label.top + label.height / 2))
+          return delta > 2 ? `badge lệch chữ ${delta.toFixed(1)}px` : ""
+        })
+        if (badge) failures.push(`${where} tab: ${badge}`)
+
+        for (const name of ranges) {
+          const radio = page.getByRole("radio", { name, exact: true })
+          if ((await radio.count()) && (await radio.first().isVisible())) {
+            const on = (await radio.first().getAttribute("data-state")) === "on" || (await radio.first().getAttribute("aria-checked")) === "true"
+            if (!on) await radio.first().click()
+          } else {
+            const trigger = page.getByRole("combobox", { name: "Select a value" })
+            if (!(await trigger.count()) || !(await trigger.first().isVisible())) {
+              failures.push(`${where} chart: ${name}: không thấy nút đổi khoảng`)
+              continue
+            }
+            await trigger.first().click()
+            await page.getByRole("option", { name, exact: true }).click()
+          }
+          await page.waitForTimeout(1700)
+          const chart = await page.evaluate((label) => {
+            const card = [...document.querySelectorAll("[data-slot=card]")].find((el) => el.textContent?.includes("Total Visitors"))
+            if (!(card instanceof HTMLElement)) return `${label}: không thấy Total Visitors`
+            const curve = card.querySelector(".recharts-area-curve, .recharts-curve")
+            const ticks = [...card.querySelectorAll(".recharts-xAxis text, .recharts-cartesian-axis-tick-value")].filter((el) => el.getBoundingClientRect().width > 2)
+            if (!(curve instanceof SVGGraphicsElement) || !ticks.length) return `${label}: thiếu đường hoặc nhãn trục`
+            const end = curve.getBoundingClientRect().right
+            const last = ticks[ticks.length - 1]!.getBoundingClientRect()
+            const target = last.left + last.width / 2
+            if (end < target - 8) return `${label}: đường dừng ở ${end.toFixed(0)}, nhãn cuối ở ${target.toFixed(0)} (${ticks[ticks.length - 1]!.textContent?.trim()})`
+            return ""
+          }, name)
+          if (chart) failures.push(`${where} chart: ${chart}`)
         }
       }
-      return notes
-    })
-    for (const note of calendar) failures.push(`calendar: ${note}`)
-
-    const rangeButton = page.getByRole("button", { name: /Jan|Pick a date/ }).first()
-    await rangeButton.click()
-    await page.waitForTimeout(300)
-    const range = await page.evaluate(() => {
-      const popup = document.querySelector("[data-slot=popover-content]")
-      if (!(popup instanceof HTMLElement)) return ["popup khoảng ngày không mở"]
-      const frame = popup.getBoundingClientRect()
-      const days = [...popup.querySelectorAll(".rdp-day")].filter((el) => el.getBoundingClientRect().width > 2)
-      if (days.length < 20) return [`ô ngày quá ít ${days.length}`]
-      const outside = days.filter((el) => {
-        const box = el.getBoundingClientRect()
-        return box.left < frame.left - 1 || box.right > frame.right + 1 || box.top < frame.top - 1 || box.bottom > frame.bottom + 1
-      })
-      const months = [...popup.querySelectorAll(".rdp-month")].map((el) => el.getBoundingClientRect()).filter((box) => box.width > 2)
-      const sideBySide = months.length >= 2 && Math.abs(months[0]!.top - months[1]!.top) < 8 && months[1]!.left > months[0]!.right - 4
-      const notes: string[] = []
-      if (outside.length) notes.push(`${outside.length} ô ngày tràn popup`)
-      if (!sideBySide) notes.push("2 tháng không xếp cạnh nhau")
-      return notes
-    })
-    for (const note of range) failures.push(`khoảng ngày: ${note}`)
-
-    const selects = await page.evaluate(() => {
-      const expected = ["Can edit", "Billing", "Severity 2"]
-      const triggers = [...document.querySelectorAll("[data-slot=select-trigger]")].filter((el) => el.getBoundingClientRect().width > 2)
-      const texts = triggers.map((el) => el.textContent?.replace(/\s+/g, " ").trim() ?? "")
-      return expected.filter((label) => !texts.some((text) => text.includes(label))).map((label) => `thiếu nhãn ${label} (đang có: ${texts.join(" | ")})`)
-    })
-    for (const note of selects) failures.push(`select: ${note}`)
-
-    await page.goto(`${base}/showcase?tab=dashboard`, { waitUntil: "networkidle" })
-    await page.waitForTimeout(1600)
-    const sidebar = await page.evaluate(() => {
-      const bar = [...document.querySelectorAll("a, button")].find((el) => el.textContent?.trim() === "Design System")
-      const side = document.querySelector("[data-slot=sidebar-container]")
-      if (!(bar instanceof HTMLElement) || !(side instanceof HTMLElement)) return "không thấy thanh trên hoặc sidebar"
-      const top = bar.getBoundingClientRect()
-      const box = side.getBoundingClientRect()
-      const overlap = box.top < top.bottom - 1 && box.bottom > top.top + 1 && box.left < top.right - 1 && box.right > top.left + 1
-      return overlap ? `sidebar đè thanh trên (${box.top.toFixed(0)} < ${top.bottom.toFixed(0)})` : ""
-    })
-    if (sidebar) failures.push(sidebar)
-
-    const badge = await page.evaluate(() => {
-      const tab = [...document.querySelectorAll("[role=tab]")].find((el) => el.textContent?.includes("Past Performance") && el.getBoundingClientRect().width > 2)
-      if (!(tab instanceof HTMLElement)) return "không thấy tab Past Performance"
-      const mark = tab.querySelector("[data-slot=badge]")
-      const text = [...tab.childNodes].find((node) => node.nodeType === Node.TEXT_NODE && node.textContent?.trim())
-      if (!(mark instanceof HTMLElement) || !text) return "tab không có badge hoặc chữ"
-      const range = document.createRange()
-      range.selectNodeContents(text)
-      const label = range.getBoundingClientRect()
-      const chip = mark.getBoundingClientRect()
-      const delta = Math.abs(chip.top + chip.height / 2 - (label.top + label.height / 2))
-      return delta > 2 ? `badge lệch chữ ${delta.toFixed(1)}px` : ""
-    })
-    if (badge) failures.push(`tab: ${badge}`)
-
-    const ranges = ["Last 3 months", "Last 30 days", "Last 7 days"]
-    for (const name of ranges) {
-      const item = page.getByRole("radio", { name, exact: true })
-      if (await item.count()) await item.click()
-      await page.waitForTimeout(1700)
-      const chart = await page.evaluate((label) => {
-        const card = [...document.querySelectorAll("[data-slot=card]")].find((el) => el.textContent?.includes("Total Visitors"))
-        if (!(card instanceof HTMLElement)) return `${label}: không thấy Total Visitors`
-        const curve = card.querySelector(".recharts-area-curve, .recharts-curve")
-        const ticks = [...card.querySelectorAll(".recharts-xAxis text, .recharts-cartesian-axis-tick-value")].filter((el) => el.getBoundingClientRect().width > 2)
-        if (!(curve instanceof SVGGraphicsElement) || !ticks.length) return `${label}: thiếu đường hoặc nhãn trục`
-        const end = curve.getBoundingClientRect().right
-        const last = ticks[ticks.length - 1]!.getBoundingClientRect()
-        const target = last.left + last.width / 2
-        if (end < target - 8) return `${label}: đường dừng ở ${end.toFixed(0)}, nhãn cuối ở ${target.toFixed(0)} (${ticks[ticks.length - 1]!.textContent?.trim()})`
-        return ""
-      }, name)
-      if (chart) failures.push(`chart: ${chart}`)
     }
 
     await page.close()
     expect(failures, failures.join("\n")).toEqual([])
-  }, 60_000)
+  }, 240_000)
 })
