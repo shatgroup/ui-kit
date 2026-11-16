@@ -53,7 +53,7 @@
   height: var(--control-lg);
 }
 
-@utility text-safe {
+[data-ui-text] {
   overflow-wrap: anywhere;
   word-break: break-word;
 }

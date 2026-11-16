@@ -72,8 +72,9 @@ export function Text({
 
   return (
     <Tag
+      data-ui-text=""
       className={cn(
-        "min-w-0 max-w-full text-safe",
+        "min-w-0 max-w-full",
         SIZE[size],
         WEIGHT[weight],
         TONE[tone],
