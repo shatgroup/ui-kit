@@ -104,16 +104,16 @@
   --border: oklch(0.9093 0.0098 204.9097);
   --input: oklch(0.9093 0.0098 204.9097);
   --ring: oklch(0.704 0.14 182.503);
-  /* fix: bộ màu đã chọn */
-  --chart-1: #62c4da;
-  /* fix: bộ màu đã chọn */
-  --chart-2: #fa855a;
-  /* fix: bộ màu đã chọn */
-  --chart-3: #2e8fa8;
-  /* fix: bộ màu đã chọn */
-  --chart-4: #f2c14e;
-  /* fix: bộ màu đã chọn */
-  --chart-5: #c93638;
+  /* duyệt: màu chart theo theme tweakcn gốc */
+  --chart-1: #00bba7;
+  /* duyệt: màu chart theo theme tweakcn gốc */
+  --chart-2: #00a3d7;
+  /* duyệt: màu chart theo theme tweakcn gốc */
+  --chart-3: #b18cfe;
+  /* duyệt: màu chart theo theme tweakcn gốc */
+  --chart-4: #ffc677;
+  /* duyệt: màu chart theo theme tweakcn gốc */
+  --chart-5: #cce8b5;
   --sidebar: oklch(0.9794 0.0045 214.3282);
   --sidebar-foreground: oklch(0.2514 0.0307 209.677);
   /* fix: sidebar-primary phải cùng primary */
@@ -196,16 +196,16 @@
   --border: oklch(0.2397 0.0193 201.5913);
   --input: oklch(0.2397 0.0193 201.5913);
   --ring: oklch(0.704 0.14 182.503);
-  /* fix: bộ màu đã chọn */
-  --chart-1: #62c4da;
-  /* fix: bộ màu đã chọn */
-  --chart-2: #fa855a;
-  /* fix: bộ màu đã chọn */
-  --chart-3: #2e8fa8;
-  /* fix: bộ màu đã chọn */
-  --chart-4: #f2c14e;
-  /* fix: bộ màu đã chọn */
-  --chart-5: #c93638;
+  /* duyệt: màu chart theo theme tweakcn gốc */
+  --chart-1: #00bba7;
+  /* duyệt: màu chart theo theme tweakcn gốc */
+  --chart-2: #00a3d7;
+  /* duyệt: màu chart theo theme tweakcn gốc */
+  --chart-3: #b18cfe;
+  /* duyệt: màu chart theo theme tweakcn gốc */
+  --chart-4: #ffc677;
+  /* duyệt: màu chart theo theme tweakcn gốc */
+  --chart-5: #cce8b5;
   --sidebar: oklch(0.1604 0.0209 201.0807);
   --sidebar-foreground: oklch(0.9396 0.0097 204.9127);
   /* fix: sidebar-primary phải cùng primary */

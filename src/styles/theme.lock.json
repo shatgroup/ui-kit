@@ -1,10 +1,10 @@
 {
   "light": {
-    "--chart-1": "#62C4DA",
-    "--chart-2": "#FA855A",
-    "--chart-3": "#2E8FA8",
-    "--chart-4": "#F2C14E",
-    "--chart-5": "#C93638",
+    "--chart-1": "#00BBA7",
+    "--chart-2": "#00A3D7",
+    "--chart-3": "#B18CFE",
+    "--chart-4": "#FFC677",
+    "--chart-5": "#CCE8B5",
     "--primary-foreground": "#FFFFFF",
     "--sidebar-primary": "var(--primary)",
     "--sidebar-primary-foreground": "#FFFFFF",
@@ -39,11 +39,11 @@
     "--radius-xl": "calc(var(--radius) + 4px)"
   },
   "dark": {
-    "--chart-1": "#62C4DA",
-    "--chart-2": "#FA855A",
-    "--chart-3": "#2E8FA8",
-    "--chart-4": "#F2C14E",
-    "--chart-5": "#C93638",
+    "--chart-1": "#00BBA7",
+    "--chart-2": "#00A3D7",
+    "--chart-3": "#B18CFE",
+    "--chart-4": "#FFC677",
+    "--chart-5": "#CCE8B5",
     "--primary-foreground": "#FFFFFF",
     "--sidebar-primary-foreground": "#FFFFFF",
     "--destructive-foreground": "#031A1E",
