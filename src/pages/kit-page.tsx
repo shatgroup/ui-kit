@@ -108,7 +108,7 @@ export function KitPage() {
           <Box border radius="md" padding={3} className="w-60 max-w-full">
             <Stack gap={3}>
               <Button className="w-full">{LONG}</Button>
-              <Badge variant="primary">{LONG}</Badge>
+              <Badge variant="primary" className="max-w-full min-w-0">{LONG}</Badge>
               <Select defaultValue="long">
                 <SelectTrigger className="w-full" aria-label="Chọn nhãn dài">
                   <SelectValue />

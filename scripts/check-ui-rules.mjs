@@ -74,7 +74,7 @@ function checkClass(file, line, token) {
   if (margin.test(value)) {
     report(file, line, "Dùng gap của Stack/Inline thay vì margin")
   }
-  if (!value.includes("${") && /\[[^\]]+\]/.test(value)) {
+  if (!token.includes("${") && /\[[^\]]+\]/.test(token)) {
     report(file, line, "Giá trị tuỳ ý trong className")
   }
   const space = value.match(spacing)

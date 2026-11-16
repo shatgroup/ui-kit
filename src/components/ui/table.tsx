@@ -8,7 +8,7 @@ type TableProps = ComponentProps<"table"> & {
 
 function Table({ className, stickyFirstColumn = false, ...props }: TableProps) {
   return (
-    <div data-slot="table-container" data-scroll-x="true" className="w-full min-w-0">
+    <div data-slot="table-container" data-scroll-x="true" className="w-full min-w-0 overflow-x-auto">
       <table
         data-slot="table"
         data-sticky-first={stickyFirstColumn ? "true" : undefined}
