@@ -60,7 +60,7 @@ type TextProps = {
 
 export function Text({
   as = "p",
-  size = "base",
+  size = "sm",
   weight = "normal",
   tone = "default",
   truncate = false,

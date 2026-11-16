@@ -1,7 +1,7 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils.ts"
-import { CONTROL_SIZE, focusRing, ICON_SIZE, type ControlSize } from "./control.ts"
+import { BUTTON_SIZE, focusRing, ICON_SIZE, type ControlSize } from "./control.ts"
 import { Spinner } from "./spinner.tsx"
 import { Truncated } from "./truncated.tsx"
 
@@ -32,9 +32,9 @@ const buttonVariants = cva(
         link: "text-primary-text underline-offset-4 hover:underline",
       },
       size: {
-        sm: CONTROL_SIZE.sm,
-        md: CONTROL_SIZE.md,
-        lg: CONTROL_SIZE.lg,
+        sm: BUTTON_SIZE.sm,
+        md: BUTTON_SIZE.md,
+        lg: BUTTON_SIZE.lg,
       },
     },
     defaultVariants: {

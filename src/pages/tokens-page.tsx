@@ -230,11 +230,11 @@ export function TokensPage() {
             </Inline>
             <Inline gap={3} align="center">
               <Box className="h-control-md w-16 bg-primary" />
-              <Text size="sm">control-md 40px</Text>
+              <Text size="sm">control-md 36px</Text>
             </Inline>
             <Inline gap={3} align="center">
               <Box className="h-control-lg w-16 bg-primary" />
-              <Text size="sm">control-lg 48px</Text>
+              <Text size="sm">control-lg 44px</Text>
             </Inline>
           </Stack>
         </Stack>

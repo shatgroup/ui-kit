@@ -80,7 +80,7 @@ function NavGroups({
       {groups.map((group) => (
         <Stack key={group.label} gap={1}>
           {collapsed ? null : (
-            <Text size="xs" tone="muted" weight="medium">
+            <Text size="sm" tone="muted" weight="medium">
               {group.label}
             </Text>
           )}

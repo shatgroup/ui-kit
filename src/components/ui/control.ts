@@ -1,7 +1,13 @@
 export const CONTROL_SIZE = {
-  sm: "h-control-sm px-2 text-xs",
+  sm: "h-control-sm px-2 text-sm",
   md: "h-control-md px-3 text-sm",
-  lg: "h-control-lg px-4 text-base",
+  lg: "h-control-lg px-4 text-sm",
+} as const
+
+export const BUTTON_SIZE = {
+  sm: "h-control-sm px-3 text-sm",
+  md: "h-control-md px-4 text-sm",
+  lg: "h-control-lg px-6 text-sm",
 } as const
 
 export const ICON_SIZE = {

@@ -20,8 +20,8 @@
 /* Thang khoảng cách được phép: 0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16 (đơn vị Tailwind, bội số 4px). */
 :root {
   --control-sm: 32px;
-  --control-md: 40px;
-  --control-lg: 48px;
+  --control-md: 36px;
+  --control-lg: 44px;
   --space-0: 0px;
   --space-1: 4px;
   --space-2: 8px;
@@ -37,8 +37,8 @@
 
 .dark {
   --control-sm: 32px;
-  --control-md: 40px;
-  --control-lg: 48px;
+  --control-md: 36px;
+  --control-lg: 44px;
 }
 
 @utility h-control-sm {

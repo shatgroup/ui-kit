@@ -245,7 +245,7 @@
     @apply font-sans;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-sm text-foreground antialiased;
   }
   [data-sonner-toaster] {
     --normal-bg: var(--popover);
