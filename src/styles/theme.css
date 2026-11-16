@@ -1,0 +1,184 @@
+/* Theme gốc: shadcn init, style base-nova, base color neutral.
+   File tweakcn ở cuối prompt chỉ là placeholder, không có CSS để dán.
+   Primary đặt #00BBA7 vì chữ trắng trên màu này đạt 2.42:1 — đúng lý do ghi đè phía dưới. */
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-heading: var(--font-sans);
+  --font-sans: "Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-text: var(--primary-text);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --color-success-foreground: var(--success-foreground);
+  --color-success: var(--success);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning: var(--warning);
+  --color-info-foreground: var(--info-foreground);
+  --color-info: var(--info);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  color-scheme: light;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  /* fix: lệch tông tím */
+  --popover-foreground: var(--foreground);
+  /* fix: chữ trắng trên teal chỉ đạt 2.42:1 */
+  --primary: #00bba7;
+  /* fix: chữ trắng trên teal chỉ đạt 2.4:1 */
+  --primary-foreground: #031a1e;
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  /* fix: #737373 trên muted chỉ đạt 4.35:1 */
+  --muted-foreground: #666666;
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  /* fix: 4.3 → 5.3:1 */
+  --destructive: #c13c3b;
+  /* fix: chữ trắng trên #C13C3B đạt 5.3:1; biến này không có trong theme shadcn */
+  --destructive-foreground: #ffffff;
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  /* fix: bộ màu đã chọn */
+  --chart-1: #62c4da;
+  /* fix: bộ màu đã chọn */
+  --chart-2: #fa855a;
+  /* fix: bộ màu đã chọn */
+  --chart-3: #2e8fa8;
+  /* fix: bộ màu đã chọn */
+  --chart-4: #f2c14e;
+  /* fix: bộ màu đã chọn */
+  --chart-5: #c93638;
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  /* fix: sidebar-primary mặc định hue 264, chữ #031A1E không đọc được */
+  --sidebar-primary: var(--primary);
+  /* fix: chữ trắng trên teal chỉ đạt 2.4:1 */
+  --sidebar-primary-foreground: #031a1e;
+  --sidebar-accent: oklch(0.97 0 0);
+  /* fix: lệch tông tím */
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: oklch(0.922 0 0);
+  /* fix: lệch tông tím */
+  --sidebar-ring: var(--ring);
+  /* chữ/link teal trên nền — không dùng text-primary cho chữ */
+  --primary-text: #007d6e;
+  --success: #15803d;
+  --success-foreground: #ffffff;
+  --warning: #b45309;
+  --warning-foreground: #ffffff;
+  --info: #1d4ed8;
+  --info-foreground: #ffffff;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  /* fix: popover lệch khỏi card */
+  --popover: var(--card);
+  /* fix: lệch tông tím */
+  --popover-foreground: var(--foreground);
+  /* fix: cùng teal với light để chữ #031A1E đạt tương phản */
+  --primary: #00bba7;
+  /* fix: chữ trắng trên teal chỉ đạt 2.4:1 */
+  --primary-foreground: #031a1e;
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  /* fix: chữ trên accent tối */
+  --accent-foreground: #e4edee;
+  --destructive: oklch(0.704 0.191 22.216);
+  /* fix: chữ trên destructive sáng */
+  --destructive-foreground: #031a1e;
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  /* fix: bộ màu đã chọn */
+  --chart-1: #62c4da;
+  /* fix: bộ màu đã chọn */
+  --chart-2: #fa855a;
+  /* fix: bộ màu đã chọn */
+  --chart-3: #2e8fa8;
+  /* fix: bộ màu đã chọn */
+  --chart-4: #f2c14e;
+  /* fix: bộ màu đã chọn */
+  --chart-5: #c93638;
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  /* fix: sidebar-primary mặc định hue 264 */
+  --sidebar-primary: var(--primary);
+  /* fix: chữ trắng trên teal chỉ đạt 2.4:1 */
+  --sidebar-primary-foreground: #031a1e;
+  --sidebar-accent: oklch(0.269 0 0);
+  /* fix: lệch tông tím */
+  --sidebar-accent-foreground: var(--foreground);
+  /* fix: lệch khỏi border */
+  --sidebar-border: var(--border);
+  /* fix: lệch tông tím */
+  --sidebar-ring: var(--ring);
+  --primary-text: #00bba7;
+  --success: #15803d;
+  --success-foreground: #ffffff;
+  --warning: #b45309;
+  --warning-foreground: #ffffff;
+  --info: #1d4ed8;
+  --info-foreground: #ffffff;
+}
+
+@layer base {
+  html {
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
