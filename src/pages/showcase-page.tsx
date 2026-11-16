@@ -1,13 +1,12 @@
-import { useState, type ReactNode } from "react"
-import { Box, Stack } from "@/components/layout/index.ts"
-import { MotionBoard } from "@/components/patterns/motion-board.tsx"
-import { PosmBoard } from "@/components/patterns/posm-board.tsx"
-import { ShowcaseApplication } from "@/components/patterns/showcase/application.tsx"
-import { ShowcaseCards } from "@/components/patterns/showcase/cards/index.tsx"
-import { ShowcaseDashboard } from "@/components/patterns/showcase/dashboard/index.tsx"
+import { useState } from "react"
+import { Box } from "@/components/layout/index.ts"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
+import ApplicationDemo from "@/showcase/tweakcn/application/index.tsx"
+import CardsDemo from "@/showcase/tweakcn/cards/index.tsx"
+import Dashboard from "@/showcase/tweakcn/dashboard/index.tsx"
+import { PreviewFrame } from "@/showcase/tweakcn/preview-frame.tsx"
 
-const TABS = ["cards", "dashboard", "application", "posm", "motion"] as const
+const TABS = ["cards", "dashboard", "application"] as const
 type Tab = (typeof TABS)[number]
 
 function initialTab(): Tab {
@@ -27,34 +26,20 @@ export function ShowcasePage() {
     window.history.replaceState(null, "", url)
   }
 
-  const tabs = (
-    <Tabs value={tab} onValueChange={choose}>
-      <TabsList>
-        <TabsTrigger value="cards">Cards</TabsTrigger>
-        <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
-        <TabsTrigger value="application">Application</TabsTrigger>
-        <TabsTrigger value="posm">POSM</TabsTrigger>
-        <TabsTrigger value="motion">Motion</TabsTrigger>
-      </TabsList>
-    </Tabs>
-  )
-
-  if (tab === "dashboard") return <ShowcaseDashboard leading={tabs} />
-  if (tab === "posm") return <PosmBoard leading={tabs} topbar={null} />
-  if (tab === "motion") return <MotionBoard leading={tabs} topbar={null} />
-
   return (
-    <Stack gap={4}>
-      <Frame>{tabs}</Frame>
-      <Frame wide={tab === "cards"}>{tab === "application" ? <ShowcaseApplication /> : <ShowcaseCards />}</Frame>
-    </Stack>
-  )
-}
-
-function Frame({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
-  return (
-    <Box padding={4} className="flex w-full flex-col items-center">
-      <Box className={wide ? "w-full" : "w-full max-w-7xl"}>{children}</Box>
+    <Box className="flex h-full min-h-0 flex-col">
+      <Box padding={4} className="shrink-0">
+        <Tabs value={tab} onValueChange={choose}>
+          <TabsList>
+            <TabsTrigger value="cards">Cards</TabsTrigger>
+            <TabsTrigger value="dashboard">Dashboard</TabsTrigger>
+            <TabsTrigger value="application">Application</TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </Box>
+      <PreviewFrame wide={tab === "dashboard"}>
+        {tab === "dashboard" ? <Dashboard /> : tab === "application" ? <ApplicationDemo /> : <CardsDemo />}
+      </PreviewFrame>
     </Box>
   )
 }

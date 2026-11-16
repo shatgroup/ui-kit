@@ -24,12 +24,8 @@ export default function App() {
     if (path !== "/design-system") window.history.replaceState(null, "", "/design-system")
     return <Frame><DesignSystemPage /></Frame>
   }
-  if (path === "/preview") {
-    window.history.replaceState(null, "", "/showcase?tab=posm")
-    return <Frame><ShowcasePage /></Frame>
-  }
-  if (path === "/preview-motion") {
-    window.history.replaceState(null, "", "/showcase?tab=motion")
+  if (path === "/preview" || path === "/preview-motion") {
+    window.history.replaceState(null, "", "/showcase")
     return <Frame><ShowcasePage /></Frame>
   }
   if (path === "/showcase") return <Frame><ShowcasePage /></Frame>
