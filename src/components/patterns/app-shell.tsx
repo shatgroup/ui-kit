@@ -29,7 +29,7 @@ type AppShellProps = {
   leading?: ReactNode
   topbar?: ReactNode
   footer?: ReactNode
-  sidebarAction?: ReactNode
+  sidebarAction?: ReactNode | ((collapsed: boolean) => ReactNode)
   account?: { name: string; email: string }
   title?: string
   inset?: boolean
@@ -121,7 +121,7 @@ export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, to
             <span className={cn("flex items-center whitespace-nowrap", collapsed && "size-8 justify-center overflow-hidden")}>
               {collapsed ? (mark ?? logo) : logo}
             </span>
-            {sidebarAction}
+            {typeof sidebarAction === "function" ? sidebarAction(collapsed) : sidebarAction}
             <Box className="min-h-0 flex-1 overflow-y-auto">
               <NavGroups groups={groups} activeId={activeId} collapsed={collapsed} onNavigate={onNavigate} />
             </Box>

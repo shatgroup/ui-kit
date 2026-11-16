@@ -8,27 +8,12 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } f
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.tsx"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx"
 import { visitorData } from "@/fixtures/visitor-data.ts"
+import { barData, pieData } from "@/fixtures/charts.ts"
 
 const areaConfig = {
   desktop: { label: "Desktop", color: "var(--chart-1)" },
   mobile: { label: "Mobile", color: "var(--chart-2)" },
 } satisfies ChartConfig
-
-const pieData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 190, fill: "var(--color-other)" },
-]
-
-const barData = [
-  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
-  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
-  { browser: "firefox", visitors: 187, fill: "var(--color-firefox)" },
-  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
-  { browser: "other", visitors: 90, fill: "var(--color-other)" },
-]
 
 const browserConfig = {
   chrome: { label: "Chrome", color: "var(--chart-1)" },

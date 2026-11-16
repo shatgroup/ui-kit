@@ -53,7 +53,7 @@ export function ShowcasePage() {
 
 function Frame({ children }: { children: ReactNode }) {
   return (
-    <Box padding={4} className="flex w-full justify-center">
+    <Box padding={4} className="flex w-full flex-col items-center">
       <Box className="w-full max-w-7xl">{children}</Box>
     </Box>
   )

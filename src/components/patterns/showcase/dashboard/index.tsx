@@ -79,12 +79,12 @@ export function ShowcaseDashboard({ leading, topbar }: { leading: ReactNode; top
       inset
       title="Documents"
       account={{ name: "shadcn", email: "m@example.com" }}
-      sidebarAction={
-        <Button className="w-full">
+      sidebarAction={(collapsed) => (
+        <Button className={collapsed ? "size-8! w-8! justify-center p-0!" : "w-full"} aria-label="Quick Create">
           <PlusIcon />
-          Quick Create
+          {collapsed ? null : "Quick Create"}
         </Button>
-      }
+      )}
     >
       <div data-showcase="">
       <Stack gap={4} className="@container py-4">

@@ -15,7 +15,7 @@ function SiteBar() {
     function onKey(event: KeyboardEvent) {
       if (event.metaKey || event.ctrlKey || event.altKey) return
       const target = event.target
-      if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable=true]")) return
+      if (target instanceof HTMLElement && (target.isContentEditable || target.closest("input, textarea, select"))) return
       const key = event.key.toLowerCase()
       if (key === "d") window.location.assign("/design-system")
       if (key === "s" && !showcase) window.location.assign("/showcase")

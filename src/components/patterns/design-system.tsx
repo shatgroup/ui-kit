@@ -310,7 +310,7 @@ function DesignSystem() {
             <Stack gap={3}>
               <FormField label="Trống"><Input placeholder="Nhập chữ" /></FormField>
               <Stack gap={1}>
-                <FormField label="Focus"><Input defaultValue="Christian Bal" className="border-ring ring-2 ring-ring" /></FormField>
+                <FormField label="Focus"><Input defaultValue="Christian Bal" data-force-state="focus" className="border-ring ring-2 ring-ring" /></FormField>
                 <Note>Focus</Note>
               </Stack>
               <FormField label="Đã điền"><Input defaultValue="Christian Bal" /></FormField>

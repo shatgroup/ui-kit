@@ -172,39 +172,28 @@ describe("kiểm showcase", () => {
             const found = await page.evaluate(scan)
             for (const message of found) failures.push(`${item.path} ${tab || "-"} ${width} ${theme}: ${message}`)
             if (item.path === "/design-system" && width === 1440) {
-              const states = await page.evaluate(() => {
-                const read = (label: string) => {
-                  const el = document.querySelector(`[aria-label="${label}"]`)
-                  if (!(el instanceof HTMLElement)) return ""
-                  const style = getComputedStyle(el)
-                  return `${style.backgroundColor}|${style.transform}`
-                }
-                return { switch: read("Bật tắt"), box: read("Đã chọn") }
+              const readPaint = async (locator: ReturnType<typeof page.getByRole>) => locator.evaluate((el) => {
+                const style = getComputedStyle(el)
+                return `${style.backgroundColor}|${style.transform}`
               })
-              await page.getByRole("switch", { name: "Bật tắt" }).click()
-              await page.getByRole("checkbox", { name: "Đã chọn" }).click()
-              await page.getByRole("radio", { name: "Hai" }).click()
-              await page.getByRole("button", { name: "Bảng" }).click()
-              const after = await page.evaluate(() => {
-                const read = (label: string) => {
-                  const el = document.querySelector(`[aria-label="${label}"]`)
-                  if (!(el instanceof HTMLElement)) return ""
-                  const style = getComputedStyle(el)
-                  return `${style.backgroundColor}|${style.transform}`
-                }
-                const radio = document.querySelector('[aria-label="Radio"] [data-checked]')
-                const toggle = document.querySelector('[data-slot="toggle-group-item"][data-pressed]')
-                return {
-                  switch: read("Bật tắt"),
-                  box: read("Đã chọn"),
-                  radio: radio ? getComputedStyle(radio).backgroundColor : "",
-                  toggle: toggle ? getComputedStyle(toggle).backgroundColor : "",
-                }
-              })
-              if (states.switch === after.switch) failures.push(`${theme}: Switch không đổi`)
-              if (states.box === after.box) failures.push(`${theme}: Checkbox không đổi`)
-              if (!after.radio) failures.push(`${theme}: Radio không checked`)
-              if (!after.toggle) failures.push(`${theme}: Toggle không pressed`)
+              const switchEl = page.getByRole("switch", { name: "Light", exact: true })
+              const boxEl = page.getByRole("checkbox", { name: "Checked", exact: true })
+              const beforeSwitch = await readPaint(switchEl)
+              const beforeBox = await readPaint(boxEl)
+              const beforeDark = await page.evaluate(() => document.documentElement.classList.contains("dark"))
+              await switchEl.click()
+              await boxEl.click()
+              await page.getByRole("radio", { name: "Unchecked", exact: true }).click()
+              await page.getByRole("button", { name: /^(Sáng|Tối)$/ }).first().click()
+              await page.waitForFunction((was) => document.documentElement.classList.contains("dark") !== was, beforeDark, { timeout: 2000 }).catch(() => undefined)
+              const afterSwitch = await readPaint(switchEl)
+              const afterBox = await readPaint(boxEl)
+              const radioChecked = await page.getByRole("radio", { name: "Unchecked", exact: true }).getAttribute("data-checked")
+              const afterDark = await page.evaluate(() => document.documentElement.classList.contains("dark"))
+              if (beforeSwitch === afterSwitch) failures.push(`${theme}: Switch không đổi`)
+              if (beforeBox === afterBox) failures.push(`${theme}: Checkbox không đổi`)
+              if (radioChecked === null) failures.push(`${theme}: Radio không checked`)
+              if (beforeDark === afterDark) failures.push(`${theme}: Toggle không pressed`)
             }
           }
         }
@@ -319,48 +308,54 @@ describe("kiểm showcase", () => {
       }
     }
 
-    await page.setViewportSize({ width: 1440, height: 900 })
-    await page.goto(`${base}/showcase`, { waitUntil: "networkidle" })
-    await page.getByRole("tab", { name: "Dashboard" }).click()
-    await page.getByRole("button", { name: "Customize Columns" }).click()
-    await page.getByRole("menuitemcheckbox", { name: "Header" }).click()
-    await page.keyboard.press("Escape")
-    const headerGone = await page.getByRole("columnheader", { name: "Header" }).count()
-    if (headerGone !== 0) failures.push("ẩn cột Header không được")
-    await page.getByRole("button", { name: "Customize Columns" }).click()
-    await page.getByRole("menuitemcheckbox", { name: "Header" }).click()
-    await page.keyboard.press("Escape")
-    if (await page.getByRole("columnheader", { name: "Header" }).count() === 0) failures.push("hiện lại cột Header không được")
-    const target = page.getByRole("textbox", { name: "Target Cover page" })
-    await target.fill("99")
-    if (await target.inputValue() !== "99") failures.push("sửa ô số không cập nhật")
-    await page.getByRole("button", { name: "Go to next page" }).click()
-    const pageText = await page.locator("[data-slot=table-pagination]").innerText()
-    if (!pageText.includes("Page 2")) failures.push(`phân trang: ${pageText}`)
-    const firstDrag = page.getByRole("button", { name: "Drag to reorder" }).first()
-    const beforeHeader = await page.getByRole("row").nth(1).innerText()
-    await firstDrag.focus()
-    await page.keyboard.press("Space")
-    await page.waitForTimeout(100)
-    for (let step = 0; step < 4; step += 1) {
-      await page.keyboard.press("ArrowDown")
-      await page.waitForTimeout(80)
+    for (const width of widths) {
+      await page.setViewportSize({ width, height: 900 })
+      for (const theme of themes) {
+        const where = `Dashboard ${width} ${theme}`
+        await page.goto(`${base}/showcase?tab=dashboard`, { waitUntil: "networkidle" })
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+        await page.getByRole("button", { name: "Customize Columns" }).click()
+        await page.getByRole("menuitemcheckbox", { name: "Header" }).click()
+        await page.keyboard.press("Escape")
+        if (await page.getByRole("columnheader", { name: "Header" }).count() !== 0) failures.push(`${where}: ẩn cột Header không được`)
+        await page.getByRole("button", { name: "Customize Columns" }).click()
+        await page.getByRole("menuitemcheckbox", { name: "Header" }).click()
+        await page.keyboard.press("Escape")
+        if (await page.getByRole("columnheader", { name: "Header" }).count() === 0) failures.push(`${where}: hiện lại cột Header không được`)
+        const target = page.getByRole("textbox", { name: "Target Cover page" })
+        await target.fill("99")
+        if (await target.inputValue() !== "99") failures.push(`${where}: sửa ô số không cập nhật`)
+        await page.getByRole("button", { name: "Go to next page" }).click()
+        const pageText = await page.locator("[data-slot=table-pagination]").innerText()
+        if (!pageText.includes("Page 2")) failures.push(`${where}: phân trang ${pageText}`)
+        const firstDrag = page.getByRole("button", { name: "Drag to reorder" }).first()
+        const beforeHeader = await page.getByRole("row").nth(1).innerText()
+        await firstDrag.focus()
+        await page.keyboard.press("Space")
+        await page.waitForTimeout(100)
+        for (let step = 0; step < 4; step += 1) {
+          await page.keyboard.press("ArrowDown")
+          await page.waitForTimeout(80)
+        }
+        await page.keyboard.press("Space")
+        const afterKey = await page.getByRole("row").nth(1).innerText()
+        if (beforeHeader === afterKey) failures.push(`${where}: kéo hàng bằng bàn phím không đổi`)
+        const handle = page.getByRole("button", { name: "Drag to reorder" }).first()
+        await handle.scrollIntoViewIfNeeded()
+        const box = await handle.boundingBox()
+        if (!box) failures.push(`${where}: không thấy nút kéo`)
+        else {
+          await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+          await page.mouse.down()
+          await page.mouse.move(box.x + box.width / 2, box.y + 140, { steps: 12 })
+          await page.mouse.up()
+          const afterMouse = await page.getByRole("row").nth(1).innerText()
+          if (afterMouse === afterKey) failures.push(`${where}: kéo hàng bằng chuột không đổi`)
+        }
+      }
     }
-    await page.keyboard.press("Space")
-    const afterKey = await page.getByRole("row").nth(1).innerText()
-    if (beforeHeader === afterKey) failures.push("kéo hàng bằng bàn phím không đổi")
-    const handle = page.getByRole("button", { name: "Drag to reorder" }).first()
-    const box = await handle.boundingBox()
-    if (box) {
-      await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
-      await page.mouse.down()
-      await page.mouse.move(box.x + box.width / 2, box.y + 140, { steps: 12 })
-      await page.mouse.up()
-    }
-    const afterMouse = await page.getByRole("row").nth(1).innerText()
-    if (afterMouse === afterKey) failures.push("kéo hàng bằng chuột không đổi")
 
     await page.close()
     expect(failures, failures.join("\n")).toEqual([])
-  }, 300_000)
+  }, 420_000)
 })
