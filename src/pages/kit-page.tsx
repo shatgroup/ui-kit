@@ -256,7 +256,7 @@ export function KitPage() {
               <CardDescription>3 yêu cầu đang mở</CardDescription>
             </CardHeader>
             <CardContent>
-              <Table className="table-fixed">
+              <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Mã</TableHead>

@@ -337,30 +337,38 @@ export function PreviewPage() {
                     description={tab === "done" ? "Các yêu cầu hoàn tất sẽ hiện ở đây." : "Đổi bộ lọc hoặc tạo yêu cầu mới."}
                   />
                 ) : (
-                  <Table className="table-fixed">
+                  <Table stickyFirstColumn>
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Mã</TableHead>
-                        <TableHead>Cửa hàng</TableHead>
-                        <TableHead>Loại POSM</TableHead>
-                        <TableHead numeric>Số lượng</TableHead>
-                        <TableHead>Trạng thái</TableHead>
-                        <TableHead>Ngày</TableHead>
-                        <TableHead>Thao tác</TableHead>
+                        <TableHead minWidth={120}>Mã</TableHead>
+                        <TableHead minWidth={220} grow>
+                          Cửa hàng
+                        </TableHead>
+                        <TableHead minWidth={120}>Loại POSM</TableHead>
+                        <TableHead minWidth={96} numeric>
+                          Số lượng
+                        </TableHead>
+                        <TableHead minWidth={120}>Trạng thái</TableHead>
+                        <TableHead minWidth={112}>Ngày</TableHead>
+                        <TableHead minWidth={64}>Thao tác</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {rows.map((row) => (
                         <TableRow key={row.code}>
-                          <TableCell>{row.code}</TableCell>
-                          <TableCell>{row.store}</TableCell>
-                          <TableCell>{row.type}</TableCell>
-                          <TableCell numeric>{row.qty}</TableCell>
-                          <TableCell>
+                          <TableCell minWidth={120}>{row.code}</TableCell>
+                          <TableCell minWidth={220} grow>
+                            {row.store}
+                          </TableCell>
+                          <TableCell minWidth={120}>{row.type}</TableCell>
+                          <TableCell minWidth={96} numeric>
+                            {row.qty}
+                          </TableCell>
+                          <TableCell minWidth={120}>
                             <Badge variant={STATUS_BADGE[row.status].variant}>{STATUS_BADGE[row.status].label}</Badge>
                           </TableCell>
-                          <TableCell>{row.date}</TableCell>
-                          <TableCell wrap>
+                          <TableCell minWidth={112}>{row.date}</TableCell>
+                          <TableCell minWidth={64} wrap>
                             <DropdownMenu>
                               <DropdownMenuTrigger
                                 render={<Button variant="ghost" size="sm" className="w-8 px-0" aria-label={`Thao tác ${row.code}`} />}

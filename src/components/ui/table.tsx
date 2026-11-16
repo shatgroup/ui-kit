@@ -2,10 +2,19 @@ import type { ComponentProps, ReactNode } from "react"
 import { cn } from "@/lib/utils.ts"
 import { Truncated } from "./truncated.tsx"
 
-function Table({ className, ...props }: ComponentProps<"table">) {
+type TableProps = ComponentProps<"table"> & {
+  stickyFirstColumn?: boolean
+}
+
+function Table({ className, stickyFirstColumn = false, ...props }: TableProps) {
   return (
-    <div data-slot="table-container" className="w-full min-w-0 overflow-x-auto">
-      <table data-slot="table" className={cn("w-full text-sm", className)} {...props} />
+    <div data-slot="table-container" data-scroll-x="true" className="w-full min-w-0">
+      <table
+        data-slot="table"
+        data-sticky-first={stickyFirstColumn ? "true" : undefined}
+        className={cn("w-full text-sm", className)}
+        {...props}
+      />
     </div>
   )
 }
@@ -29,14 +38,30 @@ function TableRow({ className, ...props }: ComponentProps<"tr">) {
 type CellProps = {
   wrap?: boolean
   numeric?: boolean
+  minWidth?: number
+  grow?: boolean
+  sticky?: boolean
   children?: ReactNode
 }
 
-function TableHead({ className, wrap = false, numeric = false, children, ...props }: ComponentProps<"th"> & CellProps) {
+function TableHead({
+  className,
+  wrap = false,
+  numeric = false,
+  minWidth,
+  grow = false,
+  sticky = false,
+  children,
+  ...props
+}: ComponentProps<"th"> & CellProps) {
   return (
     <th
       data-slot="table-head"
+      data-col={grow ? "grow" : "fit"}
+      data-col-sticky={sticky ? "true" : undefined}
       className={cn("h-control-sm px-3 text-left font-medium text-muted-foreground", numeric && "text-right tabular-nums", className)}
+      // check-ui-ignore-next-line: minWidth là số pixel của từng cột, không có class tĩnh
+      style={minWidth ? { minWidth } : undefined}
       {...props}
     >
       <CellText wrap={wrap}>{children}</CellText>
@@ -44,11 +69,24 @@ function TableHead({ className, wrap = false, numeric = false, children, ...prop
   )
 }
 
-function TableCell({ className, wrap = false, numeric = false, children, ...props }: ComponentProps<"td"> & CellProps) {
+function TableCell({
+  className,
+  wrap = false,
+  numeric = false,
+  minWidth,
+  grow = false,
+  sticky = false,
+  children,
+  ...props
+}: ComponentProps<"td"> & CellProps) {
   return (
     <td
       data-slot="table-cell"
-      className={cn("h-control-md overflow-hidden px-3 align-middle", numeric && "text-right tabular-nums", className)}
+      data-col={grow ? "grow" : "fit"}
+      data-col-sticky={sticky ? "true" : undefined}
+      className={cn("h-control-md px-3 align-middle", numeric && "text-right tabular-nums", className)}
+      // check-ui-ignore-next-line: minWidth là số pixel của từng cột, không có class tĩnh
+      style={minWidth ? { minWidth } : undefined}
       {...props}
     >
       <CellText wrap={wrap}>{children}</CellText>
