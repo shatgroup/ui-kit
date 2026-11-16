@@ -1,14 +1,15 @@
 import { Checkbox as CheckboxPrimitive } from "@base-ui/react/checkbox"
-import { CheckIcon } from "lucide-react"
+import { CheckIcon, MinusIcon } from "lucide-react"
 import { useId, type ReactNode } from "react"
 import { cn } from "@/lib/utils.ts"
 import { focusRing } from "./control.ts"
 import { Label } from "./label.tsx"
 
-function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
+function Checkbox({ className, indeterminate, ...props }: CheckboxPrimitive.Root.Props) {
   return (
     <CheckboxPrimitive.Root
       data-slot="checkbox"
+      indeterminate={indeterminate}
       className={cn(
         "flex size-4 shrink-0 items-center justify-center rounded-sm border border-input bg-background text-primary-foreground",
         "data-checked:border-primary data-checked:bg-primary",
@@ -19,7 +20,7 @@ function Checkbox({ className, ...props }: CheckboxPrimitive.Root.Props) {
       {...props}
     >
       <CheckboxPrimitive.Indicator className="flex items-center justify-center">
-        <CheckIcon className="size-3.5" />
+        {indeterminate ? <MinusIcon className="size-3.5" /> : <CheckIcon className="size-3.5" />}
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )

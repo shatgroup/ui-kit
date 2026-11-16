@@ -16,6 +16,8 @@ import { FormLayout } from "@/components/patterns/form-layout.tsx"
 import { PageHeader } from "@/components/patterns/page-header.tsx"
 import { StatCard } from "@/components/patterns/stat-card.tsx"
 import { StatusTimeline } from "@/components/patterns/status-timeline.tsx"
+import { Calendar } from "@/components/ui/calendar.tsx"
+import { vi } from "date-fns/locale"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import {
@@ -280,6 +282,7 @@ export function PreviewPage() {
           <SheetBody>
             <Stack gap={4}>
               <Text>{detail?.store}</Text>
+              <Calendar locale={vi} weekStartsOn={1} />
               <StatusTimeline
                 items={[
                   { id: "created", title: "Tạo yêu cầu", time: detail?.date ?? "", note: detail?.type, state: "done" },

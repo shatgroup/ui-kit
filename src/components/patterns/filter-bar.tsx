@@ -1,4 +1,5 @@
-import { Inline, Stack, Text } from "@/components/layout/index.ts"
+import { SearchIcon } from "lucide-react"
+import { Box, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
 import { Input } from "@/components/ui/input.tsx"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.tsx"
@@ -31,14 +32,17 @@ export function FilterBar({ query, onQueryChange, filters, onClear, resultCount 
   return (
     <Stack gap={2}>
       <Inline gap={2} align="center">
-        <Input
-          size="md"
-          value={query}
-          placeholder="Tìm kiếm"
-          aria-label="Tìm kiếm"
-          className="w-60"
-          onChange={(event) => onQueryChange(event.target.value)}
-        />
+        <Box className="relative w-60">
+          <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            size="md"
+            value={query}
+            placeholder="Tìm kiếm"
+            aria-label="Tìm kiếm"
+            className="pl-8"
+            onChange={(event) => onQueryChange(event.target.value)}
+          />
+        </Box>
         {filters.map((filter) => {
           const current = filter.options.find((option) => option.value === filter.value)
           return (

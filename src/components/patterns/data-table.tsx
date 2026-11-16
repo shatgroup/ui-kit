@@ -81,6 +81,8 @@ export function DataTable<T extends Record<string, unknown>>({
     initialState: { pagination: { pageIndex: 0, pageSize: 10 } },
   })
 
+  const allSelected = table.getIsAllPageRowsSelected()
+  const someSelected = table.getIsSomePageRowsSelected()
   const rows = table.getRowModel().rows
   const selected = table.getSelectedRowModel().rows.map((row) => row.id)
   const total = table.getFilteredRowModel().rows.length
@@ -140,7 +142,19 @@ export function DataTable<T extends Record<string, unknown>>({
                       grow={column?.grow}
                       numeric={column?.numeric}
                     >
-                      <SortButton column={header.column} label={flexRender(header.column.columnDef.header, header.getContext())} />
+                      {index === 0 && selectable ? (
+                        <Inline gap={2} align="center" wrap={false}>
+                          <Checkbox
+                            checked={allSelected}
+                            indeterminate={someSelected && !allSelected}
+                            aria-label="Chọn tất cả"
+                            onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked === true)}
+                          />
+                          <SortButton column={header.column} label={flexRender(header.column.columnDef.header, header.getContext())} />
+                        </Inline>
+                      ) : (
+                        <SortButton column={header.column} label={flexRender(header.column.columnDef.header, header.getContext())} />
+                      )}
                     </TableHead>
                   )
                 })}
