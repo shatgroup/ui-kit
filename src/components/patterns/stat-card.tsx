@@ -1,3 +1,4 @@
+import type { ReactNode } from "react"
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card.tsx"
 import { Inline, Stack, Text } from "@/components/layout/index.ts"
@@ -10,17 +11,21 @@ type StatCardProps = {
   delta?: string
   direction?: "up" | "down"
   description?: string
+  action?: ReactNode
 }
 
-export function StatCard({ label, value, delta, direction, description }: StatCardProps) {
+export function StatCard({ label, value, delta, direction, description, action }: StatCardProps) {
   const Icon = direction === "down" ? ArrowDownIcon : ArrowUpIcon
   return (
     <Card>
       <CardContent>
         <Stack gap={2}>
-          <Text size="sm" tone="muted">
-            {label}
-          </Text>
+          <Inline align="start" justify="between" gap={2}>
+            <Text size="sm" tone="muted">
+              {label}
+            </Text>
+            {action}
+          </Inline>
           <Tooltip>
             <TooltipTrigger render={<span className="block min-w-0" />}>
               <Truncated className="text-2xl font-semibold tabular-nums">{value}</Truncated>

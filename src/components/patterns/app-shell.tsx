@@ -23,7 +23,10 @@ type AppShellProps = {
   groups: AppNavGroup[]
   activeId: string
   onNavigate: (id: string) => void
+  leading?: ReactNode
   topbar?: ReactNode
+  footer?: ReactNode
+  maxWidth?: boolean
   children?: ReactNode
 }
 
@@ -99,21 +102,22 @@ function NavGroups({
   )
 }
 
-export function AppShell({ logo, groups, activeId, onNavigate, topbar, children }: AppShellProps) {
+export function AppShell({ logo, groups, activeId, onNavigate, leading, topbar, footer, maxWidth = true, children }: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <Box className="min-h-dvh">
       <Inline align="stretch" wrap={false} className="min-h-dvh">
-        <Box border className={cn("hidden shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-16" : "w-60")}>
-          <Stack gap={4} className="h-dvh p-3">
+        <Box border className={cn("sticky top-0 hidden h-dvh shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-16" : "w-60")}>
+          <Stack gap={4} className="h-full p-3">
             <Inline align="center" justify={collapsed ? "center" : "start"}>
               {logo}
             </Inline>
             <Box className="min-h-0 flex-1 overflow-y-auto">
               <NavGroups groups={groups} activeId={activeId} collapsed={collapsed} onNavigate={onNavigate} />
             </Box>
+            {footer}
             <Button
               variant="ghost"
               className={cn("w-full justify-start", collapsed && "w-10 px-0")}
@@ -125,22 +129,25 @@ export function AppShell({ logo, groups, activeId, onNavigate, topbar, children 
             </Button>
           </Stack>
         </Box>
-        <Stack gap={4} className="min-w-0 flex-1 p-4">
-          <Inline gap={2} align="center" justify="between">
-            <Inline gap={2} align="center" className="min-w-0">
-              <Button
-                variant="outline"
-                className="w-10 px-0 md:hidden"
-                aria-label="Mở menu"
-                onClick={() => setMenuOpen(true)}
-              >
-                <MenuIcon className="size-4" />
-              </Button>
+        <Box className="flex min-w-0 flex-1 justify-center">
+          <Stack gap={4} className={cn("min-h-dvh w-full p-4", maxWidth && "max-w-page")}>
+            <Inline gap={2} align="center" justify="between">
+              <Inline gap={2} align="center" className="min-w-0">
+                <Button
+                  variant="outline"
+                  className="w-10 px-0 md:hidden"
+                  aria-label="Mở menu"
+                  onClick={() => setMenuOpen(true)}
+                >
+                  <MenuIcon className="size-4" />
+                </Button>
+                {leading}
+              </Inline>
               {topbar}
             </Inline>
-          </Inline>
-          <Box className="min-w-0 flex-1">{children}</Box>
-        </Stack>
+            <Box className="min-w-0 flex-1">{children}</Box>
+          </Stack>
+        </Box>
       </Inline>
       <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
         <SheetContent side="left">
