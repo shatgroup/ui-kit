@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart.tsx"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.tsx"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx"
-import { visitorData } from "./visitor-data.ts"
+import { visitorData } from "@/fixtures/visitor-data.ts"
 
 const areaConfig = {
   desktop: { label: "Desktop", color: "var(--chart-1)" },
@@ -81,7 +81,7 @@ export function VisitorsChart() {
         </div>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={areaConfig} className="aspect-auto h-[250px] w-full">
+        <ChartContainer config={areaConfig} className="aspect-auto h-64 w-full">
           <AreaChart data={filtered} margin={{ left: 16, right: 16, top: 8 }}>
             <defs>
               <linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
@@ -121,7 +121,7 @@ export function PieDonut() {
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent className="flex justify-center">
-        <ChartContainer config={browserConfig} className="aspect-square max-h-[300px] w-full">
+        <ChartContainer config={browserConfig} className="aspect-square max-h-72 w-full">
           <PieChart>
             <ChartTooltip content={<ChartTooltipContent />} />
             <Pie data={pieData} dataKey="visitors" nameKey="browser" innerRadius={60} strokeWidth={5}>
@@ -165,7 +165,7 @@ export function BarMixed() {
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={browserConfig} className="h-[300px] w-full">
+        <ChartContainer config={browserConfig} className="h-72 w-full">
           <BarChart accessibilityLayer data={barData} layout="vertical" margin={{ left: 0 }}>
             <YAxis
               dataKey="browser"

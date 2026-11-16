@@ -61,7 +61,7 @@ export function CardsStats() {
           <CardDescription>+20.1% from last month</CardDescription>
         </CardHeader>
         <CardContent className="pb-0">
-          <ChartContainer config={chartConfig} className="h-[90px] w-full">
+          <ChartContainer config={chartConfig} className="h-24 w-full">
             <LineChart
               data={data}
               margin={{
@@ -90,7 +90,7 @@ export function CardsStats() {
           <CardDescription>+180.1% from last month</CardDescription>
         </CardHeader>
         <CardContent className="relative flex flex-1 flex-col justify-end p-0">
-          <ChartContainer config={chartConfig} className="relative size-full h-[90px]">
+          <ChartContainer config={chartConfig} className="relative size-full h-24">
             <AreaChart
               data={data}
               margin={{

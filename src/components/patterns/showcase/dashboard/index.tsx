@@ -36,15 +36,13 @@ import {
   PlusIcon,
   SearchIcon,
   SettingsIcon,
-  TrendingDownIcon,
-  TrendingUpIcon,
   UsersIcon,
 } from "lucide-react"
 import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { AppShell, type AppNavGroup } from "@/components/patterns/app-shell.tsx"
+import { StatCard } from "@/components/patterns/stat-card.tsx"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
-import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card.tsx"
 import { Checkbox } from "@/components/ui/checkbox.tsx"
 import {
   DropdownMenu,
@@ -55,10 +53,11 @@ import {
 } from "@/components/ui/dropdown-menu.tsx"
 import { Input } from "@/components/ui/input.tsx"
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select.tsx"
+import { StatusBadge } from "@/components/ui/status-badge.tsx"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
 import { BarMixed, PieDonut, VisitorsChart } from "./charts.tsx"
-import { documents, type DocumentRow } from "./documents.ts"
+import { documents, type DocumentRow } from "@/fixtures/documents.ts"
 
 const GROUPS: AppNavGroup[] = [
   {
@@ -115,25 +114,15 @@ export function ShowcaseDashboard({ leading, topbar }: { leading: ReactNode; top
       <Stack gap={4} className="@container py-4">
         <Grid columns={{ base: 1, md: 2, xl: 4 }} gap={4}>
           {STATS.map((item) => (
-            <Card key={item.label} data-gradient="soft">
-              <CardHeader className="flex-row items-start justify-between">
-                <div className="flex min-w-0 flex-col gap-1">
-                  <CardDescription>{item.label}</CardDescription>
-                  <CardTitle className="text-2xl font-semibold tabular-nums">{item.value}</CardTitle>
-                </div>
-                <Badge variant="outline">
-                  {item.trend === "up" ? <TrendingUpIcon className="size-3" /> : <TrendingDownIcon className="size-3" />}
-                  {item.delta}
-                </Badge>
-              </CardHeader>
-              <CardFooter className="flex-col items-start gap-1 text-sm">
-                <div className="flex items-center gap-2 font-medium">
-                  {item.line}
-                  {item.trend === "up" ? <TrendingUpIcon className="size-4" /> : <TrendingDownIcon className="size-4" />}
-                </div>
-                <div className="text-muted-foreground">{item.note}</div>
-              </CardFooter>
-            </Card>
+            <StatCard
+              key={item.label}
+              label={item.label}
+              value={item.value}
+              delta={item.delta}
+              direction={item.trend}
+              line={item.line}
+              note={item.note}
+            />
           ))}
         </Grid>
         <VisitorsChart />
@@ -358,10 +347,11 @@ function DocumentLine({
       ) : null}
       {show("status") ? (
         <TableCell wrap>
-          <Badge variant="outline">
-            {row.status === "Done" ? <CircleCheckIcon className="size-3" /> : <LoaderIcon className="size-3" />}
-            {row.status}
-          </Badge>
+          <StatusBadge
+            status={row.status === "Done" ? "done" : "in_progress"}
+            label={row.status}
+            icon={row.status === "Done" ? <CircleCheckIcon /> : <LoaderIcon />}
+          />
         </TableCell>
       ) : null}
       {show("target") ? (

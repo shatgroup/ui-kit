@@ -107,7 +107,7 @@ export function CardsChat() {
               <div
                 key={index}
                 className={cn(
-                  "flex w-max max-w-[75%] flex-col gap-2 rounded-lg px-3 py-2 text-sm",
+                  "flex w-max max-w-3/4 flex-col gap-2 rounded-lg px-3 py-2 text-sm",
                   message.role === "user" ? "self-end bg-primary text-primary-foreground" : "bg-muted"
                 )}
               >
@@ -153,7 +153,7 @@ export function CardsChat() {
         </CardFooter>
       </Card>
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="flex max-h-[85%] flex-col gap-0">
+        <DialogContent className="flex max-h-full flex-col gap-0">
           <DialogHeader className="p-4 pt-0 sm:pt-5">
             <DialogTitle>New message</DialogTitle>
             <DialogDescription>
@@ -166,7 +166,7 @@ export function CardsChat() {
                 key={user.email}
                 type="button"
                 variant="ghost"
-                className="h-auto w-full justify-start gap-2 px-3 py-2 data-[active=true]:opacity-50"
+                className="h-auto w-full justify-start gap-2 px-3 py-2 data-active:opacity-50"
                 data-active={selectedUsers.includes(user)}
                 onClick={() => {
                   if (selectedUsers.includes(user)) {

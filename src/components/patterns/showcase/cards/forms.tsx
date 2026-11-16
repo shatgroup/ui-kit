@@ -53,7 +53,7 @@ export function CardsForms() {
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="card-number">Card Number</Label>
-            <div className="grid grid-cols-2 gap-3 @3xl:grid-cols-[1fr_80px_60px]">
+            <div className="grid grid-cols-2 gap-3 @3xl:grid-cols-3">
               <Input
                 id="card-number"
                 placeholder="1234 1234 1234 1234"

@@ -200,7 +200,7 @@ export function CardsPayments() {
                     return (
                       <TableHead
                         key={header.id}
-                        className="data-[name=actions]:w-10 data-[name=amount]:w-24 data-[name=select]:w-10 data-[name=status]:w-24 [&:has([role=checkbox])]:pl-3"
+                        className="pl-3"
                         data-name={header.id}
                       >
                         {header.isPlaceholder
@@ -219,7 +219,7 @@ export function CardsPayments() {
                     {row.getVisibleCells().map((cell) => (
                       <TableCell
                         key={cell.id}
-                        className="data-[name=actions]:w-10 data-[name=amount]:w-24 data-[name=select]:w-10 data-[name=status]:w-24 [&:has([role=checkbox])]:pl-3"
+                        className="pl-3"
                         data-name={cell.column.id}
                       >
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}

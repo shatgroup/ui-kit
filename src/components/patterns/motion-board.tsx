@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, type ReactNode } from "react"
 import { ClapperboardIcon, FilmIcon, MicIcon, PackageIcon, ScrollTextIcon } from "lucide-react"
 import { Inline, Stack, Text } from "@/components/layout/index.ts"
 import { AudioPlayer } from "@/components/media/audio-player.tsx"
@@ -25,7 +25,7 @@ const CLIPS = Array.from({ length: 12 }, (_, index) => ({
   progress: 20 + index * 5,
 }))
 
-export function PreviewMotionPage() {
+export function MotionBoard({ leading, topbar = <ThemeToggle /> }: { leading?: ReactNode; topbar?: ReactNode }) {
   const [menu, setMenu] = useState("project")
   const [step, setStep] = useState(2)
   const [clipId, setClipId] = useState("3")
@@ -65,7 +65,8 @@ export function PreviewMotionPage() {
       ]}
       activeId={menu}
       onNavigate={setMenu}
-      topbar={<ThemeToggle />}
+      leading={leading}
+      topbar={topbar}
     >
       <Stack gap={4}>
         <PageHeader title="Khai trương Shondo" description="Đang ở bước Motion. Có thể quay lại bước đã xong." />

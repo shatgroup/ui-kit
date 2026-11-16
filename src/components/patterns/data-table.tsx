@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react"
-import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, GripVerticalIcon } from "lucide-react"
+import { ArrowDownIcon, ArrowUpDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon, ChevronsLeftIcon, ChevronsRightIcon, GripVerticalIcon } from "lucide-react"
 import {
   closestCenter,
   DndContext,
@@ -57,6 +57,11 @@ type DataTableProps<T> = {
   bulkActions?: (ids: string[]) => ReactNode
   reorderable?: boolean
   onReorder?: (ids: string[]) => void
+  labels?: {
+    selected?: (count: number, total: number) => string
+    rowsPerPage?: string
+    page?: (current: number, pages: number) => string
+  }
 }
 
 const PAGE_SIZES = ["10", "20", "50"]
@@ -77,6 +82,7 @@ export function DataTable<T extends Record<string, unknown>>({
   bulkActions,
   reorderable = false,
   onReorder,
+  labels,
 }: DataTableProps<T>) {
   const [pageSize, setPageSize] = useState("10")
   const sensors = useSensors(
@@ -109,9 +115,6 @@ export function DataTable<T extends Record<string, unknown>>({
   const selected = table.getSelectedRowModel().rows.map((row) => row.id)
   const total = table.getFilteredRowModel().rows.length
   const pageIndex = table.getState().pagination.pageIndex
-  const size = table.getState().pagination.pageSize
-  const from = total === 0 ? 0 : pageIndex * size + 1
-  const to = Math.min(total, (pageIndex + 1) * size)
 
   function handleReorder(event: DragEndEvent) {
     if (!onReorder || !event.over || event.active.id === event.over.id) return
@@ -262,10 +265,11 @@ export function DataTable<T extends Record<string, unknown>>({
         </Stack>
       ) : null}
       <Inline gap={2} align="center" justify="between">
+        <Text size="sm" tone="muted">
+          {(labels?.selected ?? ((count, all) => `${count} of ${all} row(s) selected`))(selected.length, total)}
+        </Text>
         <Inline gap={2} align="center">
-          <Text size="sm" tone="muted">
-            {from}–{to} / {total}
-          </Text>
+          <Text size="sm">{labels?.rowsPerPage ?? "Rows per page"}</Text>
           <Select
             value={pageSize}
             onValueChange={(value) => {
@@ -274,24 +278,31 @@ export function DataTable<T extends Record<string, unknown>>({
               table.setPageSize(Number(next))
             }}
           >
-            <SelectTrigger size="sm" className="w-24" aria-label="Số dòng mỗi trang">
-              <span>{pageSize} dòng</span>
+            <SelectTrigger size="sm" className="w-20" aria-label={labels?.rowsPerPage ?? "Rows per page"}>
+              <span>{pageSize}</span>
             </SelectTrigger>
             <SelectContent>
               {PAGE_SIZES.map((item) => (
                 <SelectItem key={item} value={item}>
-                  {item} dòng
+                  {item}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-        </Inline>
-        <Inline gap={2} align="center">
-          <Button variant="outline" size="sm" disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()}>
-            Trang trước
+          <Text size="sm">
+            {(labels?.page ?? ((current, pages) => `Page ${current} of ${pages}`))(total === 0 ? 0 : pageIndex + 1, Math.max(1, table.getPageCount()))}
+          </Text>
+          <Button variant="outline" size="sm" className="size-8 p-0" aria-label="Trang đầu" disabled={!table.getCanPreviousPage()} onClick={() => table.setPageIndex(0)}>
+            <ChevronsLeftIcon />
           </Button>
-          <Button variant="outline" size="sm" disabled={!table.getCanNextPage()} onClick={() => table.nextPage()}>
-            Trang sau
+          <Button variant="outline" size="sm" className="size-8 p-0" aria-label="Trang trước" disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()}>
+            <ChevronLeftIcon />
+          </Button>
+          <Button variant="outline" size="sm" className="size-8 p-0" aria-label="Trang sau" disabled={!table.getCanNextPage()} onClick={() => table.nextPage()}>
+            <ChevronRightIcon />
+          </Button>
+          <Button variant="outline" size="sm" className="size-8 p-0" aria-label="Trang cuối" disabled={!table.getCanNextPage()} onClick={() => table.setPageIndex(table.getPageCount() - 1)}>
+            <ChevronsRightIcon />
           </Button>
         </Inline>
       </Inline>

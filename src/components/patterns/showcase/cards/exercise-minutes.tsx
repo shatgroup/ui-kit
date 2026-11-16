@@ -64,7 +64,7 @@ export function CardsExerciseMinutes() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="w-full @3xl:h-[200px]">
+        <ChartContainer config={chartConfig} className="w-full @3xl:h-48">
           <LineChart
             accessibilityLayer
             data={data}

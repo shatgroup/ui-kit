@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState, type ReactNode } from "react"
 import {
   BarChart3Icon,
   ClipboardListIcon,
@@ -19,6 +19,7 @@ import { StatusTimeline } from "@/components/patterns/status-timeline.tsx"
 import { Calendar } from "@/components/ui/calendar.tsx"
 import { vi } from "date-fns/locale"
 import { Badge } from "@/components/ui/badge.tsx"
+import { StatusBadge } from "@/components/ui/status-badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import {
@@ -60,7 +61,6 @@ const STORES = ["Shondo Quận 1", LONG_STORE, "Shondo Thủ Đức"]
 const TYPES = ["Standee", "Wobbler", "Poster"]
 const STATUS_CYCLE: Status[] = ["pending", "doing", "done"]
 const STATUS_LABEL: Record<Status, string> = { pending: "Chờ duyệt", doing: "Đang làm", done: "Đã xong" }
-const STATUS_BADGE = { pending: "warning", doing: "info", done: "success" } as const
 
 const ROWS: RequestRow[] = Array.from({ length: 40 }, (_, index) => ({
   id: String(index + 1),
@@ -94,19 +94,21 @@ const GROUPS: AppNavGroup[] = [
 const COLUMNS: DataColumn<RequestRow>[] = [
   { id: "code", header: "Mã", accessor: (row) => row.code, minWidth: 120 },
   { id: "store", header: "Cửa hàng", accessor: (row) => row.store, minWidth: 240, grow: true },
-  { id: "type", header: "Loại POSM", accessor: (row) => row.type, minWidth: 120 },
+  { id: "type", header: "Loại POSM", accessor: (row) => row.type, minWidth: 120, cell: (row) => <Badge variant="outline">{row.type}</Badge> },
   { id: "qty", header: "Số lượng", accessor: (row) => row.qty, minWidth: 96, numeric: true },
   {
     id: "status",
     header: "Trạng thái",
     accessor: (row) => STATUS_LABEL[row.status],
     minWidth: 120,
-    cell: (row) => <Badge variant={STATUS_BADGE[row.status]}>{STATUS_LABEL[row.status]}</Badge>,
+    cell: (row) => (
+      <StatusBadge status={row.status === "doing" ? "in_progress" : row.status} label={STATUS_LABEL[row.status]} />
+    ),
   },
   { id: "date", header: "Ngày", accessor: (row) => row.date, minWidth: 112 },
 ]
 
-export function PreviewPage() {
+export function PosmBoard({ leading, topbar = <ThemeToggle /> }: { leading?: ReactNode; topbar?: ReactNode }) {
   const [menu, setMenu] = useState("requests")
   const [query, setQuery] = useState("")
   const [store, setStore] = useState("all")
@@ -212,7 +214,8 @@ export function PreviewPage() {
       groups={GROUPS}
       activeId={menu}
       onNavigate={setMenu}
-      topbar={<ThemeToggle />}
+      leading={leading}
+      topbar={topbar}
     >
       <Stack gap={4}>
         <PageHeader
@@ -245,6 +248,11 @@ export function PreviewPage() {
           getRowId={(row) => row.id}
           stickyFirstColumn
           selectable
+          labels={{
+            selected: (count, total) => `${count} / ${total} dòng đã chọn`,
+            rowsPerPage: "Số dòng mỗi trang",
+            page: (current, pages) => `Trang ${current} / ${pages}`,
+          }}
           bulkActions={(ids) => (
             <Button variant="outline" size="sm" onClick={() => toast.success(`Đã chọn ${ids.length} dòng`)}>
               Thao tác hàng loạt

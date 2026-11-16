@@ -10,11 +10,11 @@ import {
   PaperclipIcon,
   PhoneIcon,
   SearchIcon,
-  TriangleIcon,
   VideoIcon,
 } from "lucide-react"
 import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx"
+import { Ticker } from "@/components/patterns/ticker.tsx"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.tsx"
@@ -69,31 +69,7 @@ export function ShowcaseApplication() {
 
   return (
     <Stack gap={4}>
-      <Card className="gap-2 py-2">
-        <div data-scroll-x="true" className="overflow-x-auto">
-          <Inline gap={0} align="center" wrap={false}>
-            {ticker.map((item, index) => (
-              <Inline
-                key={item.symbol}
-                gap={2}
-                align="center"
-                wrap={false}
-                className={index > 0 ? "shrink-0 border-l border-border px-3" : "shrink-0 px-3"}
-              >
-                <Avatar size="sm">
-                  <AvatarFallback>{item.avatar}</AvatarFallback>
-                </Avatar>
-                <Text size="sm" weight="semibold" className="whitespace-nowrap">{item.symbol}</Text>
-                <Text size="sm" tone="muted" className="whitespace-nowrap tabular-nums">{item.price}</Text>
-                <Inline gap={1} align="center" wrap={false} className="shrink-0">
-                  <TriangleIcon className={item.up ? "size-3 fill-chart-1 text-chart-1" : "size-3 rotate-180 fill-destructive text-destructive"} />
-                  <Text size="sm" className={item.up ? "whitespace-nowrap text-chart-1" : "whitespace-nowrap text-destructive"}>{item.change}</Text>
-                </Inline>
-              </Inline>
-            ))}
-          </Inline>
-        </div>
-      </Card>
+      <Ticker items={ticker} />
       <Grid columns={{ base: 1, lg: 2 }} gap={4}>
         <Card>
           <CardHeader>
