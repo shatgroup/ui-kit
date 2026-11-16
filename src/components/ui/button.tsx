@@ -12,7 +12,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border bg-background hover:bg-accent hover:text-accent-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
@@ -37,24 +37,51 @@ const buttonVariants = cva(
   }
 )
 
+const forceHover: Record<string, string> = {
+  default: "bg-primary/90",
+  destructive: "bg-destructive/90",
+  outline: "bg-accent text-accent-foreground",
+  secondary: "bg-secondary/80",
+  ghost: "bg-accent text-accent-foreground",
+  link: "underline",
+}
+
+const forcePressed: Record<string, string> = {
+  default: "bg-primary/80",
+  destructive: "bg-destructive/80",
+  outline: "bg-accent text-accent-foreground",
+  secondary: "bg-secondary/70",
+  ghost: "bg-accent text-accent-foreground",
+  link: "underline",
+}
+
 function Button({
   className,
   variant = "default",
   size = "default",
   asChild = false,
+  forceState,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
+    forceState?: "hover" | "pressed" | "focus"
   }) {
   const Comp = asChild ? Slot.Root : "button"
+  const name = variant ?? "default"
 
   return (
     <Comp
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      className={cn(buttonVariants({ variant, size, className }))}
+      data-force-state={forceState}
+      className={cn(
+        buttonVariants({ variant, size, className }),
+        forceState === "hover" && forceHover[name],
+        forceState === "pressed" && forcePressed[name],
+        forceState === "focus" && "border-ring ring-[3px] ring-ring/50",
+      )}
       {...props}
     />
   )
