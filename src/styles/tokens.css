@@ -108,6 +108,17 @@
   max-width: 1440px;
 }
 
+[data-stat="true"] {
+  container-type: inline-size;
+}
+
+@container (min-width: 250px) {
+  [data-stat="true"] .stat-value {
+    font-size: var(--text-3xl);
+    line-height: var(--text-3xl--line-height);
+  }
+}
+
 [data-slot="switch"] {
   width: 32px;
   height: 18px;

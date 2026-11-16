@@ -17,8 +17,9 @@ type StatCardProps = {
 export function StatCard({ label, value, delta, direction, description, action }: StatCardProps) {
   const Icon = direction === "down" ? ArrowDownIcon : ArrowUpIcon
   return (
-    <Card>
-      <CardContent>
+    <div data-stat="true" className="min-w-0">
+      <Card>
+        <CardContent>
         <Stack gap={2}>
           <Inline align="start" justify="between" gap={2}>
             <Text size="sm" tone="muted">
@@ -28,7 +29,7 @@ export function StatCard({ label, value, delta, direction, description, action }
           </Inline>
           <Tooltip>
             <TooltipTrigger render={<span className="block min-w-0" />}>
-              <Truncated className="text-2xl font-semibold tabular-nums">{value}</Truncated>
+              <Truncated className="stat-value text-2xl font-semibold tabular-nums">{value}</Truncated>
             </TooltipTrigger>
             <TooltipContent>{value}</TooltipContent>
           </Tooltip>
@@ -46,7 +47,8 @@ export function StatCard({ label, value, delta, direction, description, action }
             </Text>
           ) : null}
         </Stack>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

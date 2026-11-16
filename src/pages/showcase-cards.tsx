@@ -4,6 +4,7 @@ import { MinusIcon, MoreHorizontalIcon, PlusIcon } from "lucide-react"
 import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx"
 import { Badge } from "@/components/ui/badge.tsx"
+import { GithubIcon } from "@/components/icons/github.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { Calendar } from "@/components/ui/calendar.tsx"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card.tsx"
@@ -194,7 +195,7 @@ export function ShowcaseCards() {
         <CardContent>
           <Stack gap={3}>
             <Grid columns={2} gap={2}>
-              <Button variant="outline">GitHub</Button>
+              <Button variant="outline"><GithubIcon />GitHub</Button>
               <Button variant="outline">Google</Button>
             </Grid>
             <Inline gap={2} align="center">
