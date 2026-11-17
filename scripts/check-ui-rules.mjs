@@ -116,8 +116,11 @@ const stylesDir = path.join(src, "styles")
 for (const name of readdirSync(stylesDir)) {
   if (!name.endsWith(".css")) continue
   const file = path.join(stylesDir, name)
+  const rel = path.relative(root, file).split(path.sep).join("/")
   const lines = readFileSync(file, "utf8").split("\n")
   lines.forEach((line, index) => {
+    const mark = line.match(/check-ui-ignore:\s*(.*)$/)
+    if (mark) exceptions.push(`${rel}:${index + 1}: ${mark[1].replace(/\*\/\s*$/, "").trim() || "không ghi lý do"}`)
     if (/\[data-slot(?:=|])/.test(line)) {
       report(file, index + 1, "Style component phải nằm trong file component, không dùng [data-slot] trong CSS")
     }
@@ -135,7 +138,7 @@ for (const file of walk(src)) {
     if (!mark) return
     const target = index + 2
     skip.add(target)
-    exceptions.push(`${rel}:${target}: ${mark[1].trim() || "không ghi lý do"}`)
+    exceptions.push(`${rel}:${target}: ${mark[1].replace(/\*\/\s*$/, "").trim() || "không ghi lý do"}`)
   })
   ignored.set(file, skip)
 

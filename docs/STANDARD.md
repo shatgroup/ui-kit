@@ -62,6 +62,12 @@ Chữ mặc định trong component là tiếng Việt. Đổi ngôn ngữ bằn
 | MediaPreview | `emptyTitle`, `emptyDescription`, `errorLabel`, `retryLabel`, `playLabel`, `pauseLabel` | Chưa có tư liệu; Thả ảnh hoặc video vào để xem trước.; Không tải được tư liệu.; Thử lại; Phát; Tạm dừng |
 | AudioPlayer | `label`, `playLabel`, `pauseLabel`, `seekLabel`, `speedLabel` | Trình phát; Phát; Tạm dừng; Thanh tua; Tốc độ phát |
 | AppShell | `collapseLabel`, `collapseAriaLabel`, `expandLabel`, `menuLabel` | Thu gọn; Thu gọn sidebar; Mở sidebar; Mở menu |
+| PlaceholderNode | `label` | Thêm bước |
+| NodeSearch | `placeholder`, `emptyLabel`, `groupLabel` | Tìm node; Không thấy kết quả; Node |
+| ZoomSlider | `zoomOutLabel`, `zoomInLabel`, `resetLabel`, `fitLabel` | Thu nhỏ; Phóng to; Đặt 100%; Vừa khung |
+| ZoomSelect | `placeholder`, `fitLabel` | Thu phóng; Vừa khung |
+| WorkflowNode | `menuLabel`, `items` | Thêm thao tác; Sửa, Nhân bản, Xoá |
+| DevTools | `labels` | Sơ đồ node; Nhật ký đổi; Khung nhìn; Chưa có thay đổi |
 
 | Token | Cỡ | Line-height | Lần dùng |
 | --- | --- | --- | --- |
@@ -117,3 +123,14 @@ Mọi app dùng cùng khung. Sidebar dựng bằng `Sidebar` của shadcn trong 
 Không thêm kiểu chiếm cột ngoài bảng. Cần kiểu mới thì thêm vào `Grid` và bảng này.
 
 Prop `columns` của `Grid` không dùng cho lưới card. Nó chỉ còn cho lưới specimen bên trong một card (ma trận nút, ô màu, icon, ô form). `src/pages` và `src/components/patterns` không ghi class `grid-cols-*`; showcase và `src/components/ui` không bị cấm này. Lưới card không dùng gap khác `gap-4`.
+
+## Chiều cao khung
+
+Chỉ dùng các mức này khi cần một khung cao cố định. `h-14` là header và thanh dưới. `h-40` là khung flow nhỏ, một component. `h-96` là khung xem trước App shell. `h-120` là khung flow lớn: cao hơn MiniMap để node không chui xuống góc minimap.
+
+| Class | px | Việc |
+| --- | --- | --- |
+| h-14 | 56 | header, thanh dưới |
+| h-40 | 160 | khung flow nhỏ |
+| h-96 | 384 | khung App shell |
+| h-120 | 480 | khung flow lớn |

@@ -12,6 +12,7 @@ const SECTIONS = [
   { id: "nhap-lieu", label: "Inputs" },
   { id: "phan-hoi", label: "Feedback" },
   { id: "du-lieu", label: "Data" },
+  { id: "flow", label: "Flow" },
   { id: "icons", label: "Icons" },
 ] as const
 

@@ -49,6 +49,7 @@ import { TagsInput } from "@/components/ui/tags-input.tsx"
 import { Textarea } from "@/components/ui/textarea.tsx"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
+import { FlowSection } from "./flow.tsx"
 import { Icons } from "./icons.tsx"
 
 const VARIANTS = ["default", "secondary", "outline", "ghost", "destructive", "link"] as const
@@ -722,6 +723,7 @@ function Kit() {
         </Span>
       </Section>
 
+      <FlowSection />
       <Icons />
     </Stack>
   )

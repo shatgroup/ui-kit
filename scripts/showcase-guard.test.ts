@@ -1087,6 +1087,56 @@ describe("kiểm showcase", () => {
           if (desktop) {
             if (Math.abs(side - 256) > 1.5) notes.push(`sidebar ${side.toFixed(1)}px`)
           } else if (side > 2) notes.push(`sidebar hiện khi hẹp ${side.toFixed(1)}px`)
+          const hiddenBox = (el: Element) => {
+            const box = el.getBoundingClientRect()
+            return box.width < 2 || box.height < 2
+          }
+          const inside = (frame: Element, node: Element) => {
+            const box = frame.getBoundingClientRect()
+            const item = node.getBoundingClientRect()
+            return item.width > 2 && item.height > 2 && item.left >= box.left - 2 && item.right <= box.right + 2 && item.top >= box.top - 2 && item.bottom <= box.bottom + 2
+          }
+          for (const id of ["mind", "workflow"]) {
+            const frame = document.querySelector(`[data-flow="${id}"]`)
+            const flowNodes = frame ? [...frame.querySelectorAll(".react-flow__node")] : []
+            if (!(frame instanceof HTMLElement) || flowNodes.length === 0) notes.push(`thiếu canvas ${id}`)
+            else if (flowNodes.some((node) => !inside(frame, node))) notes.push(`node ${id} nằm ngoài khung`)
+          }
+          const demos = [...document.querySelectorAll("[data-flow-demo]")]
+          if (demos.length !== 12) notes.push(`demo flow ${demos.length}`)
+          for (const demo of demos) {
+            const name = demo.getAttribute("data-flow-demo") ?? ""
+            const shown = demo.querySelector(".react-flow__node, [data-flow-zoom], [data-slot=command]")
+            if (!(shown instanceof Element) || hiddenBox(shown)) notes.push(`demo ${name} trống`)
+          }
+          const shadowOf = (el: Element) => {
+            const shadow = getComputedStyle(el).boxShadow
+            const lengths = shadow.match(/-?[\d.]+px/g) ?? []
+            return shadow !== "none" && lengths.some((item) => Math.abs(Number.parseFloat(item)) > 0.5)
+          }
+          const shaded = document.querySelectorAll("[data-flow] .react-flow__node, [data-flow] .react-flow__controls, [data-flow] .react-flow__minimap, [data-flow] .react-flow__edge-text, [data-flow-demo] [data-slot=command], [data-flow-demo] [data-flow-zoom]")
+          for (const el of shaded) {
+            if (shadowOf(el)) notes.push(`flow còn bóng ${el.className.toString().slice(0, 40)}`)
+          }
+          const mind = document.querySelector("[data-flow=mind]")
+          const flowControls = mind?.querySelector(".react-flow__controls")
+          const flowMap = mind?.querySelector(".react-flow__minimap")
+          if (window.innerWidth < 768) {
+            if (!(flowControls instanceof HTMLElement) || hiddenBox(flowControls)) notes.push("375 thiếu Controls")
+            if (flowMap instanceof HTMLElement && !hiddenBox(flowMap)) notes.push("375 MiniMap còn hiện")
+          }
+          const paintFlow = () => {
+            const canvas = document.querySelector("[data-flow=mind] .react-flow")
+            const node = document.querySelector("[data-flow=mind] .flow-node")
+            if (!(canvas instanceof HTMLElement) || !(node instanceof HTMLElement)) return ""
+            return `${getComputedStyle(canvas).backgroundColor}|${getComputedStyle(node).backgroundColor}`
+          }
+          const flowBefore = paintFlow()
+          const wasDark = document.documentElement.classList.contains("dark")
+          document.documentElement.classList.toggle("dark", !wasDark)
+          const flowAfter = paintFlow()
+          document.documentElement.classList.toggle("dark", wasDark)
+          if (!flowBefore || flowBefore === flowAfter) notes.push("theme flow không đổi màu")
           return notes
         })
         for (const note of found) failures.push(`${where}: ${note}`)
@@ -1133,6 +1183,43 @@ describe("kiểm showcase", () => {
           if (height > 30000) failures.push(`${where}: trang cao ${height}px`)
           await page.screenshot({ path: shot, fullPage: true })
         }
+
+        const flow = page.locator("[data-flow=mind]")
+        await flow.evaluate((el) => el.scrollIntoView({ block: "center" }))
+        const scrollBefore = await page.evaluate(() => window.scrollY)
+        const zoomBefore = await page.evaluate(() => document.querySelector("[data-flow=mind] .react-flow__viewport")?.getAttribute("style") ?? "")
+        await flow.locator(".react-flow").hover()
+        await page.mouse.wheel(0, 280)
+        const scrolled = await page.waitForFunction((before: number) => window.scrollY !== before, scrollBefore, { timeout: 1500 }).then(() => true).catch(() => false)
+        const zoomAfter = await page.evaluate(() => document.querySelector("[data-flow=mind] .react-flow__viewport")?.getAttribute("style") ?? "")
+        if (!scrolled) failures.push(`${where}: cuộn chuột không cuộn trang`)
+        if (zoomBefore !== zoomAfter) failures.push(`${where}: cuộn chuột làm zoom`)
+        const dragNode = page.locator("[data-flow=mind] .react-flow__node").first()
+        const dragBefore = await dragNode.evaluate((el) => el.getAttribute("style") ?? "")
+        const dragBox = await dragNode.boundingBox()
+        if (!dragBox) failures.push(`${where}: không thấy node để kéo`)
+        else {
+          const startX = dragBox.x + dragBox.width / 2
+          const startY = dragBox.y + dragBox.height / 2
+          await page.mouse.move(startX, startY)
+          await page.mouse.down()
+          await page.mouse.move(startX + 80, startY + 36, { steps: 8 })
+          await page.mouse.up()
+          const dragAfter = await dragNode.evaluate((el) => el.getAttribute("style") ?? "")
+          if (dragBefore === dragAfter) failures.push(`${where}: kéo node không đổi vị trí`)
+        }
+        const menuButton = page.locator("[data-flow=workflow]").getByRole("button", { name: "More actions" }).first()
+        await menuButton.evaluate((el) => el.scrollIntoView({ block: "center" }))
+        await menuButton.click()
+        const menuCovered = await page.evaluate(() => {
+          const menu = document.querySelector("[data-slot=dropdown-menu-content]")
+          if (!(menu instanceof HTMLElement)) return "menu không mở"
+          const box = menu.getBoundingClientRect()
+          const top = document.elementFromPoint(box.left + box.width / 2, box.top + 8)
+          return menu.contains(top) ? "" : "menu bị che"
+        })
+        if (menuCovered) failures.push(`${where}: ${menuCovered}`)
+        await page.keyboard.press("Escape")
 
         const before = await page.locator("[data-swatch=background]").first().getAttribute("data-hex")
         await page.evaluate((dark) => document.documentElement.classList.toggle("dark", !dark), theme === "dark")
