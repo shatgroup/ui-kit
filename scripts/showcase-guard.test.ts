@@ -204,7 +204,7 @@ describe("kiểm showcase", () => {
               await switchEl.click()
               await boxEl.click()
               await page.getByRole("radio", { name: "Radio off", exact: true }).click()
-              await page.getByRole("radio", { name: theme === "dark" ? "Light" : "Dark", exact: true }).click()
+              await page.locator("header").getByRole("radio", { name: theme === "dark" ? "Light" : "Dark", exact: true }).click()
               await page.waitForFunction((was) => document.documentElement.classList.contains("dark") !== was, beforeDark, { timeout: 2000 }).catch(() => undefined)
               const afterSwitch = await readPaint(switchEl)
               const afterBox = await readPaint(boxEl)
@@ -245,6 +245,8 @@ describe("kiểm showcase", () => {
                   return el.hasAttribute("disabled") || el.getAttribute("aria-disabled") === "true" || el.hasAttribute("data-disabled")
                 })
                 if (disabled) continue
+                if (selector.includes("[data-state=off]") && (await handle.getAttribute("data-state")) !== "off") continue
+                if (selector.includes("[data-state=unchecked]") && (await handle.getAttribute("data-state")) !== "unchecked") continue
                 const before = `${await handle.getAttribute(attr)}|${await handle.getAttribute("data-indeterminate")}`
                 await handle.click({ timeout: 2000 }).catch(() => undefined)
                 const after = `${await handle.getAttribute(attr)}|${await handle.getAttribute("data-indeterminate")}`
@@ -809,6 +811,22 @@ describe("kiểm showcase", () => {
             })
             if (vertical.length > 0) notes.push(`thừa ${vertical.length} thanh cuộn dọc`)
           }
+          const scrollers = [...document.querySelectorAll("body *")].filter((el) => {
+            if (!(el instanceof HTMLElement) || el.matches("[data-slot=section-nav-scroll]")) return false
+            const style = getComputedStyle(el)
+            const vertical = (style.overflowY === "auto" || style.overflowY === "scroll") && el.scrollHeight > el.clientHeight + 2
+            const horizontal = (style.overflowX === "auto" || style.overflowX === "scroll") && el.scrollWidth > el.clientWidth + 2
+            return vertical || horizontal
+          })
+          if (scrollers.length > 0) {
+            const names = scrollers.slice(0, 4).map((el) => {
+              if (!(el instanceof HTMLElement)) return "node"
+              if (el.hasAttribute("data-button-matrix")) return "button-matrix"
+              if (el.hasAttribute("data-button-sizes")) return "button-sizes"
+              return el.getAttribute("data-slot") || el.tagName
+            })
+            notes.push(`thanh cuộn riêng: ${names.join(" | ")}`)
+          }
           const navScroll = document.querySelector("[data-slot=section-nav-scroll]")
           if (navScroll instanceof HTMLElement) {
             if (navScroll.scrollHeight > navScroll.clientHeight + 1) notes.push("thanh tab cuộn dọc")
@@ -830,7 +848,7 @@ describe("kiểm showcase", () => {
           })
           const matrix = document.querySelector("[data-button-matrix]")
           if (matrix instanceof HTMLElement) {
-            const buttons = [...matrix.querySelectorAll("[data-slot=button]")].filter((el) => el instanceof HTMLElement)
+            const buttons = [...matrix.querySelectorAll("[data-slot=button]")].filter((el) => el instanceof HTMLElement && el.getBoundingClientRect().width > 2)
             const rows = new Map<number, DOMRect[]>()
             for (const button of buttons) {
               const box = button.getBoundingClientRect()
@@ -844,7 +862,7 @@ describe("kiểm showcase", () => {
                 if (gap < 11.5) notes.push(`nút cách ${gap.toFixed(1)}px`)
               }
             }
-            const focus = matrix.querySelector("[data-variant=destructive][data-force-state=focus]")
+            const focus = [...matrix.querySelectorAll("[data-variant=destructive][data-force-state=focus]")].find((el) => el instanceof HTMLElement && el.getBoundingClientRect().width > 2)
             if (focus instanceof HTMLElement) {
               const ring = getComputedStyle(focus).boxShadow
               const destructive = paint(getComputedStyle(document.documentElement).getPropertyValue("--destructive"))
@@ -896,13 +914,24 @@ describe("kiểm showcase", () => {
           if (matrixBox && sizeRow instanceof HTMLElement) {
             const sizeBox = sizeRow.getBoundingClientRect()
             if (sizeBox.top < matrixBox.bottom - 1) notes.push("hàng Sizes nằm trong bảng")
-            const sizeButtons = [...sizeRow.querySelectorAll("[data-slot=button]")].filter((el) => el instanceof HTMLElement)
-            const bottoms = sizeButtons.map((el) => el.getBoundingClientRect().bottom)
-            if (bottoms.length === 5 && Math.max(...bottoms) - Math.min(...bottoms) > 1) notes.push("nút kích thước lệch đáy")
-            const sizeItems = [...sizeRow.querySelectorAll("[data-slot=size-item]")].filter((el) => el instanceof HTMLElement).map((el) => el.getBoundingClientRect()).sort((a, b) => a.left - b.left)
-            const gaps = sizeItems.slice(1).map((box, index) => box.left - (sizeItems[index]?.right ?? 0))
-            if (gaps.some((gap) => gap < 11.5)) notes.push(`Sizes cách ${gaps.map((gap) => gap.toFixed(1)).join(",")}`)
-            if (gaps.length > 1 && Math.max(...gaps) - Math.min(...gaps) > 1.5) notes.push("Sizes khoảng cách không đều")
+            const sizeItems = [...sizeRow.querySelectorAll("[data-slot=size-item]")].filter((el): el is HTMLElement => el instanceof HTMLElement && el.getBoundingClientRect().width > 2)
+            const itemRows = new Map<number, HTMLElement[]>()
+            for (const el of sizeItems) {
+              const key = Math.round(el.getBoundingClientRect().bottom)
+              itemRows.set(key, [...(itemRows.get(key) ?? []), el])
+            }
+            for (const row of itemRows.values()) {
+              const line = row.sort((a, b) => a.getBoundingClientRect().left - b.getBoundingClientRect().left)
+              const boxes = line.map((el) => el.getBoundingClientRect())
+              const gaps = boxes.slice(1).map((box, index) => box.left - (boxes[index]?.right ?? 0))
+              if (gaps.some((gap) => gap < 11.5)) notes.push(`Sizes cách ${gaps.map((gap) => gap.toFixed(1)).join(",")}`)
+              if (gaps.length > 1 && Math.max(...gaps) - Math.min(...gaps) > 1.5) notes.push("Sizes khoảng cách không đều")
+              const bottoms = line.flatMap((el) => {
+                const button = el.querySelector("[data-slot=button]")
+                return button instanceof HTMLElement ? [button.getBoundingClientRect().bottom] : []
+              })
+              if (bottoms.length > 1 && Math.max(...bottoms) - Math.min(...bottoms) > 1) notes.push("nút kích thước lệch đáy")
+            }
           } else notes.push("thiếu hàng Sizes")
           const typeGrid = document.querySelector("[data-input-types]")
           if (typeGrid instanceof HTMLElement) {
@@ -1047,6 +1076,18 @@ describe("kiểm showcase", () => {
         await sliderThumb.focus()
         const sliderTip = (await page.locator("[role=tooltip]").filter({ hasText: "40%" }).textContent({ timeout: 2000 }).catch(() => "")) ?? ""
         if (!sliderTip.includes("40%")) failures.push(`${where}: slider tooltip ${sliderTip || "trống"}`)
+        const controls = page.locator("[data-controls]")
+        if ((await controls.getByText("Theme", { exact: true }).count()) !== 1) failures.push(`${where}: thiếu mẫu Theme`)
+        const themeBefore = await page.evaluate(() => document.documentElement.classList.contains("dark"))
+        const nextTheme = themeBefore ? "Light" : "Dark"
+        await controls.getByRole("radio", { name: nextTheme, exact: true }).click()
+        const themeSynced = await page.waitForFunction((name) => {
+          const dark = document.documentElement.classList.contains("dark")
+          if (dark !== (name === "Dark")) return false
+          const on = (root: ParentNode | null) => root?.querySelector(`[aria-label="${name}"]`)?.getAttribute("data-state") === "on"
+          return on(document.querySelector("header")) && on(document.querySelector("[data-controls]"))
+        }, nextTheme, { timeout: 2000 }).then(() => true).catch(() => false)
+        if (!themeSynced) failures.push(`${where}: theme không đồng bộ`)
       }
     }
     await page.close()

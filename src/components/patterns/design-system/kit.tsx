@@ -1,7 +1,7 @@
 import { cloneElement, useId, useState, type ReactElement, type ReactNode } from "react"
 import { Bar, BarChart, Cell, XAxis } from "recharts"
 import { toast } from "sonner"
-import { CircleAlertIcon, CircleCheckIcon, InfoIcon, PlusIcon, SearchIcon, TriangleAlertIcon, UserIcon } from "lucide-react"
+import { BoldIcon, CircleAlertIcon, CircleCheckIcon, InfoIcon, ItalicIcon, PlusIcon, SearchIcon, TriangleAlertIcon, UnderlineIcon, UserIcon } from "lucide-react"
 import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Stepper } from "@/components/media/stepper.tsx"
 import { Alert } from "@/components/ui/alert.tsx"
@@ -40,6 +40,8 @@ import { StatusBadge } from "@/components/ui/status-badge.tsx"
 import { SwitchField } from "@/components/ui/switch-field.tsx"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
+import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
+import { Toggle } from "@/components/ui/toggle.tsx"
 import { TagsInput } from "@/components/ui/tags-input.tsx"
 import { Textarea } from "@/components/ui/textarea.tsx"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx"
@@ -199,6 +201,13 @@ function Quiet({ name }: { name: string }) {
   return <span className="sr-only">{name}</span>
 }
 
+function SampleButton({ variant, state }: { variant: (typeof VARIANTS)[number]; state: (typeof STATES)[number]["key"] }) {
+  if (state === "hover") return <Button variant={variant} forceState="hover" className="w-fit">Button</Button>
+  if (state === "focus") return <Button variant={variant} forceState="focus" className="w-fit">Button</Button>
+  if (state === "disabled") return <Button variant={variant} disabled className="w-fit">Button</Button>
+  return <Button variant={variant} className="w-fit">Button</Button>
+}
+
 function KitCard({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Card className="h-full min-w-0">
@@ -233,25 +242,41 @@ function Kit() {
         <Span at="md:col-span-4 xl:col-span-8">
           <KitCard title="Buttons">
             <Stack gap={6}>
-              <div data-button-matrix className="min-w-0 overflow-x-auto">
-                <Grid columns={5} gap={3} className="w-max justify-items-start">
-                  <span />
-                  {STATES.map((state) => <Text key={state.key} size="xs" tone="muted">{state.label}</Text>)}
-                  {VARIANTS.map((variant) => (
-                    <span key={variant} className="contents">
-                      <Text size="xs">{variant}</Text>
-                      <Button variant={variant} className="w-fit">Button</Button>
-                      <Button variant={variant} forceState="hover" className="w-fit">Button</Button>
-                      <Button variant={variant} forceState="focus" className="w-fit">Button</Button>
-                      <Button variant={variant} disabled className="w-fit">Button</Button>
-                    </span>
-                  ))}
-                </Grid>
+              <div data-button-matrix className="min-w-0">
+                <div className="hidden xl:block">
+                  <Grid columns={5} gap={3} className="w-max justify-items-start">
+                    <span />
+                    {STATES.map((state) => <Text key={state.key} size="xs" tone="muted">{state.label}</Text>)}
+                    {VARIANTS.map((variant) => (
+                      <span key={variant} className="contents">
+                        <Text size="xs">{variant}</Text>
+                        {STATES.map((state) => <SampleButton key={state.key} variant={variant} state={state.key} />)}
+                      </span>
+                    ))}
+                  </Grid>
+                </div>
+                <div className="xl:hidden">
+                  <Stack gap={4}>
+                    {VARIANTS.map((variant) => (
+                      <Stack key={variant} gap={2}>
+                        <Text size="xs">{variant}</Text>
+                        <Inline gap={3}>
+                          {STATES.map((state) => (
+                            <Stack key={state.key} gap={1} align="start">
+                              <Text size="xs" tone="muted">{state.label}</Text>
+                              <SampleButton variant={variant} state={state.key} />
+                            </Stack>
+                          ))}
+                        </Inline>
+                      </Stack>
+                    ))}
+                  </Stack>
+                </div>
               </div>
               <Stack gap={3}>
                 <Text size="xs" tone="muted">Sizes</Text>
-                <div data-button-sizes className="min-w-0 overflow-x-auto">
-                  <div className="flex w-max items-end gap-3">
+                <div data-button-sizes className="min-w-0">
+                  <div className="flex flex-wrap items-end gap-3">
                     <Stack slot="size-item" gap={1} align="center">
                       <Button size="sm" className="w-fit">Small</Button>
                       <Text size="xs" tone="muted" className="whitespace-nowrap">Small · 32px</Text>
@@ -280,21 +305,50 @@ function Kit() {
         </Span>
         <Span at="md:col-span-2 xl:col-span-4">
           <KitCard title="Controls">
-            <div className="min-w-0 overflow-x-auto">
-            <ToggleGroup type="single" variant="outline" value={segment} onValueChange={(value) => { if (value) setSegment(value) }} aria-label="Segments">
-              <ToggleGroupItem value="bookings">Bookings</ToggleGroupItem>
-              <ToggleGroupItem value="coaches">Coaches</ToggleGroupItem>
-              <ToggleGroupItem value="notes">Notes</ToggleGroupItem>
-            </ToggleGroup>
-            </div>
-            <div className="min-w-0 overflow-x-auto">
-            <Tabs defaultValue="bookings">
-              <TabsList>
-                <TabsTrigger value="bookings">Bookings</TabsTrigger>
-                <TabsTrigger value="coaches">Coaches</TabsTrigger>
-                <TabsTrigger value="notes">Notes</TabsTrigger>
-              </TabsList>
-            </Tabs>
+            <div data-controls>
+              <Stack gap={6}>
+                <Stack gap={1}>
+                  <Text size="xs" tone="muted">Segmented</Text>
+                  <ToggleGroup type="single" variant="outline" value={segment} onValueChange={(value) => { if (value) setSegment(value) }} aria-label="Segments" className="max-w-full flex-wrap">
+                    <ToggleGroupItem value="bookings">Bookings</ToggleGroupItem>
+                    <ToggleGroupItem value="coaches">Coaches</ToggleGroupItem>
+                    <ToggleGroupItem value="notes">Notes</ToggleGroupItem>
+                  </ToggleGroup>
+                </Stack>
+                <Stack gap={1}>
+                  <Text size="xs" tone="muted">Tabs</Text>
+                  <Tabs defaultValue="bookings" className="max-w-full">
+                    <TabsList className="!h-auto max-w-full flex-wrap">
+                      <TabsTrigger value="bookings" className="h-8 flex-none">Bookings</TabsTrigger>
+                      <TabsTrigger value="coaches" className="h-8 flex-none">Coaches</TabsTrigger>
+                      <TabsTrigger value="notes" className="h-8 flex-none">Notes</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+                </Stack>
+                <Stack gap={1}>
+                  <Text size="xs" tone="muted">Theme</Text>
+                  <ThemeToggle />
+                </Stack>
+                <Stack gap={1}>
+                  <Text size="xs" tone="muted">Toggle</Text>
+                  <Inline gap={2}>
+                    <Toggle variant="outline" aria-label="Bold"><BoldIcon /></Toggle>
+                    <Toggle variant="outline" aria-label="Italic"><ItalicIcon /></Toggle>
+                    <Toggle variant="outline" aria-label="Underline"><UnderlineIcon /></Toggle>
+                  </Inline>
+                </Stack>
+                <Stack gap={1}>
+                  <Text size="xs" tone="muted">Dropdown</Text>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild><Button variant="outline" size="sm" className="w-fit">Options</Button></DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem>Edit</DropdownMenuItem>
+                      <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                      <DropdownMenuItem>Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </Stack>
+              </Stack>
             </div>
           </KitCard>
         </Span>
