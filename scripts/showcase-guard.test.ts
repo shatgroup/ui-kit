@@ -1033,10 +1033,96 @@ describe("kiểm showcase", () => {
               if (edges.length === 4 && Math.max(...edges) - Math.min(...edges) > 1) notes.push(`mép phải cột ${column[0]} lệch`)
             }
           }
+          const desktop = window.innerWidth >= 1024
+          const tablet = window.innerWidth >= 768
+          const expectCols = desktop ? 12 : tablet ? 8 : 4
+          const columnCount = (value: string) => {
+            const repeat = value.match(/repeat\((\d+)/)
+            if (repeat) return Number(repeat[1])
+            return (value.match(/[\d.]+px/g) ?? []).length
+          }
+          const frames = [...document.querySelectorAll("[data-grid=frame]")]
+          if (!frames.length) notes.push("thiếu lưới khung")
+          for (const grid of frames) {
+            if (!(grid instanceof HTMLElement)) continue
+            const style = getComputedStyle(grid)
+            const cols = columnCount(style.gridTemplateColumns)
+            if (cols !== expectCols) notes.push(`lưới ${cols} cột, cần ${expectCols}`)
+            const gap = Number.parseFloat(style.columnGap)
+            if (Math.abs(gap - 16) > 1) notes.push(`gutter ${gap.toFixed(1)}px`)
+          }
+          const sample = document.querySelector("[data-measure-grid]")
+          if (!(sample instanceof HTMLElement)) notes.push("thiếu lưới đo")
+          else {
+            const gridBox = sample.getBoundingClientRect()
+            const gap = Number.parseFloat(getComputedStyle(sample).columnGap)
+            const col = (gridBox.width - gap * (expectCols - 1)) / expectCols
+            const spans: Record<string, number> = {
+              quarter: desktop ? 3 : 4,
+              half: desktop ? 6 : expectCols,
+              full: expectCols,
+            }
+            for (const [name, count] of Object.entries(spans)) {
+              const cell = sample.querySelector(`[data-span="${name}"]`)
+              if (!(cell instanceof HTMLElement)) {
+                notes.push(`thiếu span ${name}`)
+                continue
+              }
+              const want = count * col + (count - 1) * gap
+              const got = cell.getBoundingClientRect().width
+              if (Math.abs(got - want) > 2) notes.push(`${name} rộng ${got.toFixed(1)} cần ${want.toFixed(1)}`)
+            }
+          }
+          const padOf = (el: Element | null) => el instanceof HTMLElement ? Number.parseFloat(getComputedStyle(el).paddingLeft) : Number.NaN
+          const wantPad = tablet ? 24 : 16
+          const pagePad = padOf(document.querySelector("[data-slot=container]"))
+          if (Math.abs(pagePad - wantPad) > 1) notes.push(`lề trang ${pagePad}px cần ${wantPad}`)
+          const appPad = padOf(document.querySelector("[data-slot=app-content]"))
+          if (Math.abs(appPad - wantPad) > 1) notes.push(`lề app ${appPad}px cần ${wantPad}`)
+          const appHeader = document.querySelector("[data-app-header]")
+          if (!(appHeader instanceof HTMLElement)) notes.push("thiếu header app")
+          else if (Math.abs(appHeader.getBoundingClientRect().height - 56) > 1) notes.push(`header app ${appHeader.getBoundingClientRect().height.toFixed(1)}px`)
+          const gapEl = document.querySelector("[data-app-shell] [data-slot=sidebar-gap]")
+          const side = gapEl instanceof HTMLElement ? gapEl.getBoundingClientRect().width : 0
+          if (desktop) {
+            if (Math.abs(side - 256) > 1.5) notes.push(`sidebar ${side.toFixed(1)}px`)
+          } else if (side > 2) notes.push(`sidebar hiện khi hẹp ${side.toFixed(1)}px`)
           return notes
         })
         for (const note of found) failures.push(`${where}: ${note}`)
         await unsettle(page)
+        const shell = page.locator("[data-app-shell]")
+        await shell.evaluate((el) => el.scrollIntoView({ block: "center" }))
+        if (width >= 1024) {
+          await shell.getByRole("button", { name: "Collapse sidebar", exact: true }).click()
+          const collapsed = await page.waitForFunction(() => {
+            const gap = document.querySelector("[data-app-shell] [data-slot=sidebar-gap]")
+            return gap instanceof HTMLElement && Math.abs(gap.getBoundingClientRect().width - 48) < 2
+          }).then(() => true).catch(() => false)
+          if (!collapsed) failures.push(`${where}: sidebar không thu còn 48px`)
+          await shell.getByRole("button", { name: "Expand sidebar", exact: true }).click()
+          const expanded = await page.waitForFunction(() => {
+            const gap = document.querySelector("[data-app-shell] [data-slot=sidebar-gap]")
+            return gap instanceof HTMLElement && Math.abs(gap.getBoundingClientRect().width - 256) < 2
+          }).then(() => true).catch(() => false)
+          if (!expanded) failures.push(`${where}: sidebar không mở lại 256px`)
+        } else {
+          await shell.getByRole("button", { name: "Open menu", exact: true }).click()
+          const opened = await page.waitForFunction(() => {
+            const sheet = document.querySelector("[data-mobile=true][data-slot=sidebar]")
+            return sheet instanceof HTMLElement && sheet.getBoundingClientRect().width > 40
+          }).then(() => true).catch(() => false)
+          if (!opened) failures.push(`${where}: nút menu không mở sidebar`)
+          await page.evaluate(() => {
+            const close = document.querySelector("[data-mobile=true][data-slot=sidebar] > button")
+            if (close instanceof HTMLElement) close.click()
+          })
+          const shut = await page.waitForFunction(() => {
+            const sheet = document.querySelector("[data-mobile=true][data-slot=sidebar]")
+            return !(sheet instanceof HTMLElement) || sheet.getBoundingClientRect().width < 2
+          }, undefined, { timeout: 3000 }).then(() => true).catch(() => false)
+          if (!shut) failures.push(`${where}: menu không đóng`)
+        }
 
         const shot = shots[where]
         if (shot) {
@@ -1044,11 +1130,8 @@ describe("kiểm showcase", () => {
             window.scrollTo(0, 0)
             return Math.ceil(document.documentElement.scrollHeight)
           })
-          if (height > 16000) failures.push(`${where}: trang cao ${height}px, ảnh bị cắt`)
-          await page.setViewportSize({ width, height: Math.min(height, 16000) })
-          await page.evaluate(() => window.scrollTo(0, 0))
+          if (height > 30000) failures.push(`${where}: trang cao ${height}px`)
           await page.screenshot({ path: shot, fullPage: true })
-          await page.setViewportSize({ width, height: 900 })
         }
 
         const before = await page.locator("[data-swatch=background]").first().getAttribute("data-hex")

@@ -88,3 +88,32 @@ Chữ mặc định trong component là tiếng Việt. Đổi ngôn ngữ bằn
 | lg | 64rem | layout |
 | xl | 80rem | layout |
 | @3xl @5xl @7xl | container | tab Cards |
+
+## Khung app
+
+Mọi app dùng cùng khung. Sidebar dựng bằng `Sidebar` của shadcn trong `AppShell`. Lưới card dùng `Grid` không truyền số cột.
+
+| Thành phần | Desktop (≥1024) | Tablet (768–1023) | Mobile (<768) |
+| --- | --- | --- | --- |
+| Sidebar | 256px (16rem), thu gọn 48px (3rem), chỉ còn icon | ẩn, mở bằng nút menu (Sheet) | ẩn, mở bằng nút menu (Sheet) |
+| Header | 56px (h-14) | 56px | 56px |
+| Lề nội dung | 24px (px-6) | 24px (px-6) | 16px (px-4) |
+| Gutter | 16px (gap-4) | 16px | 16px |
+| Số cột | 12 | 8 | 4 |
+| Kiểu cột | Stretch | Stretch | Stretch |
+| Nội dung tối đa | 1280px (max-w-7xl), canh giữa | full | full |
+| Thanh dưới | không | không | 56px, chỉ khi app truyền `bottomNav` |
+
+`Grid` không có `span` thì là lưới khung: `grid-cols-4 md:grid-cols-8 lg:grid-cols-12`, `gap-4` cố định. Ô con chỉ dùng `span`:
+
+| span | Mobile | Tablet | Desktop |
+| --- | --- | --- | --- |
+| quarter | 4/4 | 4/8 | 3/12 |
+| third | 4/4 | 4/8 | 4/12 |
+| half | 4/4 | 8/8 | 6/12 |
+| two-thirds | 4/4 | 8/8 | 8/12 |
+| full | 4/4 | 8/8 | 12/12 |
+
+Không thêm kiểu chiếm cột ngoài bảng. Cần kiểu mới thì thêm vào `Grid` và bảng này.
+
+Prop `columns` của `Grid` không dùng cho lưới card. Nó chỉ còn cho lưới specimen bên trong một card (ma trận nút, ô màu, icon, ô form). `src/pages` và `src/components/patterns` không ghi class `grid-cols-*`; showcase và `src/components/ui` không bị cấm này. Lưới card không dùng gap khác `gap-4`.

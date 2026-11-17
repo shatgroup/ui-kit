@@ -3,8 +3,9 @@ import { cloneElement, useId, useState, type ReactElement, type ReactNode } from
 import { type DateRange } from "react-day-picker"
 import { Bar, BarChart, Cell, XAxis } from "recharts"
 import { toast } from "sonner"
-import { BoldIcon, CircleAlertIcon, CircleCheckIcon, InfoIcon, ItalicIcon, PlusIcon, SearchIcon, TriangleAlertIcon, UnderlineIcon, UserIcon } from "lucide-react"
+import { BoldIcon, CircleAlertIcon, CircleCheckIcon, InfoIcon, ItalicIcon, LayoutDashboardIcon, ListIcon, PlusIcon, SearchIcon, SettingsIcon, TriangleAlertIcon, UnderlineIcon, UserIcon } from "lucide-react"
 import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
+import { AppShell } from "@/components/patterns/app-shell.tsx"
 import { Stepper } from "@/components/media/stepper.tsx"
 import { Alert } from "@/components/ui/alert.tsx"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx"
@@ -182,13 +183,13 @@ function Section({ id, title, children }: { id: string; title: string; children:
   return (
     <Stack gap={4}>
       <Text as="h2" id={id} size="xl" weight="semibold" className="scroll-mt-nav">{title}</Text>
-      <Grid columns={{ base: 1, md: 6, xl: 12 }} gap={4} className="kit-grid items-stretch">{children}</Grid>
+      <Grid className="kit-grid items-stretch">{children}</Grid>
     </Stack>
   )
 }
 
-function Span({ at, children }: { at: string; children: ReactNode }) {
-  return <div className={`col-span-1 h-full ${at}`}>{children}</div>
+function Span({ span, children }: { span: "quarter" | "third" | "half" | "two-thirds" | "full"; children: ReactNode }) {
+  return <Grid span={span} className="h-full">{children}</Grid>
 }
 
 function Quiet({ name }: { name: string }) {
@@ -215,6 +216,47 @@ function KitCard({ title, children }: { title: string; children: ReactNode }) {
   )
 }
 
+function AppShellSample() {
+  const [active, setActive] = useState("home")
+  return (
+    <div className="h-96 overflow-hidden rounded-lg border border-border">
+      <AppShell
+        inset
+        logo={<Text size="sm" weight="semibold">Studio</Text>}
+        mark={<Text size="sm" weight="semibold">S</Text>}
+        groups={[{
+          label: "Menu",
+          items: [
+            { id: "home", label: "Home", icon: LayoutDashboardIcon },
+            { id: "list", label: "List", icon: ListIcon },
+            { id: "settings", label: "Settings", icon: SettingsIcon },
+          ],
+        }]}
+        activeId={active}
+        onNavigate={setActive}
+        title="Overview"
+        account={{ name: "Alex Kim", email: "alex@studio.com" }}
+        collapseLabel="Collapse"
+        collapseAriaLabel="Collapse sidebar"
+        expandLabel="Expand sidebar"
+        menuLabel="Open menu"
+      >
+        <Grid>
+          <Grid span="quarter" className="h-full">
+            <Card className="h-full"><CardContent><Text size="sm">Quarter</Text></CardContent></Card>
+          </Grid>
+          <Grid span="half" className="h-full">
+            <Card className="h-full"><CardContent><Text size="sm">Half</Text></CardContent></Card>
+          </Grid>
+          <Grid span="full" className="h-full">
+            <Card className="h-full"><CardContent><Text size="sm">Full</Text></CardContent></Card>
+          </Grid>
+        </Grid>
+      </AppShell>
+    </div>
+  )
+}
+
 function Kit() {
   const [boxOn, setBoxOn] = useState(true)
   const [boxOff, setBoxOff] = useState(false)
@@ -234,7 +276,7 @@ function Kit() {
   return (
     <Stack gap={8}>
       <Section id="hanh-dong" title="Actions">
-        <Span at="md:col-span-4 xl:col-span-8">
+        <Span span="two-thirds">
           <KitCard title="Buttons">
             <Stack gap={6}>
               <div data-button-matrix className="min-w-0">
@@ -298,7 +340,7 @@ function Kit() {
             </Stack>
           </KitCard>
         </Span>
-        <Span at="md:col-span-2 xl:col-span-4">
+        <Span span="third">
           <KitCard title="Controls">
             <div data-controls>
               <Stack gap={6}>
@@ -350,9 +392,9 @@ function Kit() {
       </Section>
 
       <Section id="nhap-lieu" title="Inputs">
-        <Span at="md:col-span-6 xl:col-span-12">
+        <Span span="full">
           <KitCard title="Input states">
-            <div data-input-states className="grid min-w-0 grid-cols-1 gap-6 *:min-w-0 md:grid-cols-2">
+            <Grid data-input-states columns={{ base: 1, md: 2 }} gap={6} className="min-w-0 *:min-w-0">
               <FieldSample n={1} className="order-1 md:order-none" label="Default"><Input placeholder="Type here" /></FieldSample>
               <FieldSample n={5} className="order-5 md:order-none" label="Error" error="This field is invalid"><Input defaultValue="???" /></FieldSample>
               <FieldSample n={2} className="order-2 md:order-none" label="Filled"><Input defaultValue="Alex Kim" /></FieldSample>
@@ -361,12 +403,12 @@ function Kit() {
               <FieldSample n={7} className="order-7 md:order-none" label="Email" inline><Input placeholder="name@studio.com" /></FieldSample>
               <FieldSample n={4} className="order-4 md:order-none" label="Focus"><Input forceState="focus" defaultValue="Focused" /></FieldSample>
               <FieldSample n={8} className="order-8 md:order-none" label="With helper text" hint="Shown under the field"><Input placeholder="Add a note" /></FieldSample>
-            </div>
+            </Grid>
           </KitCard>
         </Span>
-        <Span at="md:col-span-6 xl:col-span-12">
+        <Span span="full">
           <KitCard title="Input types">
-            <div data-input-types className="grid min-w-0 grid-cols-1 border-l border-t border-border md:grid-cols-2 xl:grid-cols-3">
+            <Grid data-input-types columns={{ base: 1, md: 2, xl: 3 }} className="min-w-0 border-l border-t border-border">
               <TypeCell name="Text input" label="Name">
                 <Input placeholder="Text" />
               </TypeCell>
@@ -419,10 +461,10 @@ function Kit() {
                   </CommandList>
                 </Command>
               </TypeCell>
-            </div>
+            </Grid>
           </KitCard>
         </Span>
-        <Span at="md:col-span-6 xl:col-span-6">
+        <Span span="half">
           <KitCard title="Selection">
             <Grid columns={6} gap={2} className="items-center">
               <span />
@@ -464,7 +506,7 @@ function Kit() {
             </Grid>
           </KitCard>
         </Span>
-        <Span at="md:col-span-3 xl:col-span-3">
+        <Span span="quarter">
           <KitCard title="Selectors">
             <RadioGroup value={choice} onValueChange={setChoice} aria-label="Choice">
               <div className={choice === "selected" ? "rounded-lg border border-primary p-3" : "rounded-lg border border-border p-3"}>
@@ -476,7 +518,7 @@ function Kit() {
             </RadioGroup>
           </KitCard>
         </Span>
-        <Span at="md:col-span-3 xl:col-span-3">
+        <Span span="quarter">
           <KitCard title="Slider">
             <Slider defaultValue={[40]} aria-label="Level" />
           </KitCard>
@@ -484,7 +526,7 @@ function Kit() {
       </Section>
 
       <Section id="phan-hoi" title="Feedback">
-        <Span at="md:col-span-6 xl:col-span-6">
+        <Span span="half">
           <KitCard title="Alerts">
             {alerts.info ? <Alert variant="line" tone="info" title="Something you should know" icon={<InfoIcon className="size-4 text-info" />} onClose={() => setAlerts((current) => ({ ...current, info: false }))} /> : null}
             {alerts.success ? <Alert variant="line" tone="success" title="Saved" icon={<CircleCheckIcon className="size-4 text-success" />} onClose={() => setAlerts((current) => ({ ...current, success: false }))} /> : null}
@@ -492,7 +534,7 @@ function Kit() {
             {alerts.error ? <Alert variant="line" tone="error" title="Could not save" icon={<CircleAlertIcon className="size-4 text-destructive" />} onClose={() => setAlerts((current) => ({ ...current, error: false }))} /> : null}
           </KitCard>
         </Span>
-        <Span at="md:col-span-6 xl:col-span-6">
+        <Span span="half">
           <KitCard title="Badges">
             <Inline gap={2}>
               <StatusBadge status="done" label="Done" />
@@ -508,9 +550,9 @@ function Kit() {
             </Inline>
           </KitCard>
         </Span>
-        <Span at="md:col-span-6 xl:col-span-12">
+        <Span span="full">
           <KitCard title="Progress">
-            <div data-progress-samples className="grid grid-cols-1 gap-6 md:grid-flow-col md:grid-cols-2 md:grid-rows-4">
+            <Grid data-progress-samples columns={{ base: 1, md: 2 }} gap={6} className="md:grid-flow-col md:grid-rows-4">
               <ProgressSample n={1}>
                 <Stepper className="flex-row" steps={[
                   { id: "create", label: "Create", status: "done" },
@@ -558,10 +600,10 @@ function Kit() {
                   <Progress value={25} aria-label="Update" className="h-1 rounded-none" />
                 </div>
               </ProgressSample>
-            </div>
+            </Grid>
           </KitCard>
         </Span>
-        <Span at="md:col-span-6 xl:col-span-12">
+        <Span span="full">
           <KitCard title="Overlay">
             <Inline gap={2}>
               <Dialog>
@@ -611,7 +653,7 @@ function Kit() {
       </Section>
 
       <Section id="du-lieu" title="Data">
-        <Span at="md:col-span-6 xl:col-span-6">
+        <Span span="half">
           <KitCard title="Table">
             <Table>
               <TableHeader>
@@ -629,9 +671,9 @@ function Kit() {
             </Table>
           </KitCard>
         </Span>
-        <Span at="md:col-span-6 xl:col-span-6">
+        <Span span="half">
           <KitCard title="Calendar">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <Grid columns={{ base: 1, md: 2 }} gap={6}>
               <Stack gap={1}>
                 <Text size="xs" tone="muted">Single</Text>
                 <Calendar mode="single" defaultMonth={date} selected={date} onSelect={setDate} />
@@ -640,10 +682,10 @@ function Kit() {
                 <Text size="xs" tone="muted">Range</Text>
                 <Calendar mode="range" defaultMonth={RANGE_START} selected={range} onSelect={setRange} numberOfMonths={1} />
               </Stack>
-            </div>
+            </Grid>
           </KitCard>
         </Span>
-        <Span at="md:col-span-6 xl:col-span-6">
+        <Span span="half">
           <KitCard title="Chart">
             <ChartContainer config={chartConfig} className="aspect-auto h-32 w-full">
               <BarChart data={CHART}>
@@ -655,7 +697,7 @@ function Kit() {
             </ChartContainer>
           </KitCard>
         </Span>
-        <Span at="md:col-span-6 xl:col-span-6">
+        <Span span="half">
           <KitCard title="Empty and loading">
             <Inline gap={4} align="center">
               <Inline gap={2} align="center">
@@ -671,6 +713,11 @@ function Kit() {
               </Stack>
               <EmptyState title="Nothing here" description="The list is empty." />
             </Inline>
+          </KitCard>
+        </Span>
+        <Span span="full">
+          <KitCard title="App shell">
+            <AppShellSample />
           </KitCard>
         </Span>
       </Section>

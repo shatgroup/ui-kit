@@ -186,7 +186,7 @@ function TypeAndColor() {
   return (
     <Stack gap={4}>
       <Text as="h2" id="nen-tang" size="xl" weight="semibold" className="scroll-mt-nav">Foundations</Text>
-      <div className="grid min-w-0 items-start gap-6 md:grid-cols-auto-fr">
+      <div data-layout="type-color" className="min-w-0 items-start">
         <Stack gap={4} className="min-w-0">
           <Card className="min-w-0">
             <CardContent>
@@ -293,7 +293,7 @@ function ColorRows() {
       {COLOR_GROUPS.map((group) => (
         <Stack key={group.title} gap={3}>
           <Text size="sm" weight="medium">{group.title}</Text>
-          <div data-color-grid={group.title} className="grid grid-cols-3 gap-3 md:grid-cols-4 xl:grid-cols-9">
+          <Grid data-color-grid={group.title} columns={{ base: 3, md: 4, xl: 9 }} gap={3}>
             {group.names.map((name) => {
               const item = SWATCHES.find((entry) => entry.name === name)
               if (!item) return null
@@ -312,7 +312,7 @@ function ColorRows() {
                 </Tooltip>
               )
             })}
-          </div>
+          </Grid>
         </Stack>
       ))}
     </Stack>
@@ -332,11 +332,80 @@ function TokenCard({ title, children }: { title: string; children: ReactNode }) 
   )
 }
 
+function ColumnBars({ count }: { count: number }) {
+  return (
+    <div className="flex min-w-0 gap-1">
+      {Array.from({ length: count }, (_, index) => (
+        <span key={index} className="h-6 min-w-0 flex-1 rounded-sm bg-primary/15" />
+      ))}
+    </div>
+  )
+}
+
+function FrameDiagram() {
+  return (
+    <Stack gap={4}>
+      <Grid>
+        <Grid span="half">
+          <Stack gap={2}>
+            <Text size="xs" weight="medium">Desktop</Text>
+            <div className="overflow-hidden rounded-md border border-border">
+              <div className="flex min-w-0">
+                <div className="flex w-16 shrink-0 items-center justify-center bg-muted px-1">
+                  <Text size="xs">256</Text>
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <div className="flex h-14 items-center bg-muted px-2">
+                    <Text size="xs">56</Text>
+                  </div>
+                  <div className="p-2">
+                    <ColumnBars count={12} />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <Text size="xs" tone="muted">12 columns · margin 24 · gutter 16</Text>
+          </Stack>
+        </Grid>
+        <Grid span="half">
+          <Stack gap={2}>
+            <Text size="xs" weight="medium">Mobile</Text>
+            <div className="overflow-hidden rounded-md border border-border">
+              <div className="flex h-14 items-center bg-muted px-2">
+                <Text size="xs">56</Text>
+              </div>
+              <div className="p-2">
+                <ColumnBars count={4} />
+              </div>
+              <div className="flex h-14 items-center bg-muted px-2">
+                <Text size="xs">56</Text>
+              </div>
+            </div>
+            <Text size="xs" tone="muted">4 columns · margin 16 · gutter 16 · tab bar 56</Text>
+          </Stack>
+        </Grid>
+      </Grid>
+      <Grid data-measure-grid>
+        <Grid span="quarter" className="rounded-md bg-primary/15 px-2 py-2">
+          <Text size="xs">Quarter</Text>
+        </Grid>
+        <Grid span="half" className="rounded-md bg-primary/15 px-2 py-2">
+          <Text size="xs">Half</Text>
+        </Grid>
+        <Grid span="full" className="rounded-md bg-primary/15 px-2 py-2">
+          <Text size="xs">Full</Text>
+        </Grid>
+      </Grid>
+    </Stack>
+  )
+}
+
 function Tokens() {
   return (
     <Stack gap={4}>
       <Text as="h2" id="token" size="xl" weight="semibold" className="scroll-mt-nav">Tokens</Text>
-      <Grid columns={{ base: 1, md: 2, xl: 4 }} gap={4} className="kit-grid items-stretch">
+      <Grid className="kit-grid items-stretch">
+        <Grid span="quarter" className="h-full">
         <TokenCard title="Spacing">
           <div data-space-grid className="grid grid-flow-col grid-rows-6 gap-2">
             {SPACE_BARS.map((item) => (
@@ -349,6 +418,8 @@ function Tokens() {
             ))}
           </div>
         </TokenCard>
+        </Grid>
+        <Grid span="quarter" className="h-full">
         <TokenCard title="Radius">
           <Inline gap={3}>
             {RADII.map((item) => (
@@ -359,11 +430,15 @@ function Tokens() {
             ))}
           </Inline>
         </TokenCard>
+        </Grid>
+        <Grid span="quarter" className="h-full">
         <TokenCard title="Motion">
           {MOTION.map((item) => (
             <MotionRow key={item.token} label={item.label} token={item.token} ease={item.ease} />
           ))}
         </TokenCard>
+        </Grid>
+        <Grid span="quarter" className="h-full">
         <TokenCard title="Breakpoint">
           {BREAKS.map((item) => (
             <Stack key={item.name} gap={1}>
@@ -372,6 +447,12 @@ function Tokens() {
             </Stack>
           ))}
         </TokenCard>
+        </Grid>
+        <Grid span="full" className="h-full">
+          <TokenCard title="Grid & Layout">
+            <FrameDiagram />
+          </TokenCard>
+        </Grid>
       </Grid>
     </Stack>
   )

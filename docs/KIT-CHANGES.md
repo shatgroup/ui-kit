@@ -82,3 +82,19 @@ Chữ hiện trên kit cũng mặc định tiếng Việt và đổi bằng prop
 ## Calendar
 
 `calendar.tsx` — không đổi hành vi tuần. Mặc định Chủ nhật, đúng react-day-picker. `weekStartsOn` và `locale` chỉ có hiệu lực khi nơi gọi truyền vào props (DayPicker nhận qua `{...props}`). Tiếng Việt và Thứ 2 không bị ép.
+
+## AppShell
+
+`app-shell.tsx` dựng trên `SidebarProvider`, `Sidebar`, `SidebarInset`, `SidebarTrigger`. Bỏ sidebar tự viết `w-60` / `w-12`.
+
+| Prop | Việc |
+| --- | --- |
+| Giữ nguyên | `logo`, `mark`, `groups`, `activeId`, `onNavigate`, `leading`, `topbar`, `footer`, `sidebarAction`, `account`, `title`, `children`, `collapseAriaLabel`, `expandLabel`, `menuLabel` |
+| `collapseLabel` | Vẫn nhận, không còn hiện chữ. Nút là `SidebarTrigger` chỉ icon. Tên đọc màn hình lấy `collapseAriaLabel`, `expandLabel`, `menuLabel` |
+| `maxWidth` | Vẫn mặc định bật. Trần đổi từ `max-w-page` (1440px) sang `max-w-7xl` (1280px), canh giữa |
+| `inset` | Vẫn nhận. Trước đây là khung bo góc có lề muted. Giờ shell lấp đầy cha (`contained`), sidebar `absolute` trong khung, không `fixed` theo viewport |
+| `bottomNav` | Thêm. Thanh cao 56px, chỉ hiện dưới 768px |
+
+Sidebar rộng 16rem, `collapsible="icon"` còn 3rem. Dưới 1024px sidebar ẩn và mở bằng Sheet. Showcase vẫn dùng ngưỡng 768px của sidebar gốc vì không truyền `mobileBreakpoint`.
+
+`sidebar.tsx` — thêm `mobileBreakpoint` (mặc định 768), `contained` (sidebar absolute trong cha), và `label` trên `SidebarTrigger` để đổi chữ đọc màn hình. Không đổi class khi hai prop này để mặc định.

@@ -15,6 +15,8 @@ export type Columns =
       xl?: ColCount
     }
 
+export type GridSpan = "quarter" | "third" | "half" | "two-thirds" | "full"
+
 export type Align = "start" | "center" | "end" | "stretch"
 
 export type Justify = "start" | "center" | "end" | "between"

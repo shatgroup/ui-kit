@@ -97,6 +97,13 @@ function checkClass(file, line, token) {
   if (/^shadow-(?!none(?:$|:))/.test(value)) {
     report(file, line, "Không dùng shadow, popup dùng viền")
   }
+  if (frameFile(rel) && /grid-cols-/.test(value)) {
+    report(file, line, "Dùng Grid, không dùng grid-cols tự do")
+  }
+}
+
+function frameFile(rel) {
+  return (rel.startsWith("src/pages/") || rel.startsWith("src/components/patterns/")) && !rel.includes("/showcase/")
 }
 
 const ignored = new Map()
@@ -159,7 +166,20 @@ for (const file of walk(src)) {
   for (const match of source.matchAll(stringLiteral)) {
     const body = match[0].slice(1, -1)
     const line = lineOf(source, match.index)
+    if (frameFile(rel) && /\bkit-grid\b/.test(body)) {
+      for (const token of body.split(/\s+/)) {
+        const gap = normalize(token).match(/^gap-(.+)$/)
+        if (gap && gap[1] !== "4") report(file, line, "Lưới card chỉ dùng gap-4")
+      }
+    }
     for (const token of body.split(/\s+/)) checkClass(file, line, token)
+  }
+
+  if (frameFile(rel)) {
+    for (const match of source.matchAll(/<Grid\b[^>]*kit-grid[^>]*>/g)) {
+      const gap = match[0].match(/\bgap=\{(\d+)\}/)
+      if (gap && gap[1] !== "4") report(file, lineOf(source, match.index), "Lưới card chỉ dùng gap-4")
+    }
   }
 }
 

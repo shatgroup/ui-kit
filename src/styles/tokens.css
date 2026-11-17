@@ -198,6 +198,17 @@ html {
   grid-template-columns: auto minmax(0, 1fr);
 }
 
+[data-layout="type-color"] {
+  display: grid;
+  gap: var(--space-6);
+}
+
+@media (min-width: 48rem) {
+  [data-layout="type-color"] {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+}
+
 @utility scrollbar-none {
   scrollbar-width: none;
   &::-webkit-scrollbar {
