@@ -55,6 +55,8 @@ Bỏ mọi class `shadow-*` trừ `shadow-none`. Popup đã có `border` sẵn (
 
 `slider.tsx` — thêm `tip?: string`. Khi có tip, nút kéo bọc trong Tooltip và hiện đúng chuỗi đó.
 
+Nút icon giữ tên tiếng Việt và có prop đổi tên, theo `docs/STANDARD.md`: `Alert.closeLabel`, `NumberInput.decrementLabel` / `incrementLabel`, `PasswordInput.showPasswordLabel` / `hidePasswordLabel`, `TagsInput.removeLabel`, `DateInput.removeLabel`.
+
 ## component thêm mới
 
 | File | Việc |

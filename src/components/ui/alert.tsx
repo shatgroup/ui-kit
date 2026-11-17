@@ -26,6 +26,7 @@ function Alert({
   onClose,
   icon,
   variant = "soft",
+  closeLabel = "Đóng",
 }: {
   tone?: AlertTone
   title: string
@@ -33,6 +34,7 @@ function Alert({
   onClose?: () => void
   icon?: ReactNode
   variant?: "soft" | "line"
+  closeLabel?: string
 }) {
   const line = variant === "line"
   return (
@@ -44,7 +46,7 @@ function Alert({
         {children ? <span>{children}</span> : null}
       </div>
       {onClose ? (
-        <Button variant="ghost" size="sm" className="size-8 p-0" aria-label="Đóng" onClick={onClose}>
+        <Button variant="ghost" size="sm" className="size-8 p-0" aria-label={closeLabel} onClick={onClose}>
           <XIcon />
         </Button>
       ) : null}

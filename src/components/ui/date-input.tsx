@@ -13,12 +13,14 @@ function DateInput({
   size = "default",
   placeholder = "Chọn ngày",
   id,
+  removeLabel = "Xoá",
 }: {
   value?: Date
   onValueChange: (value: Date | undefined) => void
   size?: ControlSize
   placeholder?: string
   id?: string
+  removeLabel?: string
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -46,7 +48,7 @@ function DateInput({
           }}
         />
         <Button variant="ghost" size="sm" onClick={() => onValueChange(undefined)}>
-          Xoá
+          {removeLabel}
         </Button>
       </PopoverContent>
     </Popover>

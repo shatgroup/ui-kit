@@ -1,5 +1,5 @@
 import { createServer, type ViteDevServer } from "vite"
-import { chromium, type Browser } from "playwright"
+import { chromium, type Browser, type Page } from "playwright"
 import { afterAll, beforeAll, describe, expect, it } from "vitest"
 
 const widths = [375, 768, 1440]
@@ -10,6 +10,23 @@ const pages = [
   { path: "/showcase?tab=dashboard", tabs: [""] },
   { path: "/showcase?tab=application", tabs: [""] },
 ]
+
+async function settle(page: Page) {
+  await page.evaluate(async () => {
+    await document.fonts.ready
+    if (!document.querySelector("[data-test-settle]")) {
+      const style = document.createElement("style")
+      style.setAttribute("data-test-settle", "true")
+      style.textContent = "*, *::before, *::after { transition: none !important; animation: none !important; }"
+      document.head.appendChild(style)
+    }
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve(undefined))))
+  })
+}
+
+async function unsettle(page: Page) {
+  await page.evaluate(() => document.querySelector("[data-test-settle]")?.remove())
+}
 
 function scan() {
   const hidden = (el: Element) => {
@@ -184,11 +201,12 @@ describe("kiểm showcase", () => {
         for (const item of pages) {
           await page.goto(`${base}${item.path}`, { waitUntil: "networkidle" })
           await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+          await settle(page)
           for (const tab of item.tabs) {
             if (tab) await page.getByRole("tab", { name: tab }).click()
             const collapse = page.getByRole("button", { name: "Thu gọn sidebar" })
             if (await collapse.isVisible()) await collapse.click()
-            await page.waitForTimeout(300)
+            await settle(page)
             const found = await page.evaluate(scan)
             for (const message of found) failures.push(`${item.path} ${tab || "-"} ${width} ${theme}: ${message}`)
             if (item.path === "/design-system" && width === 1440) {
@@ -627,7 +645,7 @@ describe("kiểm showcase", () => {
           const meta = document.querySelector("[data-type-meta]")?.textContent ?? ""
           return hex.startsWith("#") && /\d+\/\d+/.test(meta)
         })
-        await page.waitForTimeout(600)
+        await settle(page)
         const found = await page.evaluate(() => {
           const notes: string[] = []
           const doc = document.documentElement
@@ -982,11 +1000,31 @@ describe("kiểm showcase", () => {
               return
             }
             const delta = Math.abs(mid(badge) - mid(control))
-            if (delta > 2) notes.push(`số ${badge.textContent?.trim()} lệch control ${delta.toFixed(1)}px`)
+            const limit = sample.hasAttribute("data-field-sample") ? 1 : 2
+            if (delta > limit) notes.push(`số ${badge.textContent?.trim()} lệch control ${delta.toFixed(1)}px`)
           })
+          const fieldControl = (n: number) => document.querySelector(`[data-field-sample="${n}"] [data-sample-control]`)
+          for (const [left, right] of [[1, 5], [2, 6], [3, 7], [4, 8]]) {
+            const a = fieldControl(left)
+            const b = fieldControl(right)
+            if (!(a instanceof HTMLElement) || !(b instanceof HTMLElement)) {
+              notes.push(`thiếu cặp ${left}-${right}`)
+              continue
+            }
+            const delta = Math.abs(mid(a) - mid(b))
+            if (delta > 1) notes.push(`cặp ${left}-${right} lệch ${delta.toFixed(1)}px`)
+          }
+          for (const column of [[1, 2, 3, 4], [5, 6, 7, 8]]) {
+            const edges = column.flatMap((n) => {
+              const el = fieldControl(n)
+              return el instanceof HTMLElement ? [el.getBoundingClientRect().right] : []
+            })
+            if (edges.length === 4 && Math.max(...edges) - Math.min(...edges) > 1) notes.push(`mép phải cột ${column[0]} lệch`)
+          }
           return notes
         })
         for (const note of found) failures.push(`${where}: ${note}`)
+        await unsettle(page)
 
         const shot = shots[where]
         if (shot) {
@@ -1108,7 +1146,7 @@ describe("kiểm showcase", () => {
       for (const theme of themes) {
         await page.goto(`${base}${path}`, { waitUntil: "networkidle" })
         await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
-        await page.waitForTimeout(600)
+        await settle(page)
         if (theme === "light" && shots[path]) {
           const height = await page.evaluate(() => {
             window.scrollTo(0, 0)

@@ -12,6 +12,8 @@ function NumberInput({
   step = 1,
   id,
   label = "Số",
+  decrementLabel = "Giảm",
+  incrementLabel = "Tăng",
 }: {
   size?: ControlSize
   value: number
@@ -21,6 +23,8 @@ function NumberInput({
   step?: number
   id?: string
   label?: string
+  decrementLabel?: string
+  incrementLabel?: string
 }) {
   function set(next: number) {
     const low = min ?? next
@@ -39,12 +43,12 @@ function NumberInput({
         if (!Number.isNaN(next)) set(next)
       }}
       prefix={
-        <Button type="button" variant="ghost" size="sm" className="size-8 p-0" aria-label="Giảm" onClick={() => set(value - step)}>
+        <Button type="button" variant="ghost" size="sm" className="size-8 p-0" aria-label={decrementLabel} onClick={() => set(value - step)}>
           <MinusIcon />
         </Button>
       }
       suffix={
-        <Button type="button" variant="ghost" size="sm" className="size-8 p-0" aria-label="Tăng" onClick={() => set(value + step)}>
+        <Button type="button" variant="ghost" size="sm" className="size-8 p-0" aria-label={incrementLabel} onClick={() => set(value + step)}>
           <PlusIcon />
         </Button>
       }

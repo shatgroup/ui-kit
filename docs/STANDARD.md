@@ -45,6 +45,16 @@ Cỡ và line-height mặc định Tailwind. Ngoại lệ tiếng Việt: `--tex
 
 Nhỏ (`text-xs`) và chú thích mô tả (`text-sm`) dùng `muted-foreground`. Các cỡ còn lại trong bảng chữ dùng `foreground`. Cột ÁP DỤNG ghi đúng tên màu đang áp lên chữ mẫu.
 
+Nút chỉ có icon giữ tên tiếng Việt cho trình đọc. Muốn ngôn ngữ khác thì truyền prop, không sửa chữ mặc định trong component. Trang `/design-system` không truyền các prop này.
+
+| Component | Prop | Mặc định |
+| --- | --- | --- |
+| Alert | `closeLabel` | Đóng |
+| NumberInput | `decrementLabel`, `incrementLabel` | Giảm, Tăng |
+| PasswordInput | `showPasswordLabel`, `hidePasswordLabel` | Hiện mật khẩu, Ẩn mật khẩu |
+| TagsInput | `removeLabel` | Xoá, kèm tên tag |
+| DateInput | `removeLabel` | Xoá |
+
 | Token | Cỡ | Line-height | Lần dùng |
 | --- | --- | --- | --- |
 | text-xs | 0.75rem | 1.333 | 8 |

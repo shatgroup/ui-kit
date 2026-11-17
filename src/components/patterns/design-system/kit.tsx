@@ -123,36 +123,25 @@ function FieldSample({
   const note = message ? (
     <Text id={messageId} as="p" size="sm" tone={error ? "destructive" : "muted"}>{message}</Text>
   ) : null
-  if (inline) {
-    return (
-      <div data-field-sample={n}>
-        <Inline gap={3} align="center" wrap={false}>
-          <SampleIndex n={n} />
-          <Inline gap={3} align="center" wrap={false} className="min-w-0 flex-1">
-            <Label htmlFor={id}>{label}</Label>
-            <div data-sample-control className="min-w-0 flex-1">{control}</div>
-          </Inline>
-        </Inline>
-      </div>
-    )
-  }
   return (
-    <div data-field-sample={n}>
+    <div data-field-sample={n} className="min-w-0">
       <Stack gap={1}>
-        <Inline gap={3} align="end" wrap={false}>
-          <span className="w-8 shrink-0" aria-hidden="true" />
-          <Label htmlFor={id} className="min-w-0 flex-1">{label}</Label>
-        </Inline>
+        <div className="flex h-5 min-w-0 items-center">
+          {inline ? null : <Label htmlFor={id} className="min-w-0 truncate">{label}</Label>}
+        </div>
         <Inline gap={3} align="center" wrap={false}>
           <SampleIndex n={n} />
+          {inline ? <Label htmlFor={id} className="shrink-0">{label}</Label> : null}
           <div data-sample-control className="min-w-0 flex-1">{control}</div>
         </Inline>
-        {note ? (
-          <Inline gap={3} wrap={false}>
-            <span className="w-8 shrink-0" aria-hidden="true" />
-            <div className="min-w-0 flex-1">{note}</div>
-          </Inline>
-        ) : null}
+        <div className="min-h-5 min-w-0">
+          {note ? (
+            <Inline gap={3} wrap={false}>
+              <span className="w-8 shrink-0" aria-hidden="true" />
+              <div className="min-w-0 flex-1">{note}</div>
+            </Inline>
+          ) : null}
+        </div>
       </Stack>
     </div>
   )
@@ -357,14 +346,14 @@ function Kit() {
       <Section id="nhap-lieu" title="Inputs">
         <Span at="md:col-span-6 xl:col-span-12">
           <KitCard title="Input states">
-            <div data-input-states className="grid grid-cols-1 gap-6 md:grid-flow-col md:grid-cols-2 md:grid-rows-4">
+            <div data-input-states className="grid min-w-0 grid-cols-2 gap-6 *:min-w-0">
               <FieldSample n={1} label="Default"><Input placeholder="Type here" /></FieldSample>
-              <FieldSample n={2} label="Filled"><Input defaultValue="Alex Kim" /></FieldSample>
-              <FieldSample n={3} label="With icon"><InputGroup prefix={<UserIcon className="size-4" />} aria-label="Username" placeholder="Username" /></FieldSample>
-              <FieldSample n={4} label="Focus"><Input forceState="focus" defaultValue="Focused" /></FieldSample>
               <FieldSample n={5} label="Error" error="This field is invalid"><Input defaultValue="???" /></FieldSample>
+              <FieldSample n={2} label="Filled"><Input defaultValue="Alex Kim" /></FieldSample>
               <FieldSample n={6} label="Disabled"><Input defaultValue="Not editable" disabled /></FieldSample>
+              <FieldSample n={3} label="With icon"><InputGroup prefix={<UserIcon className="size-4" />} aria-label="Username" placeholder="Username" /></FieldSample>
               <FieldSample n={7} label="Email" inline><Input placeholder="name@studio.com" /></FieldSample>
+              <FieldSample n={4} label="Focus"><Input forceState="focus" defaultValue="Focused" /></FieldSample>
               <FieldSample n={8} label="With helper text" hint="Shown under the field"><Input placeholder="Add a note" /></FieldSample>
             </div>
           </KitCard>

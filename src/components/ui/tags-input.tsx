@@ -9,11 +9,13 @@ function TagsInput({
   onValueChange,
   size = "default",
   placeholder = "Thêm tag",
+  removeLabel = "Xoá",
 }: {
   value: string[]
   onValueChange: (value: string[]) => void
   size?: ControlSize
   placeholder?: string
+  removeLabel?: string
 }) {
   const [draft, setDraft] = useState("")
   function add(text: string) {
@@ -37,7 +39,7 @@ function TagsInput({
         {value.map((tag, index) => (
           <Badge key={`${tag}-${index}`} variant="outline">
             {tag}
-            <button type="button" className="inline-flex size-3 items-center justify-center" aria-label={`Xoá ${tag}`} onClick={() => onValueChange(value.filter((_, itemIndex) => itemIndex !== index))}>
+            <button type="button" className="inline-flex size-3 items-center justify-center" aria-label={`${removeLabel} ${tag}`} onClick={() => onValueChange(value.filter((_, itemIndex) => itemIndex !== index))}>
               <XIcon className="size-3" />
             </button>
           </Badge>
