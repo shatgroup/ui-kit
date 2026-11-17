@@ -288,9 +288,8 @@ describe("kiểm showcase", () => {
                   await trigger.click({ timeout: 2000 }).catch(() => failures.push(`${where}: ${slot} không bấm được`))
                 }
                 await page.waitForTimeout(200)
-                const covered = await page.evaluate(() => {
+                const measurePopup = () => page.evaluate(() => {
                   const trigger = document.querySelector("[data-guard-trigger=true]")
-                  trigger?.removeAttribute("data-guard-trigger")
                   if (!(trigger instanceof HTMLElement)) return "không thấy ô"
                   const rect = trigger.getBoundingClientRect()
                   const popup = [...document.querySelectorAll("[data-slot=select-content], [data-slot=dropdown-menu-content], [data-slot=popover-content]")].find((el) => {
@@ -302,6 +301,12 @@ describe("kiểm showcase", () => {
                   const overlap = frame.left < rect.right - 1 && frame.right > rect.left + 1 && frame.top < rect.bottom - 1 && frame.bottom > rect.top + 1
                   return overlap ? "che ô bấm" : ""
                 })
+                let covered = await measurePopup()
+                if (covered === "không mở") {
+                  await page.waitForTimeout(400)
+                  covered = await measurePopup()
+                }
+                await page.evaluate(() => document.querySelector("[data-guard-trigger=true]")?.removeAttribute("data-guard-trigger"))
                 if (covered) failures.push(`${where}: ${slot} ${covered}`)
                 if (!already) await page.keyboard.press("Escape")
               }
