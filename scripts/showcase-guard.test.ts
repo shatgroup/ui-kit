@@ -636,11 +636,6 @@ describe("kiểm showcase", () => {
   it("design system: tràn, tương phản, hex, control", async () => {
     const page = await browser.newPage()
     const failures: string[] = []
-    const shots: Record<string, string> = {
-      "1440 light": "docs/reference/ket-qua-ds-light-1440.png",
-      "1440 dark": "docs/reference/ket-qua-ds-dark-1440.png",
-      "375 light": "docs/reference/ket-qua-ds-375.png",
-    }
     for (const width of [...widths, 1920]) {
       await page.setViewportSize({ width, height: 900 })
       for (const theme of themes) {
@@ -1206,17 +1201,6 @@ describe("kiểm showcase", () => {
           return notes
         })
         for (const note of found) failures.push(`${where}: ${note}`)
-        if (where === "1440 light") {
-          const cells = page.locator("[data-flow-demo]")
-          const count = await cells.count()
-          for (let index = 0; index < count; index += 1) {
-            const cell = cells.nth(index)
-            const name = (await cell.getAttribute("data-flow-demo")) ?? `demo-${index}`
-            const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
-            await cell.scrollIntoViewIfNeeded()
-            await cell.screenshot({ path: `docs/reference/flow-demo-${slug}.png` })
-          }
-        }
         await unsettle(page)
         const shell = page.locator("[data-app-shell]")
         await shell.evaluate((el) => el.scrollIntoView({ block: "center" }))
@@ -1251,14 +1235,12 @@ describe("kiểm showcase", () => {
           if (!shut) failures.push(`${where}: menu không đóng`)
         }
 
-        const shot = shots[where]
-        if (shot) {
+        if (where === "1440 light" || where === "1440 dark" || where === "375 light") {
           const height = await page.evaluate(() => {
             window.scrollTo(0, 0)
             return Math.ceil(document.documentElement.scrollHeight)
           })
           if (height > 30000) failures.push(`${where}: trang cao ${height}px`)
-          await page.screenshot({ path: shot, fullPage: true })
         }
 
         const flow = page.locator("[data-flow=mind]")
@@ -1394,11 +1376,6 @@ describe("kiểm showcase", () => {
   it("viền Card, Input, Table bằng --border", async () => {
     const page = await browser.newPage()
     const failures: string[] = []
-    const shots: Record<string, string> = {
-      "/showcase?tab=cards": "docs/reference/ket-qua-cards.png",
-      "/showcase?tab=dashboard": "docs/reference/ket-qua-dashboard.png",
-      "/showcase?tab=application": "docs/reference/ket-qua-application.png",
-    }
     const paths = ["/design-system", "/showcase?tab=cards", "/showcase?tab=dashboard", "/showcase?tab=application"]
     await page.setViewportSize({ width: 1440, height: 900 })
     for (const path of paths) {
@@ -1406,20 +1383,13 @@ describe("kiểm showcase", () => {
         await page.goto(`${base}${path}`, { waitUntil: "networkidle" })
         await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
         await settle(page)
-        if (theme === "light" && shots[path]) {
+        if (theme === "light" && path.startsWith("/showcase")) {
           const height = await page.evaluate(() => {
             window.scrollTo(0, 0)
             document.querySelector("[data-showcase-scroll]")?.scrollTo(0, 0)
             return Math.ceil(document.documentElement.scrollHeight)
           })
-          if (height > 16000) failures.push(`${path}: trang cao ${height}px, ảnh bị cắt`)
-          await page.setViewportSize({ width: 1440, height: Math.min(height, 16000) })
-          await page.evaluate(() => {
-            window.scrollTo(0, 0)
-            document.querySelector("[data-showcase-scroll]")?.scrollTo(0, 0)
-          })
-          await page.screenshot({ path: shots[path], fullPage: true })
-          await page.setViewportSize({ width: 1440, height: 900 })
+          if (height > 16000) failures.push(`${path}: trang cao ${height}px`)
         }
         // Tab Application không có Table. Card và Input trên tab đó vẫn phải bằng --border.
         const notes = await page.evaluate((flags) => {

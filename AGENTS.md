@@ -44,7 +44,7 @@ Trao đổi và giải thích với người dùng bằng **tiếng Việt**.
 
 ### Sau khi làm xong
 9. Chạy build + lint của dự án, sửa hết lỗi.
-10. **Chạy thử thực tế.** Nếu có **Playwright MCP**: tự mở trang, bấm thử luồng chính, đọc trang dạng chữ (snapshot). Không chụp màn hình để kiểm luồng. Sửa giao diện thì chụp ảnh đối chiếu theo mục Giao diện.
+10. **Chạy thử thực tế.** Nếu có **Playwright MCP**: tự mở trang, bấm thử luồng chính, đọc trang dạng chữ (snapshot). Không chụp ảnh kết quả trừ khi người dùng yêu cầu. Không tạo hay cập nhật ảnh trong `docs/reference/`.
 11. Chạy qua checklist cuối `QUY_UOC.md`.
 12. **Cập nhật `TRANG_THAI_DU_AN.md`** — bắt buộc, không được bỏ qua.
 13. Báo cáo theo mẫu ở mục 6.
