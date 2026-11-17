@@ -1,32 +1,21 @@
-# React + TypeScript + Vite
+# UI Kit
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Bộ giao diện dùng chung cho dự án nội bộ. Stack: Vite, React, TypeScript, Tailwind CSS, shadcn new-york (Radix). Theme Future Teal nằm trong `src/styles/theme.lock.json`.
 
-Currently, two official plugins are available:
+## Tạo dự án mới
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Trên trang repo này bấm **Use this template**, rồi tạo repo private mới. Clone repo đó về máy.
 
-## React Compiler
+## Chạy
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+npm i
+npm run dev
+npm test
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+`npm run dev` mở trang kit. `npm test` chạy kiểm tra giao diện.
+
+## Tài liệu
+
+Quy ước kích thước, khung app và control: [docs/STANDARD.md](docs/STANDARD.md).
