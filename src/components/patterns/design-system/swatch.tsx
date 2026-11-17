@@ -59,7 +59,7 @@ function Swatch({
   children?: ReactNode
 }) {
   return (
-    <div data-swatch={name} data-hex={hex} className={`${bg} ${fg ?? ""} flex h-24 flex-col items-center justify-center rounded-lg px-3`}>
+    <div data-swatch={name} data-hex={hex} className={`${bg} ${fg ?? ""} flex h-24 flex-col items-center justify-center rounded-lg px-3 ${name === "background" ? "border border-border" : ""}`}>
       <span className="text-sm font-medium">{children ?? name}</span>
       <span className="text-xs">{hex || "…"}</span>
     </div>

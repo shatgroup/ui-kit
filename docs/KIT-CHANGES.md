@@ -2,6 +2,16 @@
 
 Bản gốc là file CLI ghi đè ngày chuyển Radix. Chỉ các điểm dưới đây khác bản đó.
 
+## Base
+
+`theme.css` — khôi phục base gốc của shadcn trong `@layer base`:
+
+```css
+* { @apply border-border outline-ring/50; }
+```
+
+Bản chuyển Radix thiếu dòng này. Card và dòng Table chỉ ghi `border` / `border-b`, nên viền lấy màu chữ.
+
 ## Kích thước
 
 Control `sm` / `default` / `lg` của Button, Input, Select trùng `docs/STANDARD.md`: `h-8` (32), `h-9` (36), `h-10` (40). Không sửa.

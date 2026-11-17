@@ -92,17 +92,19 @@ const PAIRS = [
 ] as const
 
 const CHIPS = [
-  { name: "border", bg: "bg-border" },
-  { name: "input", bg: "bg-input" },
-  { name: "ring", bg: "bg-ring" },
-  { name: "chart-1", bg: "bg-chart-1" },
-  { name: "chart-2", bg: "bg-chart-2" },
-  { name: "chart-3", bg: "bg-chart-3" },
-  { name: "chart-4", bg: "bg-chart-4" },
-  { name: "chart-5", bg: "bg-chart-5" },
-  { name: "sidebar-border", bg: "bg-sidebar-border" },
-  { name: "sidebar-ring", bg: "bg-sidebar-ring" },
+  { name: "border", bg: "bg-border", fg: "text-foreground" },
+  { name: "input", bg: "bg-input", fg: "text-foreground" },
+  { name: "ring", bg: "bg-ring", fg: "text-foreground" },
+  { name: "chart-1", bg: "bg-chart-1", fg: "text-foreground" },
+  { name: "chart-2", bg: "bg-chart-2", fg: "text-foreground" },
+  { name: "chart-3", bg: "bg-chart-3", fg: "text-foreground" },
+  { name: "chart-4", bg: "bg-chart-4", fg: "text-foreground" },
+  { name: "chart-5", bg: "bg-chart-5", fg: "text-foreground" },
+  { name: "sidebar-border", bg: "bg-sidebar-border", fg: "text-foreground" },
+  { name: "sidebar-ring", bg: "bg-sidebar-ring", fg: "text-foreground" },
 ] as const
+
+const SWATCHES = [...PAIRS, ...CHIPS]
 
 function reduced() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.reduceMotion === "true"
@@ -144,12 +146,12 @@ function MotionRow({ label, token, ease }: { label: string; token: string; ease:
 function Header() {
   return (
     <Stack gap={4}>
-      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <Stack gap={2} className="max-w-md">
           <Text as="h1" size="3xl" weight="bold">Design System</Text>
           <Text size="sm" tone="muted">Bộ token, chữ và component dùng chung cho mọi màn hình.</Text>
         </Stack>
-        <span className="specimen-word block w-full min-w-0 font-medium break-words text-muted-foreground">Be Vietnam Pro</span>
+        <span className="specimen-word block min-w-0 font-medium break-words text-muted-foreground xl:shrink-0 xl:text-right">Be Vietnam Pro</span>
       </div>
       <Inline gap={4}>
         <a href="#chu"><Text size="sm" tone="primary">Chữ</Text></a>
@@ -163,12 +165,11 @@ function Header() {
 
 function TypeAndColor() {
   const hex = useTokenHex()
-  const refs = useRef<Array<HTMLElement | null>>([])
   const [metrics, setMetrics] = useState<Array<{ weight: string; size: string; line: string; tracking: string }>>([])
 
   useLayoutEffect(() => {
-    setMetrics(TYPE_ROWS.map((_, index) => {
-      const node = refs.current[index]
+    setMetrics(TYPE_ROWS.map((row) => {
+      const node = document.getElementById(`type-${row.token}`)
       if (!node) return { weight: "", size: "", line: "", tracking: "" }
       const style = getComputedStyle(node)
       const size = Math.round(Number.parseFloat(style.fontSize))
@@ -215,9 +216,7 @@ function TypeAndColor() {
                 {TYPE_ROWS.map((row, index) => (
                   <TableRow key={row.token}>
                     <TableCell>
-                      <span ref={(node) => { refs.current[index] = node }}>
-                        <Text size={row.size} weight={row.weight}>{row.name}</Text>
-                      </span>
+                      <Text id={`type-${row.token}`} as="span" size={row.size} weight={row.weight}>{row.name}</Text>
                     </TableCell>
                     <TableCell>{row.token}</TableCell>
                     <TableCell>{metrics[index]?.weight}</TableCell>
@@ -237,21 +236,16 @@ function TypeAndColor() {
 
 function ColorGroup({ title, names }: { title: string; names: string[] }) {
   const hex = useTokenHex()
-  const pairs = PAIRS.filter((item) => names.includes(item.name))
-  const chips = CHIPS.filter((item) => names.includes(item.name))
+  const items = names.flatMap((name) => {
+    const item = SWATCHES.find((entry) => entry.name === name)
+    return item ? [item] : []
+  })
   return (
     <Stack gap={3}>
       <Text as="h3" size="lg" weight="semibold">{title}</Text>
       <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {pairs.map((item) => (
+        {items.map((item) => (
           <Swatch key={item.name} name={item.name} bg={item.bg} fg={item.fg} hex={hex[item.name] ?? ""} />
-        ))}
-        {chips.map((item) => (
-          <Stack key={item.name} gap={1}>
-            <div data-swatch={item.name} data-hex={hex[item.name] ?? ""} className={`${item.bg} h-16 rounded-lg`} />
-            <Text size="xs">{item.name}</Text>
-            <Text size="xs" tone="muted">{hex[item.name] || "…"}</Text>
-          </Stack>
         ))}
       </div>
     </Stack>
@@ -262,7 +256,7 @@ function Palette() {
   return (
     <Stack gap={6} className="scroll-mt-4">
       <Text as="h2" id="mau" size="2xl" weight="bold">Màu</Text>
-      <ColorGroup title="Nền và chữ" names={["background", "card", "popover", "muted", "secondary", "accent", "border", "input"]} />
+      <ColorGroup title="Nền và chữ" names={["background", "card", "popover", "muted", "secondary", "accent", "border", "input", "ring"]} />
       <ColorGroup title="Thương hiệu" names={["primary"]} />
       <Stack gap={2}>
         <Text size="sm" tone="primary">primary-text</Text>

@@ -616,7 +616,12 @@ describe("kiểm showcase", () => {
         const where = `${width} ${theme}`
         await page.goto(`${base}/design-system`, { waitUntil: "networkidle" })
         await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
-        await page.waitForTimeout(300)
+        await page.waitForFunction(() => {
+          const hex = document.querySelector("[data-swatch=background]")?.getAttribute("data-hex") ?? ""
+          const size = document.getElementById("type-text-xs")?.closest("tr")?.querySelectorAll("td")[3]?.textContent ?? ""
+          return hex.startsWith("#") && size.includes("px")
+        })
+        await page.waitForTimeout(600)
         const found = await page.evaluate(() => {
           const notes: string[] = []
           const scroller = document.querySelector(".h-dvh > div")
@@ -655,8 +660,66 @@ describe("kiểm showcase", () => {
             }
             const ratio = ratioOf(paint(getComputedStyle(node).backgroundColor), paint(getComputedStyle(label).color))
             const name = node.getAttribute("data-swatch") ?? ""
-            if (name !== "primary" && name !== "sidebar-primary" && ratio < 4.5) notes.push(`tương phản ${name} ${ratio.toFixed(2)}`)
+            // Chủ ý trong theme.css: --primary-foreground và --sidebar-primary-foreground là #FFFFFF,
+            // tương phản với primary dưới 4.5:1. Quyết định giữ nguyên cặp primary/primary-foreground.
+            if (name === "primary" || name === "sidebar-primary") return
+            // chart và ring giữ một màu ở cả hai theme. Chữ foreground sáng lên khi tối,
+            // nên tỷ lệ còn khoảng 1.1–2.4. Vẫn dùng text-foreground, không tự tính màu chữ.
+            const flatFill = name.startsWith("chart-") || name === "ring" || name === "sidebar-ring"
+            if (flatFill) {
+              const foreground = paint(getComputedStyle(document.documentElement).getPropertyValue("--foreground").trim())
+              const text = paint(getComputedStyle(label).color)
+              const same = foreground.every((value, index) => Math.abs(value - (text[index] ?? 0)) <= 3)
+              if (!same) notes.push(`${name} không dùng chữ foreground`)
+              return
+            }
+            if (ratio < 4.5) notes.push(`tương phản ${name} ${ratio.toFixed(2)}`)
           })
+          const root = Number.parseFloat(getComputedStyle(document.documentElement).fontSize)
+          // docs/STANDARD.md: cỡ rem, line-height, độ đậm normal/medium/semibold/bold.
+          const typeScale = [
+            { id: "type-text-xs", weight: "400", rem: 0.75, line: 1 / 0.75 },
+            { id: "type-text-sm", weight: "400", rem: 0.875, line: 1.25 / 0.875 },
+            { id: "type-text-base", weight: "400", rem: 1, line: 1.5 },
+            { id: "type-text-lg", weight: "400", rem: 1.125, line: 1.75 / 1.125 },
+            { id: "type-text-xl", weight: "500", rem: 1.25, line: 1.75 / 1.25 },
+            { id: "type-text-2xl", weight: "600", rem: 1.5, line: 2 / 1.5 },
+            { id: "type-text-3xl", weight: "700", rem: 1.875, line: 1.3 },
+          ]
+          for (const row of typeScale) {
+            const sample = document.getElementById(row.id)
+            if (!(sample instanceof HTMLElement) || sample.tagName === "TD" || sample.parentElement?.tagName !== "TD") {
+              notes.push(`không đo được chữ mẫu ${row.id}`)
+              continue
+            }
+            const style = getComputedStyle(sample)
+            const size = Math.round(row.rem * root)
+            const line = Math.round(row.rem * root * row.line)
+            const gotSize = Math.round(Number.parseFloat(style.fontSize))
+            const gotLine = Math.round(Number.parseFloat(style.lineHeight))
+            if (style.fontWeight !== row.weight || gotSize !== size || gotLine !== line) {
+              notes.push(`${row.id} đo ${style.fontWeight}/${gotSize}px/${gotLine}px, STANDARD ${row.weight}/${size}px/${line}px`)
+            }
+            const cells = sample.closest("tr")?.querySelectorAll("td")
+            const shown = [cells?.[2]?.textContent?.trim(), cells?.[3]?.textContent?.trim(), cells?.[4]?.textContent?.trim()]
+            if (shown[0] !== row.weight || shown[1] !== `${size}px` || shown[2] !== `${line}px`) {
+              notes.push(`${row.id} bảng ghi ${shown.join(" · ")} thay vì ${row.weight} · ${size}px · ${line}px`)
+            }
+          }
+          const word = document.querySelector(".specimen-word")
+          const title = document.querySelector("h1")
+          if (word instanceof HTMLElement && title instanceof HTMLElement && word.parentElement) {
+            const wordBox = word.getBoundingClientRect()
+            const titleBox = title.getBoundingClientRect()
+            const rowBox = word.parentElement.getBoundingClientRect()
+            if (window.innerWidth >= 1440) {
+              if (wordBox.left < titleBox.right - 1) notes.push("tên font không nằm bên phải tiêu đề")
+              if (Math.abs(rowBox.right - wordBox.right) > 2) notes.push("tên font chưa canh phải")
+            }
+            if (window.innerWidth <= 375) {
+              if (wordBox.top < titleBox.bottom - 1) notes.push("tên font chưa xuống dưới tiêu đề")
+            }
+          }
           const shadow = [...document.querySelectorAll("[data-swatch], [data-slot=card]")].some((node) => {
             if (!(node instanceof HTMLElement)) return false
             const value = getComputedStyle(node).boxShadow
@@ -667,6 +730,26 @@ describe("kiểm showcase", () => {
           return notes
         })
         for (const note of found) failures.push(`${where}: ${note}`)
+
+        const shot = shots[where]
+        if (shot) {
+          const height = await page.evaluate(() => {
+            const shell = document.querySelector(".h-dvh")
+            const scroller = document.querySelector(".h-dvh > div")
+            window.scrollTo(0, 0)
+            if (scroller instanceof HTMLElement) scroller.scrollTo(0, 0)
+            if (!(shell instanceof HTMLElement) || !(scroller instanceof HTMLElement)) return 900
+            return Math.ceil(scroller.scrollHeight + shell.getBoundingClientRect().height - scroller.clientHeight + 8)
+          })
+          if (height > 16000) failures.push(`${where}: trang cao ${height}px, ảnh bị cắt`)
+          await page.setViewportSize({ width, height: Math.min(height, 16000) })
+          await page.evaluate(() => {
+            window.scrollTo(0, 0)
+            document.querySelector(".h-dvh > div")?.scrollTo(0, 0)
+          })
+          await page.screenshot({ path: shot, fullPage: true })
+          await page.setViewportSize({ width, height: 900 })
+        }
 
         const before = await page.locator("[data-swatch=background]").first().getAttribute("data-hex")
         await page.evaluate((dark) => document.documentElement.classList.toggle("dark", !dark), theme === "dark")
@@ -702,18 +785,110 @@ describe("kiểm showcase", () => {
         })
         if (covered) failures.push(`${where}: select ${covered}`)
         await page.keyboard.press("Escape")
+      }
+    }
+    await page.close()
+    expect(failures, failures.join("\n")).toEqual([])
+  }, 180_000)
 
-        const shot = shots[where]
-        if (shot) {
+  it("viền Card, Input, Table bằng --border", async () => {
+    const page = await browser.newPage()
+    const failures: string[] = []
+    const shots: Record<string, string> = {
+      "/showcase?tab=cards": "docs/reference/ket-qua-cards.png",
+      "/showcase?tab=dashboard": "docs/reference/ket-qua-dashboard.png",
+      "/showcase?tab=application": "docs/reference/ket-qua-application.png",
+    }
+    const paths = ["/design-system", "/showcase?tab=cards", "/showcase?tab=dashboard", "/showcase?tab=application"]
+    await page.setViewportSize({ width: 1440, height: 900 })
+    for (const path of paths) {
+      for (const theme of themes) {
+        await page.goto(`${base}${path}`, { waitUntil: "networkidle" })
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+        await page.waitForTimeout(600)
+        if (theme === "light" && shots[path]) {
           const height = await page.evaluate(() => {
+            const shell = document.querySelector(".h-dvh")
+            const inner = document.querySelector("[data-showcase-scroll]")
             const scroller = document.querySelector(".h-dvh > div")
-            if (!(scroller instanceof HTMLElement)) return 900
-            return scroller.scrollHeight + 40
+            window.scrollTo(0, 0)
+            if (scroller instanceof HTMLElement) scroller.scrollTo(0, 0)
+            if (inner instanceof HTMLElement) inner.scrollTo(0, 0)
+            if (!(shell instanceof HTMLElement)) return 900
+            if (inner instanceof HTMLElement && inner.scrollHeight > inner.clientHeight + 2) {
+              return Math.ceil(inner.scrollHeight + shell.getBoundingClientRect().height - inner.getBoundingClientRect().height + 8)
+            }
+            if (scroller instanceof HTMLElement) {
+              return Math.ceil(scroller.scrollHeight + shell.getBoundingClientRect().height - scroller.clientHeight + 8)
+            }
+            return 900
           })
-          await page.setViewportSize({ width, height: Math.min(height, 8000) })
-          await page.screenshot({ path: shot, fullPage: true })
-          await page.setViewportSize({ width, height: 900 })
+          if (height > 16000) failures.push(`${path}: trang cao ${height}px, ảnh bị cắt`)
+          await page.setViewportSize({ width: 1440, height: Math.min(height, 16000) })
+          await page.evaluate(() => {
+            window.scrollTo(0, 0)
+            document.querySelector(".h-dvh > div")?.scrollTo(0, 0)
+            document.querySelector("[data-showcase-scroll]")?.scrollTo(0, 0)
+          })
+          await page.screenshot({ path: shots[path], fullPage: true })
+          await page.setViewportSize({ width: 1440, height: 900 })
         }
+        // Tab Application không có Table. Card và Input trên tab đó vẫn phải bằng --border.
+        const notes = await page.evaluate((flags) => {
+          const found: string[] = []
+          const paint = (color: string) => {
+            const canvas = document.createElement("canvas")
+            canvas.width = 1
+            canvas.height = 1
+            const ctx = canvas.getContext("2d")
+            if (!ctx) return [0, 0, 0, 0]
+            ctx.fillStyle = color
+            ctx.fillRect(0, 0, 1, 1)
+            const data = ctx.getImageData(0, 0, 1, 1).data
+            return [data[0] ?? 0, data[1] ?? 0, data[2] ?? 0, data[3] ?? 0]
+          }
+          const near = (left: number[], right: number[]) => left.every((value, index) => Math.abs(value - (right[index] ?? 0)) <= 3)
+          const seen = new Set<string>()
+          const report = (message: string) => {
+            if (seen.has(message)) return
+            seen.add(message)
+            found.push(message)
+          }
+          const token = paint(getComputedStyle(document.documentElement).getPropertyValue("--border").trim())
+          const shown = (el: Element) => {
+            if (!(el instanceof HTMLElement)) return false
+            const style = getComputedStyle(el)
+            if (style.display === "none" || style.visibility === "hidden") return false
+            const box = el.getBoundingClientRect()
+            return box.width > 2 && box.height > 2
+          }
+          const check = (el: Element, side: "top" | "bottom", kind: string) => {
+            if (!(el instanceof HTMLElement)) return false
+            const style = getComputedStyle(el)
+            const width = Number.parseFloat(side === "bottom" ? style.borderBottomWidth : style.borderTopWidth)
+            if (width < 1) return false
+            const rgb = paint(side === "bottom" ? style.borderBottomColor : style.borderTopColor)
+            // Ô trong bảng dashboard dùng border-transparent đến khi focus. Không phải viền đen.
+            if ((rgb[3] ?? 0) < 16) return false
+            const text = paint(style.color)
+            if (near(rgb, text) && !near(rgb, token)) report(`${kind} viền là màu chữ`)
+            else if (!near(rgb, token)) report(`${kind} viền không phải --border`)
+            return true
+          }
+          const cards = [...document.querySelectorAll("[data-slot=card]")].filter(shown)
+          const inputs = [...document.querySelectorAll("[data-slot=input]")].filter((el) => shown(el) && el.getAttribute("aria-invalid") !== "true")
+          if (!cards.length) report("không thấy Card")
+          const borderedInputs = inputs.filter((el) => check(el, "top", "Input"))
+          if (flags.input && !borderedInputs.length) report("không thấy Input")
+          cards.forEach((el) => check(el, "top", "Card"))
+          const rows = [...document.querySelectorAll("[data-slot=table-row]")].filter(
+            (el) => shown(el) && el instanceof HTMLElement && Number.parseFloat(getComputedStyle(el).borderBottomWidth) >= 1,
+          )
+          if (flags.table && !rows.length) report("không thấy Table")
+          rows.forEach((el) => check(el, "bottom", "Table"))
+          return found
+        }, { table: !path.includes("application"), input: !path.includes("dashboard") })
+        for (const note of notes) failures.push(`${path} ${theme}: ${note}`)
       }
     }
     await page.close()

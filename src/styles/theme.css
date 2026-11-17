@@ -241,6 +241,10 @@
 }
 
 @layer base {
+  /* khôi phục base gốc của shadcn: thiếu dòng này thì border không màu thành currentColor */
+  * {
+    @apply border-border outline-ring/50;
+  }
   html {
     @apply font-sans;
   }
