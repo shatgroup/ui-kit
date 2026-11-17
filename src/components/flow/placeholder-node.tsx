@@ -1,33 +1,72 @@
-import { useCallback, type ReactNode } from "react"
-import { Handle, Position, useNodeId, useReactFlow, type NodeProps } from "@xyflow/react"
-import { Text } from "@/components/layout/index.ts"
-import { BaseNode } from "@/components/flow/base-node.tsx"
+"use client";
+
+import { useCallback, type ReactNode } from "react";
+import {
+  useReactFlow,
+  useNodeId,
+  Handle,
+  Position,
+  type NodeProps,
+} from "@xyflow/react";
+
+import { BaseNode } from "@/components/flow/base-node";
 
 export type PlaceholderNodeProps = Partial<NodeProps> & {
-  children?: ReactNode
-  label?: string
-}
+  children?: ReactNode;
+  label?: string;
+};
 
-export function PlaceholderNode({ children, label = "Thêm bước" }: PlaceholderNodeProps) {
-  const id = useNodeId()
-  const { setNodes, setEdges } = useReactFlow()
+export function PlaceholderNode({
+  children,
+  label = "Nút",
+}: PlaceholderNodeProps) {
+  const id = useNodeId();
+  const { setNodes, setEdges } = useReactFlow();
 
   const handleClick = useCallback(() => {
-    if (!id) return
-    setEdges((edges) => edges.map((edge) => (edge.target === id ? { ...edge, animated: false } : edge)))
-    setNodes((nodes) => nodes.map((node) => (
-      node.id === id ? { ...node, data: { ...node.data, label }, type: "default" } : node
-    )))
-  }, [id, label, setEdges, setNodes])
+    if (!id) return;
+
+    setEdges((edges) =>
+      edges.map((edge) =>
+        edge.target === id ? { ...edge, animated: false } : edge,
+      ),
+    );
+
+    setNodes((nodes) => {
+      const updatedNodes = nodes.map((node) => {
+        if (node.id === id) {
+          // Customize this function to update the node's data as needed.
+          // For example, you can change the label or other properties of the node.
+          return {
+            ...node,
+            data: { ...node.data, label },
+            type: "default",
+          };
+        }
+        return node;
+      });
+      return updatedNodes;
+    });
+  }, [id, label, setEdges, setNodes]);
 
   return (
     <BaseNode
-      className="w-36 border-dashed p-2 text-center text-muted-foreground"
+      className="bg-card w-[150px] border-dashed border-muted-foreground p-2 text-center text-muted-foreground shadow-none"
       onClick={handleClick}
     >
-      {children ?? <Text size="sm" tone="muted">{label}</Text>}
-      <Handle type="target" className="invisible" position={Position.Top} isConnectable={false} />
-      <Handle type="source" className="invisible" position={Position.Bottom} isConnectable={false} />
+      {children}
+      <Handle
+        type="target"
+        style={{ visibility: "hidden" }}
+        position={Position.Top}
+        isConnectable={false}
+      />
+      <Handle
+        type="source"
+        style={{ visibility: "hidden" }}
+        position={Position.Bottom}
+        isConnectable={false}
+      />
     </BaseNode>
-  )
+  );
 }

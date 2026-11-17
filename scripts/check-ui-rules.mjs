@@ -72,9 +72,12 @@ function checkClass(file, line, token) {
   const rel = path.relative(root, file).split(path.sep).join("/")
   const value = normalize(token)
   if (!value) return
-  if (rel.startsWith("src/components/ui/")) {
+  if (rel.startsWith("src/components/ui/") || rel.startsWith("src/components/flow/")) {
     if (/^shadow-(?!none(?:$|:))/.test(value)) {
       report(file, line, "Không dùng shadow, popup dùng viền")
+    }
+    if (rel.startsWith("src/components/flow/") && (shadedColor.test(value) || plainColor.test(value))) {
+      report(file, line, "Dùng token màu, không dùng màu Tailwind mặc định")
     }
     return
   }
@@ -143,9 +146,15 @@ for (const file of walk(src)) {
   ignored.set(file, skip)
 
   const inUi = rel.startsWith("src/components/ui/")
+  const inFlow = rel.startsWith("src/components/flow/")
   lines.forEach((line, index) => {
     const lineNo = index + 1
     if (skip.has(lineNo) || inUi) return
+    if (inFlow) {
+      if (hexOutsideSelector(line)) report(file, lineNo, "Không ghi mã màu trong file tsx")
+      if (/\brgb\s*\(/.test(line) || /\bhsl\s*\(/.test(line)) report(file, lineNo, "Không ghi mã màu trong file tsx")
+      return
+    }
     if (hexOutsideSelector(line)) {
       report(file, lineNo, "Không ghi mã màu trong file tsx")
     }

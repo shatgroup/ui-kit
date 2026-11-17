@@ -1,16 +1,24 @@
-import type { ComponentProps } from "react"
-import { Handle, type HandleProps } from "@xyflow/react"
-import { cn } from "@/lib/utils"
+import type { ComponentProps } from "react";
+import { Handle, type HandleProps } from "@xyflow/react";
 
-export type BaseHandleProps = HandleProps
+import { cn } from "@/lib/utils";
 
-export function BaseHandle({ className, children, ...props }: ComponentProps<typeof Handle>) {
+export type BaseHandleProps = HandleProps;
+
+export function BaseHandle({
+  className,
+  children,
+  ...props
+}: ComponentProps<typeof Handle>) {
   return (
     <Handle
       {...props}
-      className={cn("size-3 rounded-full border border-foreground bg-background", className)}
+      className={cn(
+        "dark:border-secondary dark:bg-secondary h-[11px] w-[11px] rounded-full border border-border bg-muted transition",
+        className,
+      )}
     >
       {children}
     </Handle>
-  )
+  );
 }

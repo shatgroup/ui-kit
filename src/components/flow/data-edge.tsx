@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   BaseEdge,
   EdgeLabelRenderer,
@@ -9,12 +10,26 @@ import {
   type Edge,
   type EdgeProps,
   type Node,
-} from "@xyflow/react"
+} from "@xyflow/react";
 
 export type DataEdge<T extends Node = Node> = Edge<{
-  key?: keyof T["data"]
-  path?: "bezier" | "smoothstep" | "step" | "straight"
-}>
+  /**
+   * The key to lookup in the source node's `data` object. For additional safety,
+   * you can parameterize the `DataEdge` over the type of one of your nodes to
+   * constrain the possible values of this key.
+   *
+   * If no key is provided this edge behaves identically to React Flow's default
+   * edge component.
+   */
+  key?: keyof T["data"];
+  /**
+   * Which of React Flow's path algorithms to use. Each value corresponds to one
+   * of React Flow's built-in edge types.
+   *
+   * If not provided, this defaults to `"bezier"`.
+   */
+  path?: "bezier" | "smoothstep" | "step" | "straight";
+}>;
 
 export function DataEdge({
   data = { path: "bezier" },
@@ -29,15 +44,7 @@ export function DataEdge({
   targetX,
   targetY,
 }: EdgeProps<DataEdge>) {
-  const label = useNodesStore((state) => {
-    if (!data.key) return ""
-    const nodeData = state.nodeLookup.get(source)?.data
-    if (!nodeData) return ""
-    const value = nodeData[data.key]
-    if (typeof value === "string" || typeof value === "number") return String(value)
-    if (value && typeof value === "object") return JSON.stringify(value)
-    return ""
-  })
+  const nodeData = useNodesStore((state) => state.nodeLookup.get(source)?.data);
   const [edgePath, labelX, labelY] = getPath({
     type: data.path ?? "bezier",
     sourceX,
@@ -46,29 +53,49 @@ export function DataEdge({
     targetX,
     targetY,
     targetPosition,
-  })
+  });
 
-  const transform = `translate(${labelX}px, ${labelY}px) translate(-50%, -50%)`
+  const label = useMemo(() => {
+    if (data.key && nodeData) {
+      const value = nodeData[data.key];
+
+      switch (typeof value) {
+        case "string":
+        case "number":
+          return value;
+
+        case "object":
+          return JSON.stringify(value);
+
+        default:
+          return "";
+      }
+    }
+  }, [data, nodeData]);
+
+  const transform = `translate(${labelX}px,${labelY}px) translate(-50%, -50%)`;
 
   return (
     <>
       <BaseEdge id={id} path={edgePath} markerEnd={markerEnd} style={style} />
-      {data.key ? (
+      {data.key && (
         <EdgeLabelRenderer>
           <div
-            data-edge-label
-            className="flow-edge-label nodrag nopan pointer-events-none absolute z-10 rounded-full border border-border bg-card px-2 py-1 text-xs text-card-foreground"
-            // check-ui-ignore-next-line: vị trí nhãn dây là toạ độ động của React Flow, không có class tĩnh
+            className="bg-background text-foreground absolute rounded border px-1"
             style={{ transform }}
           >
-            {label}
+            <pre className="text-xs">{label}</pre>
           </div>
         </EdgeLabelRenderer>
-      ) : null}
+      )}
     </>
-  )
+  );
 }
 
+/**
+ * Chooses which of React Flow's edge path algorithms to use based on the provided
+ * `type`.
+ */
 function getPath({
   type,
   sourceX,
@@ -78,25 +105,52 @@ function getPath({
   sourcePosition,
   targetPosition,
 }: {
-  type: "bezier" | "smoothstep" | "step" | "straight"
-  sourceX: number
-  sourceY: number
-  targetX: number
-  targetY: number
-  sourcePosition: Position
-  targetPosition: Position
+  type: "bezier" | "smoothstep" | "step" | "straight";
+  sourceX: number;
+  sourceY: number;
+  targetX: number;
+  targetY: number;
+  sourcePosition: Position;
+  targetPosition: Position;
 }) {
-  if (type === "straight") return getStraightPath({ sourceX, sourceY, targetX, targetY })
-  if (type === "smoothstep" || type === "step") {
-    return getSmoothStepPath({
-      sourceX,
-      sourceY,
-      targetX,
-      targetY,
-      sourcePosition,
-      targetPosition,
-      borderRadius: type === "step" ? 0 : undefined,
-    })
+  switch (type) {
+    case "bezier":
+      return getBezierPath({
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+        sourcePosition,
+        targetPosition,
+      });
+
+    case "smoothstep":
+      return getSmoothStepPath({
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+        sourcePosition,
+        targetPosition,
+      });
+
+    case "step":
+      return getSmoothStepPath({
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+        sourcePosition,
+        targetPosition,
+        borderRadius: 0,
+      });
+
+    case "straight":
+      return getStraightPath({
+        sourceX,
+        sourceY,
+        targetX,
+        targetY,
+      });
   }
-  return getBezierPath({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition })
 }

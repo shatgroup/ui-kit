@@ -1,12 +1,20 @@
-import { useCallback, type ReactNode } from "react"
-import { Panel, Position, addEdge, useEdgesState, useNodesState, type Connection, type Edge, type EdgeProps, type EdgeTypes, type Node, type NodeProps, type NodeTypes } from "@xyflow/react"
+import { memo, useCallback, useState, type ReactNode } from "react"
+import { Background, Handle, Panel, Position, ReactFlow, addEdge, useConnection, useEdgesState, useNodesState, useReactFlow, type Connection, type ConnectionState, type Edge, type EdgeProps, type FitViewOptions, type Node, type NodeProps } from "@xyflow/react"
+import { MousePointerClick, Plus, Rocket } from "lucide-react"
 import { Stack, Text } from "@/components/layout/index.ts"
 import { Grid } from "@/components/layout/grid.tsx"
+import type { GridSpan } from "@/components/layout/types.ts"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Slider } from "@/components/ui/slider"
 import {
   AnimatedSvgEdge,
+  BaseHandle,
   BaseNode,
+  BaseNodeContent,
+  BaseNodeFooter,
+  BaseNodeHeader,
+  BaseNodeHeaderTitle,
   ButtonEdge,
   ButtonHandle,
   DataEdge,
@@ -15,12 +23,14 @@ import {
   DatabaseSchemaNodeHeader,
   DatabaseSchemaTableCell,
   DatabaseSchemaTableRow,
+  DevTools,
   FlowCanvas,
   GroupNode,
   LabeledHandle,
   MindMapNode,
   NodeAppendix,
   NodeSearch,
+  NodeStatusIndicator,
   NodeTooltip,
   NodeTooltipContent,
   NodeTooltipTrigger,
@@ -192,168 +202,345 @@ function WorkflowSample() {
   )
 }
 
-function pair(prefix: string, extra?: Partial<Node>): Node[] {
-  return [
-    {
-      id: `${prefix}-a`,
-      position: { x: 0, y: 0 },
-      data: { label: "Source", amount: "12" },
-      sourcePosition: Position.Right,
-      targetPosition: Position.Left,
-      width: 96,
-      height: 40,
-      ...extra,
-    },
-    {
-      id: `${prefix}-b`,
-      position: { x: 220, y: 0 },
-      data: { label: "Target" },
-      sourcePosition: Position.Right,
-      targetPosition: Position.Left,
-      width: 96,
-      height: 40,
-    },
-  ]
-}
-
-function AppendixNode() {
+function OfficialDemo({
+  title,
+  span = "third",
+  height = "h-96",
+  children,
+}: {
+  title: string
+  span?: GridSpan
+  height?: "h-96" | "h-120"
+  children: ReactNode
+}) {
   return (
-    <div className="pt-12">
-      <BaseNode className="px-3 py-2">
-        <Text size="sm">Topic</Text>
-        <NodeAppendix position="top">Note</NodeAppendix>
-      </BaseNode>
-    </div>
+    <Grid span={span} className="h-full">
+      <Stack gap={2} className="min-w-0">
+        <div data-flow-demo={title} className={`${height} overflow-hidden rounded-lg border border-border`}>
+          {children}
+        </div>
+        <Text size="xs" tone="muted">{title}</Text>
+      </Stack>
+    </Grid>
   )
 }
 
-function TooltipNode() {
+const baseNodeFitView: FitViewOptions = { padding: "100px" }
+const tightFit: FitViewOptions = { padding: 0.3 }
+
+const BaseNodeFullDemo = memo(() => {
+  return (
+    <BaseNode className="w-96">
+      <BaseNodeHeader className="border-b">
+        <Rocket className="size-4" />
+        <BaseNodeHeaderTitle>Header</BaseNodeHeaderTitle>
+      </BaseNodeHeader>
+      <BaseNodeContent>
+        <h3 className="text-lg font-bold">Content</h3>
+        <p className="text-xs">
+          This is a full-featured node with a header, content, and footer. You
+          can customize it as needed.
+        </p>
+      </BaseNodeContent>
+      <BaseNodeFooter>
+        <h4 className="text-md self-start font-bold">Footer</h4>
+        <Button variant="outline" className="nodrag w-full">
+          Action 1
+        </Button>
+      </BaseNodeFooter>
+    </BaseNode>
+  )
+})
+
+const LoadingNode = () => {
+  return (
+    <NodeStatusIndicator status="loading" variant="border">
+      <BaseNode>
+        <BaseNodeContent>This node is loading...</BaseNodeContent>
+      </BaseNode>
+    </NodeStatusIndicator>
+  )
+}
+
+const NodeAppendixDemo = () => {
+  return (
+    <BaseNode>
+      <NodeAppendix position="bottom" className="p-2">
+        Add custom content to the node appendix.
+      </NodeAppendix>
+      <BaseNodeHeader className="border-b">
+        <BaseNodeHeaderTitle>Custom Node</BaseNodeHeaderTitle>
+      </BaseNodeHeader>
+      <BaseNodeContent>
+        <p>Node Content goes here.</p>
+      </BaseNodeContent>
+    </BaseNode>
+  )
+}
+
+const NodeTooltipDemo = memo(() => {
   return (
     <NodeTooltip>
-      <NodeTooltipContent>Details</NodeTooltipContent>
-      <NodeTooltipTrigger>
-        <BaseNode className="px-3 py-2"><Text size="sm">Hover</Text></BaseNode>
-      </NodeTooltipTrigger>
+      <NodeTooltipContent position={Position.Top} className="text-center">
+        You can display any content here, like text, images, or even components.{" "}
+        <br />
+        The tooltip will appear when you hover over the trigger.
+      </NodeTooltipContent>
+      <BaseNode className="w-64 text-center">
+        <BaseNodeContent className="flex flex-col items-center">
+          <NodeTooltipTrigger className="rounded border border-border p-2 text-lg font-bold">
+            Hover me! ⭐️
+          </NodeTooltipTrigger>
+          <span>
+            You can add more content that does not trigger the tooltip.
+          </span>
+        </BaseNodeContent>
+      </BaseNode>
     </NodeTooltip>
   )
+})
+
+type DatabaseSchemaNodeData = {
+  data: {
+    label: string
+    schema: { title: string; type: string }[]
+  }
 }
 
-type SchemaColumn = { name: string; type: string; side?: "source" | "target" }
-
-function readColumns(data: Record<string, unknown>): SchemaColumn[] {
-  if (!Array.isArray(data.columns)) return []
-  return data.columns.flatMap((item) => {
-    if (!item || typeof item !== "object") return []
-    const row = item as Record<string, unknown>
-    if (typeof row.name !== "string" || typeof row.type !== "string") return []
-    const side = row.side === "source" || row.side === "target" ? row.side : undefined
-    return [{ name: row.name, type: row.type, side }]
-  })
-}
-
-function SchemaNode({ data }: NodeProps) {
-  const record = data as Record<string, unknown>
-  const title = typeof record.title === "string" ? record.title : ""
+const DatabaseSchemaDemo = memo(({ data }: DatabaseSchemaNodeData) => {
   return (
-    <DatabaseSchemaNode>
-      <DatabaseSchemaNodeHeader>{title}</DatabaseSchemaNodeHeader>
+    <DatabaseSchemaNode className="p-0">
+      <DatabaseSchemaNodeHeader>{data.label}</DatabaseSchemaNodeHeader>
       <DatabaseSchemaNodeBody>
-        {readColumns(record).map((column) => (
-          <DatabaseSchemaTableRow key={column.name}>
-            {column.side === "target" ? <LabeledHandle type="target" position={Position.Left} id={column.name} title="" /> : null}
-            <DatabaseSchemaTableCell><Text size="xs">{column.name}</Text></DatabaseSchemaTableCell>
-            <DatabaseSchemaTableCell align="end"><Text size="xs" tone="muted">{column.type}</Text></DatabaseSchemaTableCell>
-            {column.side === "source" ? <LabeledHandle type="source" position={Position.Right} id={column.name} title="" /> : null}
+        {data.schema.map((entry) => (
+          <DatabaseSchemaTableRow key={entry.title}>
+            <DatabaseSchemaTableCell className="pl-0 pr-6 font-light">
+              <LabeledHandle
+                id={entry.title}
+                title={entry.title}
+                type="target"
+                position={Position.Left}
+              />
+            </DatabaseSchemaTableCell>
+            <DatabaseSchemaTableCell className="pr-0 font-thin">
+              <LabeledHandle
+                id={entry.title}
+                title={entry.type}
+                type="source"
+                position={Position.Right}
+                className="p-0"
+                handleClassName="p-0"
+                labelClassName="p-0 w-full pr-3 text-right"
+              />
+            </DatabaseSchemaTableCell>
           </DatabaseSchemaTableRow>
         ))}
       </DatabaseSchemaNodeBody>
     </DatabaseSchemaNode>
   )
-}
+})
 
-function GroupDemoNode() {
-  return <GroupNode label="Group" position="top-left" />
-}
+const schemaNodes = [
+  {
+    id: "1",
+    position: { x: 0, y: 0 },
+    type: "databaseSchema",
+    data: {
+      label: "Products",
+      schema: [
+        { title: "id", type: "uuid" },
+        { title: "name", type: "varchar" },
+        { title: "description", type: "varchar" },
+        { title: "warehouse_id", type: "uuid" },
+        { title: "supplier_id", type: "uuid" },
+        { title: "price", type: "money" },
+        { title: "quantity", type: "int4" },
+      ],
+    },
+  },
+  {
+    id: "2",
+    position: { x: 350, y: -100 },
+    type: "databaseSchema",
+    data: {
+      label: "Warehouses",
+      schema: [
+        { title: "id", type: "uuid" },
+        { title: "name", type: "varchar" },
+        { title: "address", type: "varchar" },
+        { title: "capacity", type: "int4" },
+      ],
+    },
+  },
+  {
+    id: "3",
+    position: { x: 350, y: 200 },
+    type: "databaseSchema",
+    data: {
+      label: "Suppliers",
+      schema: [
+        { title: "id", type: "uuid" },
+        { title: "name", type: "varchar" },
+        { title: "description", type: "varchar" },
+        { title: "country", type: "varchar" },
+      ],
+    },
+  },
+]
 
-function HandleDemoNode() {
+const schemaEdges: Edge[] = [
+  {
+    id: "products-warehouses",
+    source: "1",
+    target: "2",
+    sourceHandle: "warehouse_id",
+    targetHandle: "id",
+  },
+  {
+    id: "products-suppliers",
+    source: "1",
+    target: "3",
+    sourceHandle: "supplier_id",
+    targetHandle: "id",
+  },
+]
+
+const PlaceholderNodeDemo = memo(() => {
   return (
-    <div className="flex items-center">
-      <BaseNode className="px-3 py-2">
-        <Text size="sm">Step</Text>
-        <ButtonHandle type="source" position={Position.Right}>
-          <Button size="sm" variant="outline" className="nodrag">Add</Button>
+    <PlaceholderNode label="Node">
+      <div>+</div>
+    </PlaceholderNode>
+  )
+})
+
+const LabeledGroupNodeDemo = memo(() => <GroupNode label="Label" />)
+
+const BaseHandleDemo = memo(() => {
+  return (
+    <BaseNode>
+      <BaseNodeContent>
+        <BaseHandle id="target-1" type="target" position={Position.Left} />
+        <div>A node with two handles</div>
+        <BaseHandle id="source-1" type="source" position={Position.Right} />
+      </BaseNodeContent>
+    </BaseNode>
+  )
+})
+
+const LabeledHandleDemo = memo(() => {
+  return (
+    <BaseNode className="flex px-0 py-5">
+      <LabeledHandle id="target-1" title="Some Input" type="target" position={Position.Left} />
+      <LabeledHandle id="source-1" title="Some Output" type="source" position={Position.Right} />
+    </BaseNode>
+  )
+})
+
+const buttonHandleClick = () => {
+  window.alert("Handle button has been clicked!")
+}
+
+const buttonHandleSelector = (connection: ConnectionState) => {
+  return connection.inProgress
+}
+
+const ButtonHandleDemo = () => {
+  const connectionInProgress = useConnection(buttonHandleSelector)
+  return (
+    <BaseNode>
+      <BaseNodeContent>
+        Node with a handle button
+        <ButtonHandle type="target" position={Position.Bottom} showButton={!connectionInProgress}>
+          <Button onClick={buttonHandleClick} size="sm" variant="secondary" className="rounded-full">
+            <Plus size={10} />
+          </Button>
         </ButtonHandle>
-      </BaseNode>
-      <div className="w-32" />
-    </div>
+      </BaseNodeContent>
+    </BaseNode>
   )
 }
 
-function ButtonEdgeDemo(props: EdgeProps) {
+const ButtonEdgeDemo = memo((props: EdgeProps) => {
+  const onEdgeClick = () => {
+    window.alert("Edge has been clicked!")
+  }
   return (
     <ButtonEdge {...props}>
-      <Button size="sm" variant="secondary" className="nodrag rounded-full border-0 bg-card">Run</Button>
+      <Button onClick={onEdgeClick} size="icon" variant="secondary">
+        <MousePointerClick size={16} />
+      </Button>
     </ButtonEdge>
   )
-}
+})
 
-function PlaceholderDemo(props: NodeProps) {
-  return <PlaceholderNode {...props} label="Add step">Add step</PlaceholderNode>
-}
+type CounterNodeType = Node<{ value: number }>
 
-const appendixTypes = { appendix: AppendixNode }
-const tooltipTypes = { tooltip: TooltipNode }
-const schemaTypes = { schema: SchemaNode }
-const placeholderTypes = { placeholder: PlaceholderDemo }
-const groupTypes = { labeledGroup: GroupDemoNode }
-const handleTypes = { handle: HandleDemoNode }
-const buttonEdgeTypes = { button: ButtonEdgeDemo } as EdgeTypes
-const dataEdgeTypes = { data: DataEdge } as EdgeTypes
-const animatedTypes = { animated: AnimatedSvgEdge } as EdgeTypes
-
-function DemoFrame({
-  title,
-  id,
-  nodes,
-  edges,
-  nodeTypes,
-  edgeTypes,
-  children,
-}: {
-  title: string
-  id: string
-  nodes: Node[]
-  edges: Edge[]
-  nodeTypes?: NodeTypes
-  edgeTypes?: EdgeTypes
-  children?: ReactNode
-}) {
-  const [liveNodes, , onNodesChange] = useNodesState(nodes)
-  const [liveEdges, setEdges, onEdgesChange] = useEdgesState(edges)
-  const onConnect = useCallback(connect(setEdges), [setEdges])
+const CounterNode = memo(({ id, data }: NodeProps<CounterNodeType>) => {
+  const { updateNodeData } = useReactFlow()
   return (
-    <Grid span="third" className="h-full">
-      <Stack gap={2} className="min-w-0">
-        <div data-flow-demo={title} className="h-40 overflow-hidden rounded-lg border border-border">
-          <FlowCanvas
-            id={id}
-            devtools={false}
-            minimap={false}
-            controls={false}
-            nodes={liveNodes}
-            edges={liveEdges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            nodeTypes={nodeTypes}
-            edgeTypes={edgeTypes}
+    <BaseNode>
+      <BaseNodeContent className="p-5">
+        <Slider
+          value={[data.value]}
+          min={0}
+          max={100}
+          step={1}
+          className="nopan nodrag w-24"
+          onValueChange={([value]) => {
+            updateNodeData(id, (node) => ({
+              ...node.data,
+              value,
+            }))
+          }}
+        />
+        <Handle type="source" position={Position.Bottom} />
+      </BaseNodeContent>
+    </BaseNode>
+  )
+})
+
+const searchNodes: Node<{ label: string }>[] = Array.from({ length: 20 }, (_, index) => {
+  const cols = Math.ceil(Math.sqrt(20))
+  const col = index % cols
+  const row = Math.floor(index / cols)
+  return {
+    id: `node-${index}`,
+    data: { label: `Node ${index}` },
+    position: { x: 100 + col * 200, y: 100 + row * 200 },
+  }
+})
+
+const baseNodeTypes = { baseNodeFull: BaseNodeFullDemo }
+const statusNodeTypes = { loadingNode: LoadingNode }
+const appendixNodeTypes = { appendixNode: NodeAppendixDemo }
+const tooltipNodeTypes = { nodeTooltip: NodeTooltipDemo }
+const schemaNodeTypes = { databaseSchema: DatabaseSchemaDemo }
+const placeholderNodeTypes = { placeholderNode: PlaceholderNodeDemo }
+const groupNodeTypes = { labeledGroupNode: LabeledGroupNodeDemo }
+const baseHandleNodeTypes = { baseHandle: BaseHandleDemo }
+const labeledHandleNodeTypes = { labeledHandle: LabeledHandleDemo }
+const buttonHandleNodeTypes = { sourceHandleDemo: ButtonHandleDemo }
+const buttonEdgeTypes = { buttonedge: ButtonEdgeDemo }
+const dataEdgeNodeTypes = { counterNode: CounterNode }
+const dataEdgeTypes = { dataEdge: DataEdge }
+const animatedEdgeTypes = { animatedSvgEdge: AnimatedSvgEdge }
+
+function ZoomSliderDemo() {
+  const [orientation, setOrientation] = useState<"horizontal" | "vertical">("horizontal")
+  return (
+    <div className="h-full w-full">
+      <ReactFlow id="demo-zoom-slider" defaultNodes={[{ id: "1", position: { x: 200, y: 200 }, data: { label: "Node" } }]} fitView>
+        <Background />
+        <ZoomSlider position="top-left" orientation={orientation} />
+        <Panel position="bottom-right">
+          <Button
+            onClick={() => setOrientation(orientation === "horizontal" ? "vertical" : "horizontal")}
           >
-            {children}
-          </FlowCanvas>
-        </div>
-        <Text size="xs" tone="muted">{title}</Text>
-      </Stack>
-    </Grid>
+            Toggle orientation
+          </Button>
+        </Panel>
+      </ReactFlow>
+    </div>
   )
 }
 
@@ -378,37 +565,184 @@ function FlowSection() {
           <Card className="h-full">
             <CardHeader><Text size="sm" tone="muted">Flow components</Text></CardHeader>
             <CardContent>
-            <Grid className="kit-grid items-stretch">
-              <DemoFrame title="Appendix" id="demo-appendix" nodes={[{ id: "n", type: "appendix", position: { x: 40, y: 48 }, data: {} }]} edges={[]} nodeTypes={appendixTypes} />
-              <DemoFrame title="Tooltip" id="demo-tooltip" nodes={[{ id: "n", type: "tooltip", position: { x: 40, y: 40 }, data: {}, width: 120, height: 40 }]} edges={[]} nodeTypes={tooltipTypes} />
-              <DemoFrame
-                title="Database Schema"
-                id="demo-schema"
-                nodes={[
-                  { id: "orders", type: "schema", position: { x: 0, y: 0 }, width: 210, data: { title: "orders", columns: [{ name: "id", type: "uuid" }, { name: "user_id", type: "uuid", side: "source" }] } },
-                  { id: "users", type: "schema", position: { x: 280, y: 0 }, width: 180, data: { title: "users", columns: [{ name: "id", type: "uuid", side: "target" }, { name: "name", type: "text" }] } },
-                ]}
-                edges={[{ id: "fk", source: "orders", sourceHandle: "user_id", target: "users", targetHandle: "id" }]}
-                nodeTypes={schemaTypes}
-              />
-              <DemoFrame title="Placeholder" id="demo-placeholder" nodes={[{ id: "n", type: "placeholder", position: { x: 40, y: 40 }, data: { label: "Add step" }, width: 144, height: 40 }]} edges={[]} nodeTypes={placeholderTypes} />
-              <DemoFrame title="Labeled Group" id="demo-group" nodes={[{ id: "n", type: "labeledGroup", position: { x: 16, y: 8 }, data: {}, width: 180, height: 96 }]} edges={[]} nodeTypes={groupTypes} />
-              <DemoFrame title="Button Handle" id="demo-handle" nodes={[{ id: "n", type: "handle", position: { x: 24, y: 40 }, data: {} }]} edges={[]} nodeTypes={handleTypes} />
-              <DemoFrame title="Edge with Button" id="demo-button-edge" nodes={pair("button")} edges={[{ id: "e", source: "button-a", target: "button-b", type: "button" }]} edgeTypes={buttonEdgeTypes} />
-              <DemoFrame title="Edge with Node Data" id="demo-data-edge" nodes={pair("data")} edges={[{ id: "e", source: "data-a", target: "data-b", type: "data", data: { key: "amount" } }]} edgeTypes={dataEdgeTypes} />
-              <DemoFrame title="Animated SVG Edge" id="demo-animated" nodes={pair("move")} edges={[{ id: "e", source: "move-a", target: "move-b", type: "animated", data: { duration: 2, shape: "circle" } }]} edgeTypes={animatedTypes} />
-              <DemoFrame title="Node Search" id="demo-search" nodes={[{ id: "n", position: { x: 80, y: 70 }, data: { label: "Orders" }, width: 96, height: 40 }]} edges={[]}>
-                <Panel position="top-left" className="w-36">
-                  <NodeSearch placeholder="Search nodes" emptyLabel="No results" groupLabel="Nodes" />
-                </Panel>
-              </DemoFrame>
-              <DemoFrame title="Zoom Slider" id="demo-slider" nodes={[{ id: "n", position: { x: 80, y: 48 }, data: { label: "Canvas" }, width: 96, height: 40 }]} edges={[]}>
-                <ZoomSlider zoomOutLabel="Zoom out" zoomInLabel="Zoom in" resetLabel="Reset zoom" fitLabel="Fit view" />
-              </DemoFrame>
-              <DemoFrame title="Zoom Select" id="demo-zoom" nodes={[{ id: "n", position: { x: 80, y: 48 }, data: { label: "Canvas" }, width: 96, height: 40 }]} edges={[]}>
-                <ZoomSelect placeholder="Zoom" fitLabel="Best fit" />
-              </DemoFrame>
-            </Grid>
+              <Grid className="kit-grid items-stretch">
+                <OfficialDemo title="Base Node" span="half">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-base-node" defaultNodes={[{ id: "2", position: { x: 200, y: 200 }, data: {}, type: "baseNodeFull" }]} nodeTypes={baseNodeTypes} fitView fitViewOptions={baseNodeFitView}>
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Node Status">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-status" defaultNodes={[{ id: "1", position: { x: 120, y: 160 }, type: "loadingNode", data: {} }]} nodeTypes={statusNodeTypes} fitView>
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Node Appendix" span="half" height="h-120">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-appendix" defaultNodes={[{ id: "1", position: { x: 200, y: 200 }, data: {}, type: "appendixNode" }]} nodeTypes={appendixNodeTypes} minZoom={0.2} maxZoom={1} fitView fitViewOptions={tightFit}>
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Node Tooltip" span="half">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-tooltip" defaultNodes={[{ id: "1", position: { x: 200, y: 200 }, data: {}, type: "nodeTooltip" }]} nodeTypes={tooltipNodeTypes} fitView>
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Database Schema" span="full" height="h-120">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-schema" defaultNodes={schemaNodes} defaultEdges={schemaEdges} nodeTypes={schemaNodeTypes} fitView>
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Placeholder" span="half">
+                  <div className="h-full w-full">
+                    <ReactFlow
+                      id="demo-placeholder"
+                      defaultNodes={[
+                        { id: "1", data: { label: "Original Node" }, position: { x: 0, y: 0 }, type: "default" },
+                        { id: "2", data: {}, position: { x: 0, y: 150 }, type: "placeholderNode" },
+                      ]}
+                      defaultEdges={[{ id: "1=>2", source: "1", target: "2", type: "default", animated: true }]}
+                      nodeTypes={placeholderNodeTypes}
+                      fitView
+                    >
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Labeled Group" span="half">
+                  <div className="h-full w-full">
+                    <ReactFlow
+                      id="demo-group"
+                      defaultNodes={[
+                        { id: "1", position: { x: 200, y: 200 }, data: { label: "Group Node" }, width: 380, height: 200, type: "labeledGroupNode" },
+                        { id: "2", position: { x: 50, y: 100 }, data: { label: "Node" }, type: "default", parentId: "1", extent: "parent" },
+                        { id: "3", position: { x: 200, y: 50 }, data: { label: "Node" }, type: "default", parentId: "1", extent: "parent" },
+                      ]}
+                      nodeTypes={groupNodeTypes}
+                      fitView
+                    >
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Base Handle">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-base-handle" defaultNodes={[{ id: "1", position: { x: 200, y: 200 }, data: {}, type: "baseHandle" }]} nodeTypes={baseHandleNodeTypes} minZoom={0.2} maxZoom={1} fitView fitViewOptions={tightFit}>
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Labeled Handle">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-labeled-handle" defaultNodes={[{ id: "1", position: { x: 200, y: 200 }, data: {}, type: "labeledHandle" }]} nodeTypes={labeledHandleNodeTypes} minZoom={0.2} maxZoom={1} fitView fitViewOptions={tightFit}>
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Button Handle" span="half" height="h-120">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-button-handle" defaultNodes={[{ id: "1", position: { x: 0, y: 0 }, data: { label: "Node" }, type: "sourceHandleDemo" }]} nodeTypes={buttonHandleNodeTypes} minZoom={0.2} maxZoom={1} fitView fitViewOptions={tightFit}>
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Button Edge" span="half">
+                  <div className="h-full w-full">
+                    <ReactFlow
+                      id="demo-button-edge"
+                      defaultNodes={[{ id: "1", position: { x: 200, y: 200 }, data: { label: "Node" } }, { id: "2", position: { x: 500, y: 500 }, data: { label: "Node" } }]}
+                      defaultEdges={[{ id: "e1-2", source: "1", target: "2", type: "buttonedge" }]}
+                      edgeTypes={buttonEdgeTypes}
+                      fitView
+                    >
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Data Edge" span="half">
+                  <div className="h-full w-full">
+                    <ReactFlow
+                      id="demo-data-edge"
+                      defaultNodes={[
+                        { id: "1", position: { x: 100, y: 100 }, type: "counterNode", data: { value: 10 } },
+                        { id: "2", position: { x: 300, y: 300 }, data: { label: "Output" } },
+                      ]}
+                      nodeTypes={dataEdgeNodeTypes}
+                      defaultEdges={[{ id: "1->2", source: "1", target: "2", type: "dataEdge", data: { key: "value" } } satisfies DataEdge<CounterNodeType>]}
+                      edgeTypes={dataEdgeTypes}
+                      fitView
+                    >
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Animated SVG Edge" span="half">
+                  <div className="h-full w-full">
+                    <ReactFlow
+                      id="demo-animated"
+                      defaultNodes={[{ id: "1", position: { x: 200, y: 200 }, data: { label: "A" } }, { id: "2", position: { x: 400, y: 400 }, data: { label: "B" } }]}
+                      defaultEdges={[{
+                        id: "1->2",
+                        source: "1",
+                        target: "2",
+                        type: "animatedSvgEdge",
+                        data: { duration: 2, shape: "package", path: "smoothstep" },
+                      } satisfies AnimatedSvgEdge]}
+                      edgeTypes={animatedEdgeTypes}
+                      fitView
+                    >
+                      <Background />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Node Search" span="full" height="h-120">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-search" defaultNodes={searchNodes} defaultEdges={[]} minZoom={0.05} fitView fitViewOptions={{ padding: 0.2 }}>
+                      <Background />
+                      <Panel className="bg-primary-foreground text-foreground flex gap-1 rounded-md p-1" position="top-left">
+                        <NodeSearch placeholder="Search nodes..." emptyLabel="No results found." groupLabel="Nodes" />
+                      </Panel>
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="Zoom Slider" span="half">
+                  <ZoomSliderDemo />
+                </OfficialDemo>
+                <OfficialDemo title="Zoom Select">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-zoom-select" defaultNodes={[{ id: "1", position: { x: 200, y: 200 }, data: { label: "Node" } }]} fitView>
+                      <Background />
+                      <ZoomSelect position="top-left" placeholder="Zoom" fitLabel="Best Fit" />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+                <OfficialDemo title="DevTools" span="half">
+                  <div className="h-full w-full">
+                    <ReactFlow id="demo-devtools" defaultNodes={[{ id: "1a", type: "input", data: { label: "Node 1" }, position: { x: 250, y: 5 } }]} fitView>
+                      <Background />
+                      <DevTools
+                        position="top-left"
+                        labels={{
+                          inspector: "Node Inspector",
+                          changes: "Change Logger",
+                          viewport: "Viewport Logger",
+                          selected: "Selected",
+                          idle: "Not Selected",
+                          empty: "No Changes Triggered",
+                        }}
+                      />
+                    </ReactFlow>
+                  </div>
+                </OfficialDemo>
+              </Grid>
             </CardContent>
           </Card>
         </Grid>

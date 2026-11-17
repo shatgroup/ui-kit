@@ -1,15 +1,15 @@
-import type { ComponentProps } from "react"
-import { type HandleProps } from "@xyflow/react"
-import { Text } from "@/components/layout/index.ts"
-import { cn } from "@/lib/utils"
-import { BaseHandle } from "@/components/flow/base-handle.tsx"
+import { type ComponentProps } from "react";
+import { type HandleProps } from "@xyflow/react";
+
+import { cn } from "@/lib/utils";
+import { BaseHandle } from "@/components/flow/base-handle";
 
 const flexDirections = {
   top: "flex-col",
   right: "flex-row-reverse justify-end",
   bottom: "flex-col-reverse justify-end",
   left: "flex-row",
-}
+};
 
 export function LabeledHandle({
   className,
@@ -18,21 +18,32 @@ export function LabeledHandle({
   title,
   position,
   ...props
-}: HandleProps & ComponentProps<"div"> & {
-  title: string
-  handleClassName?: string
-  labelClassName?: string
-}) {
-  const { ref, ...handleProps } = props
+}: HandleProps &
+  ComponentProps<"div"> & {
+    title: string;
+    handleClassName?: string;
+    labelClassName?: string;
+  }) {
+  const { ref, ...handleProps } = props;
 
   return (
     <div
       title={title}
-      className={cn("flex items-center", flexDirections[position], className)}
+      className={cn(
+        "relative flex items-center",
+        flexDirections[position],
+        className,
+      )}
       ref={ref}
     >
-      <BaseHandle position={position} className={handleClassName} {...handleProps} />
-      {title ? <Text as="span" size="xs" className={cn("px-3", labelClassName)}>{title}</Text> : null}
+      <BaseHandle
+        position={position}
+        className={handleClassName}
+        {...handleProps}
+      />
+      <label className={cn("text-foreground px-3", labelClassName)}>
+        {title}
+      </label>
     </div>
-  )
+  );
 }

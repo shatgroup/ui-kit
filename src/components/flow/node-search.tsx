@@ -1,5 +1,12 @@
-import { useCallback, useState } from "react"
-import { useReactFlow, type BuiltInEdge, type Node, type PanelProps } from "@xyflow/react"
+import { useCallback, useState } from "react";
+
+import {
+  BuiltInEdge,
+  useReactFlow,
+  type Node,
+  type PanelProps,
+} from "@xyflow/react";
+
 import {
   Command,
   CommandDialog,
@@ -8,16 +15,20 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/ui/command"
+} from "@/components/ui/command";
 
 export interface NodeSearchProps extends Omit<PanelProps, "children"> {
-  onSearch?: (searchString: string) => Node[]
-  onSelectNode?: (node: Node) => void
-  open?: boolean
-  onOpenChange?: (open: boolean) => void
-  placeholder?: string
-  emptyLabel?: string
-  groupLabel?: string
+  // The function to search for nodes, should return an array of nodes that match the search string
+  // By default, it will check for lowercase string inclusion.
+  onSearch?: (searchString: string) => Node[];
+  // The function to select a node, should set the node as selected and fit the view to the node
+  // By default, it will set the node as selected and fit the view to the node.
+  onSelectNode?: (node: Node) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  placeholder?: string;
+  emptyLabel?: string;
+  groupLabel?: string;
 }
 
 export function NodeSearchInternal({
@@ -25,106 +36,135 @@ export function NodeSearchInternal({
   onSelectNode,
   open,
   onOpenChange,
-  placeholder = "Tìm node",
-  emptyLabel = "Không thấy kết quả",
-  groupLabel = "Node",
+  placeholder = "Tìm node...",
+  emptyLabel = "Không có kết quả.",
+  groupLabel = "Nút",
 }: NodeSearchProps) {
-  const [searchResults, setSearchResults] = useState<Node[]>([])
-  const [searchString, setSearchString] = useState("")
-  const { getNodes, fitView, setNodes } = useReactFlow<Node, BuiltInEdge>()
+  const [searchResults, setSearchResults] = useState<Node[]>([]);
+  const [searchString, setSearchString] = useState<string>("");
+  const { getNodes, fitView, setNodes } = useReactFlow<Node, BuiltInEdge>();
 
-  const defaultOnSearch = useCallback((query: string) => {
-    return getNodes().filter((node) => String(node.data.label ?? "").toLowerCase().includes(query.toLowerCase()))
-  }, [getNodes])
+  const defaultOnSearch = useCallback(
+    (searchString: string) => {
+      const nodes = getNodes();
+      return nodes.filter((node) =>
+        (node.data.label as string)
+          .toLowerCase()
+          .includes(searchString.toLowerCase()),
+      );
+    },
+    [getNodes],
+  );
 
-  const onChange = useCallback((query: string) => {
-    setSearchString(query)
-    if (query.length > 0) {
-      onOpenChange?.(true)
-      setSearchResults((onSearch || defaultOnSearch)(query))
-    }
-  }, [defaultOnSearch, onOpenChange, onSearch])
+  const onChange = useCallback(
+    (searchString: string) => {
+      setSearchString(searchString);
+      if (searchString.length > 0) {
+        onOpenChange?.(true);
+        const results = (onSearch || defaultOnSearch)(searchString);
+        setSearchResults(results);
+      }
+    },
+    [defaultOnSearch, onOpenChange, onSearch],
+  );
 
-  const defaultOnSelectNode = useCallback((node: Node) => {
-    setNodes((nodes) => nodes.map((item) => (item.id === node.id ? { ...item, selected: true } : item)))
-    void fitView({ nodes: [node], duration: 300 })
-  }, [fitView, setNodes])
+  const defaultOnSelectNode = useCallback(
+    (node: Node) => {
+      setNodes((nodes) =>
+        nodes.map((n) => (n.id === node.id ? { ...n, selected: true } : n)),
+      );
+      fitView({ nodes: [node], duration: 500 });
+    },
+    [fitView, setNodes],
+  );
 
-  const onSelect = useCallback((node: Node) => {
-    ;(onSelectNode || defaultOnSelectNode)(node)
-    setSearchString("")
-    onOpenChange?.(false)
-  }, [onSelectNode, defaultOnSelectNode, onOpenChange])
+  const onSelect = useCallback(
+    (node: Node) => {
+      (onSelectNode || defaultOnSelectNode)?.(node);
+      setSearchString("");
+      onOpenChange?.(false);
+    },
+    [onSelectNode, defaultOnSelectNode, onOpenChange],
+  );
 
   return (
     <>
-      <CommandInput placeholder={placeholder} onValueChange={onChange} value={searchString} onFocus={() => onOpenChange?.(true)} />
-      {open ? (
+      <CommandInput
+        placeholder={placeholder}
+        onValueChange={onChange}
+        value={searchString}
+        onFocus={() => onOpenChange?.(true)}
+      />
+
+      {open && (
         <CommandList>
           {searchResults.length === 0 ? (
-            <CommandEmpty>{emptyLabel}</CommandEmpty>
+            <CommandEmpty>
+              {emptyLabel} {searchString}
+            </CommandEmpty>
           ) : (
             <CommandGroup heading={groupLabel}>
-              {searchResults.map((node) => (
-                <CommandItem key={node.id} onSelect={() => onSelect(node)}>
-                  <span>{String(node.data.label ?? node.id)}</span>
-                </CommandItem>
-              ))}
+              {searchResults.map((node) => {
+                return (
+                  <CommandItem key={node.id} onSelect={() => onSelect(node)}>
+                    <span>{node.data.label as string}</span>
+                  </CommandItem>
+                );
+              })}
             </CommandGroup>
           )}
         </CommandList>
-      ) : null}
+      )}
     </>
-  )
+  );
 }
 
 export function NodeSearch({
+  className,
   onSearch,
   onSelectNode,
-  placeholder,
-  emptyLabel,
-  groupLabel,
+  ...props
 }: NodeSearchProps) {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   return (
-    <Command shouldFilter={false} className="nodrag nopan w-full rounded-lg border border-border bg-card">
+    <Command
+      shouldFilter={false}
+      className="rounded-lg border md:min-w-[450px]"
+    >
       <NodeSearchInternal
+        className={className}
         onSearch={onSearch}
         onSelectNode={onSelectNode}
         open={open}
         onOpenChange={setOpen}
-        placeholder={placeholder}
-        emptyLabel={emptyLabel}
-        groupLabel={groupLabel}
+        {...props}
       />
     </Command>
-  )
+  );
 }
 
 export interface NodeSearchDialogProps extends NodeSearchProps {
-  title?: string
+  title?: string;
 }
 
 export function NodeSearchDialog({
+  className,
   onSearch,
   onSelectNode,
   open,
   onOpenChange,
-  placeholder,
-  emptyLabel,
-  groupLabel,
+  ...props
 }: NodeSearchDialogProps) {
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
       <NodeSearchInternal
+        className={className}
         onSearch={onSearch}
         onSelectNode={onSelectNode}
         open={open}
         onOpenChange={onOpenChange}
-        placeholder={placeholder}
-        emptyLabel={emptyLabel}
-        groupLabel={groupLabel}
+        {...props}
       />
     </CommandDialog>
-  )
+  );
 }

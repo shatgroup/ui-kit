@@ -101,36 +101,32 @@ Sidebar rộng 16rem, `collapsible="icon"` còn 3rem. Dưới 1024px sidebar ẩ
 
 ## Flow
 
-Nguồn: [React Flow UI](https://reactflow.dev/ui) (`ui.reactflow.dev`), giấy phép MIT, trên `@xyflow/react` 13.0.1. Sắp cây bằng `@dagrejs/dagre` 3.1.3. Không cài template Pro.
+Nguồn: bản `npx shadcn@latest add https://ui.reactflow.dev/<tên>` (shadcn 4.23.0), lưu nguyên ở `docs/reference/react-flow-ui-original/` kèm LICENSE MIT của xyflow. `@xyflow/react` 13.0.1. Sắp cây bằng `@dagrejs/dagre` 3.1.3.
 
-CSS: `@layer theme, base, xyflow, components, utilities` rồi `@import "@xyflow/react/style.css"` sau stylesheet shadcn, đúng hướng dẫn React Flow 13 (layer `xyflow` nằm sau `base`, trước `utilities`). Không nhét file CSS vào `@layer base` như ghi chú Tailwind 4 cũ, vì bản 13 đã bọc style trong layer riêng.
+`scripts/flow-original.test.ts` so từng file với bản gốc. Dòng khác chỉ được là import, bỏ `shadow-*`, đổi hex hoặc tên màu cứng sang token, hoặc chữ mặc định thành prop. `src/components/flow/` được miễn class tuỳ ý như `src/components/ui/`, vẫn cấm shadow và hex.
 
-`colorMode` đã bỏ ở bản 13. Canvas theo class `dark` trên `html` và token của kit. `src/styles/flow.css` đè bóng và màu hex mặc định của thư viện.
-
-File trong `src/components/flow/`, không trộn vào `ui/`:
-
-| File | Nguồn | Đã sửa |
+| File | Dòng khác | Lý do |
 | --- | --- | --- |
-| base-node.tsx | base-node | Bỏ bóng và ring. Viền `border-border`, nền `bg-card`, bo `rounded-lg`. Node đang chọn đổi viền primary trong `flow.css` |
-| node-status-indicator.tsx | node-status-indicator | Bỏ màu Tailwind và gradient hex. Loading dùng `Spinner`. Đúng `success`, sai `destructive` |
-| node-appendix.tsx | node-appendix | Bỏ margin. Viền `border-border`, nền `bg-card` |
-| node-tooltip.tsx | node-tooltip | Tooltip nền `bg-card` viền `border-border`, không nền primary |
-| base-handle.tsx | base-handle | Bỏ slate. Nền `background`, viền `foreground`, cỡ `size-3` |
-| labeled-handle.tsx | labeled-handle | Chữ dùng `Text` |
-| button-handle.tsx | button-handle | Bỏ `gray` và giá trị tuỳ ý. Nét nối `bg-border` |
-| placeholder-node.tsx | placeholder-node | Bỏ xám, bóng, style ẩn. Nhãn mặc định `Thêm bước` |
-| labeled-group-node.tsx | labeled-group-node | Bỏ nền trắng và margin. Nền `bg-muted` |
-| database-schema-node.tsx | database-schema-node | Dòng full width trong node `overflow-hidden`. Handle theo dòng, tên trái, kiểu dữ liệu phải màu muted |
-| button-edge.tsx | button-edge | Nút giữa dây, nền card đặc, bo full. Transform động có ngoại lệ |
-| data-edge.tsx | data-edge | Nhãn nền card đặc, bo full, chữ xs. Transform động có ngoại lệ |
-| animated-svg-edge.tsx | animated-svg-edge | Bỏ fill hex. Tắt `animateMotion` khi reduced motion |
-| node-search.tsx | node-search | Bỏ bóng và min-width tuỳ ý. Chữ mặc định tiếng Việt |
-| zoom-slider.tsx | zoom-slider | Bỏ bề rộng tuỳ ý. Thanh co trong khung hẹp. Nút có tên tiếng Việt. Viền, không bóng |
-| zoom-select.tsx | zoom-select | Bỏ margin của đường kẻ. Chữ mặc định tiếng Việt |
-| devtools.tsx | devtools | Bỏ bóng và nền trắng. `import.meta.env.DEV` thì mới hiện. Nhãn tiếng Việt |
-| flow-canvas.tsx | kit | Khung React Flow: chấm, Controls, MiniMap 160×96, fitView. Appendix được tính vào fitBounds. Từ 768px chừa góc phải-dưới cho MiniMap. Cuộn thường cuộn trang. Zoom bằng Ctrl hoặc Cmd + cuộn |
-| mind-map-node.tsx | kit | 3 cấp và nét đứt |
-| workflow-node.tsx | kit | Header, hàng muted, trạng thái, handle vào/ra, nhánh đúng/sai |
-| use-tree-layout.ts | kit | dagre, khoảng cách `--space-8` và `--space-16` |
+| base-node.tsx | 1 | Bỏ `in-[.selected]:shadow-lg` |
+| node-status-indicator.tsx | 12 | `blue`/`emerald`/`red` và gradient `rgb` sang `info`, `success`, `destructive` |
+| node-appendix.tsx | 0 | Giữ nguyên |
+| node-tooltip.tsx | 0 | Giữ nguyên |
+| database-schema-node.tsx | 4 | Import `base-node` vào `flow/`. Bỏ import `React` không dùng |
+| placeholder-node.tsx | 16 | Import `flow/base-node`. `gray` sang `muted-foreground`. Prop `label` mặc định `Nút` |
+| labeled-group-node.tsx | 6 | Import `flow/base-node`. `bg-white bg-opacity-50` sang `bg-card/50`. Bỏ import `React` không dùng |
+| base-handle.tsx | 2 | `slate-300`/`slate-100` sang `border`/`muted` |
+| labeled-handle.tsx | 4 | Import `flow/base-handle`. Bỏ import `React` không dùng |
+| button-handle.tsx | 4 | Import `flow/base-handle`. `bg-gray-300` sang `bg-border` |
+| button-edge.tsx | 0 | Giữ nguyên |
+| data-edge.tsx | 0 | Giữ nguyên |
+| animated-svg-edge.tsx | 4 | `fill`/`stroke` hex sang `var(--primary)`, `var(--muted)`, `var(--foreground)` |
+| node-search.tsx | 16 | Bỏ `shadow-md`. Placeholder, câu trống và heading thành prop, mặc định tiếng Việt |
+| zoom-slider.tsx | 1 | Bỏ import `React` không dùng |
+| zoom-select.tsx | 20 | Placeholder và nhãn Best Fit thành prop, mặc định `Thu phóng` và `Vừa khung`. Bỏ import `React` không dùng. Danh sách mức zoom đưa vào `useMemo` vì React 19 báo vòng lặp khi selector trả mảng mới |
+| devtools.tsx | 61 | Bỏ `shadow-xs`, `shadow-md`, `bg-white` sang `bg-card`. Nhãn công cụ và trạng thái thành prop, mặc định tiếng Việt |
 
-Không ghi đè `button`, `slider`, `select`, `table`, `dialog`, `toggle`, `command`, `toggle-group` khi cài registry.
+Demo trong card Flow components lấy đúng node, dây và dữ liệu trên reactflow.dev/ui/components. Ô Database Schema là Products, Warehouses, Suppliers và 2 dây. Demo truyền chữ tiếng Anh của trang gốc qua prop. Ô Tooltip đổi `border-gray-300` thành `border-border` vì check:ui. Mỗi canvas có `id` riêng vì một trang có nhiều React Flow.
+
+`flow-canvas.tsx`, `mind-map-node.tsx`, `workflow-node.tsx`, `use-tree-layout.ts` là của kit. Mind map dựng trên `BaseNode` và `BaseHandle` bản gốc. Workflow dựng trên `BaseNode`, `BaseHandle` và `NodeStatusIndicator` bản gốc.
+
+Không ghi đè `button`, `slider`, `select`, `table`, `dialog`, `command`, `toggle`, `toggle-group` của kit.

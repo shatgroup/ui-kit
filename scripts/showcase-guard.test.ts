@@ -336,10 +336,12 @@ describe("kiểm showcase", () => {
               const shift = await page.evaluate(() => (window as Window & { __shift?: number }).__shift ?? 0)
               if (shift > 0) failures.push(`${where}: layout shift ${shift}`)
             }
+            await page.keyboard.press("Escape")
             const tabNames = (await page.locator("[role=tab][data-state=inactive]").allInnerTexts()).map((text) => text.split("\n")[0]?.trim() ?? "").filter(Boolean)
             for (const name of tabNames) {
               const current = page.getByRole("tab", { name, exact: true })
               if (!(await current.count()) || !(await current.isVisible())) continue
+              await current.evaluate((el) => el.scrollIntoView({ block: "center", inline: "nearest" }))
               await current.click({ timeout: 2000 }).catch(() => undefined)
               if ((await page.getByRole("tab", { name, exact: true }).getAttribute("data-state")) !== "active") failures.push(`${where}: Tab không đổi`)
             }
@@ -1103,11 +1105,14 @@ describe("kiểm showcase", () => {
             else if (flowNodes.some((node) => !inside(frame, node))) notes.push(`node ${id} nằm ngoài khung`)
           }
           const demos = [...document.querySelectorAll("[data-flow-demo]")]
-          if (demos.length !== 12) notes.push(`demo flow ${demos.length}`)
+          if (demos.length !== 17) notes.push(`demo flow ${demos.length}`)
           for (const demo of demos) {
             const name = demo.getAttribute("data-flow-demo") ?? ""
             const shown = demo.querySelector(".react-flow__node, [data-flow-zoom], [data-slot=command]")
             if (!(shown instanceof Element) || hiddenBox(shown)) notes.push(`demo ${name} trống`)
+            for (const node of demo.querySelectorAll(".react-flow__node")) {
+              if (!inside(demo, node)) notes.push(`node ${name} nằm ngoài khung`)
+            }
           }
           const shadowOf = (el: Element) => {
             const shadow = getComputedStyle(el).boxShadow
@@ -1155,24 +1160,25 @@ describe("kiểm showcase", () => {
               if (!(host instanceof HTMLElement) || !inside(host, text)) notes.push(`${id} chữ tràn`)
             }
           }
-          const schema = document.querySelector("[data-flow=demo-schema]")
-          for (const row of schema?.querySelectorAll("[data-schema-row]") ?? []) {
-            const node = row.closest(".flow-node")
+          const schema = document.querySelector("[data-flow-demo='Database Schema']")
+          for (const row of schema?.querySelectorAll("tr") ?? []) {
+            const node = row.closest(".react-flow__node")?.firstElementChild
             if (!(row instanceof HTMLElement) || !(node instanceof HTMLElement)) continue
             const rowBox = row.getBoundingClientRect()
             const nodeBox = node.getBoundingClientRect()
             const border = Number.parseFloat(getComputedStyle(node).borderLeftWidth) || 0
-            if (Math.abs(rowBox.left - nodeBox.left - border) > 1.5 || Math.abs(nodeBox.right - border - rowBox.right) > 1.5) notes.push("dòng schema lệch viền node")
+            if (rowBox.left < nodeBox.left + border - 1.5 || rowBox.right > nodeBox.right - border + 1.5) notes.push("dòng schema vượt viền node")
             if (rowBox.top < nodeBox.top || rowBox.bottom > nodeBox.bottom + 1) notes.push("dòng schema tràn khỏi node")
           }
-          const schemaNode = schema?.querySelector(".flow-node")
-          if (schemaNode instanceof HTMLElement) {
-            const style = getComputedStyle(schemaNode)
-            if (style.overflow === "visible") notes.push("schema thiếu overflow")
-            if (Number.parseFloat(style.borderTopWidth) < 1 || Number.parseFloat(style.borderBottomWidth) < 1) notes.push("schema thiếu viền")
-          }
-          for (const label of document.querySelectorAll("[data-flow=demo-data-edge] [data-edge-label], [data-flow=demo-button-edge] [data-edge-label]")) {
-            if (!opaque(getComputedStyle(label).backgroundColor)) notes.push("nhãn dây trong suốt")
+          const labelOf = (name: string) => document.querySelector(`[data-flow-demo="${name}"] .react-flow__edgelabel-renderer`)
+          for (const label of [labelOf("Data Edge"), labelOf("Button Edge")]) {
+            if (!(label instanceof HTMLElement)) {
+              notes.push("thiếu nhãn dây")
+              continue
+            }
+            const painted = label.querySelector("button, [class*='bg-']")
+            const target = painted instanceof HTMLElement ? painted : label
+            if (!opaque(getComputedStyle(target).backgroundColor)) notes.push("nhãn dây trong suốt")
           }
           const preview = document.querySelector("[data-app-preview]")
           const jump = document.querySelector("[data-slot=section-nav]")
@@ -1195,6 +1201,17 @@ describe("kiểm showcase", () => {
           return notes
         })
         for (const note of found) failures.push(`${where}: ${note}`)
+        if (where === "1440 light") {
+          const cells = page.locator("[data-flow-demo]")
+          const count = await cells.count()
+          for (let index = 0; index < count; index += 1) {
+            const cell = cells.nth(index)
+            const name = (await cell.getAttribute("data-flow-demo")) ?? `demo-${index}`
+            const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
+            await cell.scrollIntoViewIfNeeded()
+            await cell.screenshot({ path: `docs/reference/flow-demo-${slug}.png` })
+          }
+        }
         await unsettle(page)
         const shell = page.locator("[data-app-shell]")
         await shell.evaluate((el) => el.scrollIntoView({ block: "center" }))

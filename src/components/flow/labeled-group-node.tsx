@@ -1,48 +1,71 @@
-import type { ComponentProps, ReactNode } from "react"
-import { Panel, type NodeProps, type PanelPosition } from "@xyflow/react"
-import { cn } from "@/lib/utils"
-import { BaseNode } from "@/components/flow/base-node.tsx"
+import { type ReactNode, type ComponentProps } from "react";
+import { Panel, type NodeProps, type PanelPosition } from "@xyflow/react";
 
-export type GroupNodeLabelProps = ComponentProps<"div">
+import { BaseNode } from "@/components/flow/base-node";
+import { cn } from "@/lib/utils";
 
-export function GroupNodeLabel({ children, className, ...props }: GroupNodeLabelProps) {
+/* GROUP NODE Label ------------------------------------------------------- */
+
+export type GroupNodeLabelProps = ComponentProps<"div">;
+
+export function GroupNodeLabel({
+  children,
+  className,
+  ...props
+}: GroupNodeLabelProps) {
   return (
     <div className="h-full w-full" {...props}>
-      <div className={cn("w-fit bg-secondary p-2 text-xs text-secondary-foreground", className)}>
+      <div
+        className={cn(
+          "text-card-foreground bg-secondary w-fit p-2 text-xs",
+          className,
+        )}
+      >
         {children}
       </div>
     </div>
-  )
+  );
 }
 
 export type GroupNodeProps = Partial<NodeProps> & {
-  label?: ReactNode
-  position?: PanelPosition
-}
+  label?: ReactNode;
+  position?: PanelPosition;
+};
 
-function labelClass(position?: PanelPosition) {
-  switch (position) {
-    case "top-center":
-      return "rounded-b-sm"
-    case "top-right":
-      return "rounded-bl-sm"
-    case "bottom-left":
-      return "rounded-tr-sm"
-    case "bottom-right":
-      return "rounded-tl-sm"
-    case "bottom-center":
-      return "rounded-t-sm"
-    default:
-      return "rounded-br-sm"
-  }
-}
+/* GROUP NODE -------------------------------------------------------------- */
 
 export function GroupNode({ label, position, ...props }: GroupNodeProps) {
+  const getLabelClassName = (position?: PanelPosition) => {
+    switch (position) {
+      case "top-left":
+        return "rounded-br-sm";
+      case "top-center":
+        return "rounded-b-sm";
+      case "top-right":
+        return "rounded-bl-sm";
+      case "bottom-left":
+        return "rounded-tr-sm";
+      case "bottom-right":
+        return "rounded-tl-sm";
+      case "bottom-center":
+        return "rounded-t-sm";
+      default:
+        return "rounded-br-sm";
+    }
+  };
+
   return (
-    <BaseNode className="h-full overflow-hidden rounded-lg bg-muted" {...props}>
-      <Panel className="p-0" position={position}>
-        {label ? <GroupNodeLabel className={labelClass(position)}>{label}</GroupNodeLabel> : null}
+    <BaseNode
+      className="h-full overflow-hidden rounded-sm bg-card/50"
+      {...props}
+    >
+      <Panel className="m-0 p-0" position={position}>
+        {label && (
+          <GroupNodeLabel className={getLabelClassName(position)}>
+            {label}
+          </GroupNodeLabel>
+        )}
       </Panel>
     </BaseNode>
-  )
+  );
 }

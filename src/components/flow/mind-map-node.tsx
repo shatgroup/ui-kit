@@ -2,6 +2,7 @@ import { Position, type Node, type NodeProps } from "@xyflow/react"
 import { Text } from "@/components/layout/index.ts"
 import { cn } from "@/lib/utils"
 import { BaseHandle } from "@/components/flow/base-handle.tsx"
+import { BaseNode } from "@/components/flow/base-node.tsx"
 
 export type MindLevel = "root" | "branch" | "leaf"
 
@@ -21,8 +22,8 @@ const LOOK: Record<MindLevel, string> = {
 
 export function MindMapNode({ data }: NodeProps<MindMapNodeType>) {
   return (
-    <div className={cn(
-      "flow-node relative w-max rounded-lg border px-3 py-2 whitespace-nowrap",
+    <BaseNode className={cn(
+      "flow-node w-max rounded-lg px-3 py-2 whitespace-nowrap",
       LOOK[data.level],
       data.planned && "border-dashed border-border bg-card text-foreground",
     )}>
@@ -36,6 +37,6 @@ export function MindMapNode({ data }: NodeProps<MindMapNodeType>) {
         {data.label}
       </Text>
       {data.level === "leaf" ? null : <BaseHandle type="source" position={Position.Right} />}
-    </div>
+    </BaseNode>
   )
 }
