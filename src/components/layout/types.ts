@@ -1,3 +1,4 @@
+/** Khớp docs/STANDARD.md. Không thêm mức nếu chưa được duyệt. */
 export const SPACES = [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16] as const
 
 export type Space = (typeof SPACES)[number]
@@ -13,6 +14,8 @@ export type Columns =
       lg?: ColCount
       xl?: ColCount
     }
+
+export type GridSpan = "quarter" | "third" | "half" | "two-thirds" | "full"
 
 export type Align = "start" | "center" | "end" | "stretch"
 

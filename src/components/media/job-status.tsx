@@ -7,11 +7,11 @@ import { Meter } from "./meter.tsx"
 export type JobState = "queued" | "running" | "done" | "failed" | "cancelled"
 
 const BADGE = {
-  queued: { variant: "neutral", label: "Chờ" },
-  running: { variant: "info", label: "Đang chạy" },
-  done: { variant: "success", label: "Xong" },
-  failed: { variant: "destructive", label: "Lỗi" },
-  cancelled: { variant: "warning", label: "Đã huỷ" },
+  queued: { className: "border-transparent bg-badge-neutral text-badge-neutral-foreground", label: "Chờ" },
+  running: { className: "border-transparent bg-badge-info text-badge-info-foreground", label: "Đang chạy" },
+  done: { className: "border-transparent bg-badge-success text-badge-success-foreground", label: "Xong" },
+  failed: { className: "border-transparent bg-badge-destructive text-badge-destructive-foreground", label: "Lỗi" },
+  cancelled: { className: "border-transparent bg-badge-warning text-badge-warning-foreground", label: "Đã huỷ" },
 } as const
 
 type JobStatusProps = {
@@ -23,6 +23,9 @@ type JobStatusProps = {
   compact?: boolean
   onCancel?: () => void
   onRetry?: () => void
+  statusLabels?: Partial<Record<JobState, string>>
+  cancelLabel?: string
+  retryLabel?: string
 }
 
 function clock(seconds: number) {
@@ -41,6 +44,9 @@ export function JobStatus({
   compact = false,
   onCancel,
   onRetry,
+  statusLabels,
+  cancelLabel = "Huỷ",
+  retryLabel = "Thử lại",
 }: JobStatusProps) {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {
@@ -49,12 +55,12 @@ export function JobStatus({
     return () => window.clearInterval(timer)
   }, [status, startedAt])
   const elapsed = startedAt ? (now - startedAt) / 1000 : 0
-  const badge = BADGE[status]
+  const badge = { ...BADGE[status], label: statusLabels?.[status] ?? BADGE[status].label }
 
   if (compact) {
     return (
       <Inline gap={2} align="center" className="min-w-0">
-        <Badge variant={badge.variant}>{badge.label}</Badge>
+        <Badge className={badge.className}>{badge.label}</Badge>
         <Text size="sm" truncate className="min-w-0 flex-1">
           {name}
         </Text>
@@ -71,7 +77,7 @@ export function JobStatus({
     <Stack gap={2} className="rounded-md border border-border p-3">
       <Inline gap={2} align="center" justify="between">
         <Inline gap={2} align="center" className="min-w-0">
-          <Badge variant={badge.variant}>{badge.label}</Badge>
+          <Badge className={badge.className}>{badge.label}</Badge>
           <Text weight="medium" truncate>
             {name}
           </Text>
@@ -89,12 +95,12 @@ export function JobStatus({
       <Inline gap={2}>
         {status === "running" && onCancel ? (
           <Button variant="outline" size="sm" onClick={onCancel}>
-            Huỷ
+            {cancelLabel}
           </Button>
         ) : null}
         {status === "failed" && onRetry ? (
           <Button size="sm" onClick={onRetry}>
-            Thử lại
+            {retryLabel}
           </Button>
         ) : null}
       </Inline>

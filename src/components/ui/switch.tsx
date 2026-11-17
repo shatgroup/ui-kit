@@ -1,41 +1,32 @@
-import { Switch as SwitchPrimitive } from "@base-ui/react/switch"
-import { useId, type ReactNode } from "react"
-import { cn } from "@/lib/utils.ts"
-import { focusRing } from "./control.ts"
-import { Label } from "./label.tsx"
+import * as React from "react"
+import { cn } from "cn"
+import { Switch as SwitchPrimitive } from "radix-ui"
 
-function Switch({ className, ...props }: SwitchPrimitive.Root.Props) {
+function Switch({
+  className,
+  size = "default",
+  ...props
+}: React.ComponentProps<typeof SwitchPrimitive.Root> & {
+  size?: "sm" | "default"
+}) {
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
+      data-size={size}
       className={cn(
-        "inline-flex shrink-0 items-center rounded-full bg-input",
-        "data-checked:bg-primary data-disabled:cursor-not-allowed data-disabled:opacity-50",
-        "aria-invalid:border aria-invalid:border-destructive",
-        focusRing,
-        className,
+        "peer group/switch inline-flex shrink-0 items-center rounded-full border border-transparent transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-[1.15rem] data-[size=default]:w-8 data-[size=sm]:h-3.5 data-[size=sm]:w-6 data-[state=checked]:bg-primary data-[state=unchecked]:bg-input dark:data-[state=unchecked]:bg-input/80",
+        className
       )}
       {...props}
     >
-      <SwitchPrimitive.Thumb data-slot="switch-thumb" className="pointer-events-none block rounded-full bg-background" />
+      <SwitchPrimitive.Thumb
+        data-slot="switch-thumb"
+        className={cn(
+          "pointer-events-none block rounded-full bg-background ring-0 transition-transform group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0 dark:data-[state=checked]:bg-primary-foreground dark:data-[state=unchecked]:bg-foreground"
+        )}
+      />
     </SwitchPrimitive.Root>
   )
 }
 
-function SwitchField({
-  label,
-  id,
-  className,
-  ...props
-}: SwitchPrimitive.Root.Props & { label: ReactNode }) {
-  const autoId = useId()
-  const fieldId = id ?? autoId
-  return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
-      <Switch id={fieldId} {...props} />
-      <Label htmlFor={fieldId}>{label}</Label>
-    </span>
-  )
-}
-
-export { Switch, SwitchField }
+export { Switch }

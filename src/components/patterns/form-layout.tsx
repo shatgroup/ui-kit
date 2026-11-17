@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useRef, useState, type FormEvent, type ReactNode } from "react"
 import { Box, Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
+import { Spinner } from "@/components/ui/spinner.tsx"
 
 export type FormSection = {
   title: string
@@ -96,7 +97,8 @@ export function FormLayout({
                 {cancelLabel}
               </Button>
             ) : null}
-            <Button type="submit" loading={saving}>
+            <Button type="submit" disabled={saving}>
+              {saving ? <Spinner /> : null}
               {submitLabel}
             </Button>
           </Inline>
@@ -108,7 +110,8 @@ export function FormLayout({
                   {cancelLabel}
                 </Button>
               ) : null}
-              <Button type="submit" loading={saving}>
+              <Button type="submit" disabled={saving}>
+                {saving ? <Spinner /> : null}
                 {submitLabel}
               </Button>
             </Inline>

@@ -24,9 +24,25 @@ type FilterBarProps = {
   filters: FilterItem[]
   onClear: () => void
   resultCount: number
+  searchPlaceholder?: string
+  searchLabel?: string
+  clearLabel?: string
+  resultLabel?: (count: number) => string
+  activeLabel?: (count: number) => string
 }
 
-export function FilterBar({ query, onQueryChange, filters, onClear, resultCount }: FilterBarProps) {
+export function FilterBar({
+  query,
+  onQueryChange,
+  filters,
+  onClear,
+  resultCount,
+  searchPlaceholder = "Tìm kiếm",
+  searchLabel = "Tìm kiếm",
+  clearLabel = "Xoá lọc",
+  resultLabel = (count) => `${count} kết quả`,
+  activeLabel = (count) => `${count} bộ lọc đang bật`,
+}: FilterBarProps) {
   const active = filters.filter((filter) => filter.value !== (filter.allValue ?? "all")).length
 
   return (
@@ -35,10 +51,9 @@ export function FilterBar({ query, onQueryChange, filters, onClear, resultCount 
         <Box className="relative w-60">
           <SearchIcon className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
-            size="md"
             value={query}
-            placeholder="Tìm kiếm"
-            aria-label="Tìm kiếm"
+            placeholder={searchPlaceholder}
+            aria-label={searchLabel}
             className="pl-8"
             onChange={(event) => onQueryChange(event.target.value)}
           />
@@ -47,7 +62,7 @@ export function FilterBar({ query, onQueryChange, filters, onClear, resultCount 
           const current = filter.options.find((option) => option.value === filter.value)
           return (
             <Select key={filter.id} value={filter.value} onValueChange={(value) => filter.onChange(value ?? filter.allValue ?? "all")}>
-              <SelectTrigger size="md" className="w-48" aria-label={filter.label}>
+              <SelectTrigger size="default" className="w-48" aria-label={filter.label}>
                 <span className="block min-w-0 truncate">
                   {filter.label}: {current?.label ?? filter.value}
                 </span>
@@ -62,17 +77,17 @@ export function FilterBar({ query, onQueryChange, filters, onClear, resultCount 
             </Select>
           )
         })}
-        <Button variant="outline" size="md" onClick={onClear}>
-          Xoá lọc
+        <Button variant="outline" size="default" onClick={onClear}>
+          {clearLabel}
         </Button>
       </Inline>
       <Inline gap={3} align="center">
         <Text size="sm" tone="muted">
-          {resultCount} kết quả
+          {resultLabel(resultCount)}
         </Text>
         {active > 0 ? (
           <Text size="sm" weight="medium">
-            {active} bộ lọc đang bật
+            {activeLabel(active)}
           </Text>
         ) : null}
       </Inline>

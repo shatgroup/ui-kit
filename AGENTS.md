@@ -15,6 +15,15 @@ Khung lấy từ `~/Projects/_mau/khung/AGENTS.md` vì `~/Projects/_mau/AGENTS.m
 
 **Mô hình truy cập:** thư viện giao diện phía client. Không có backend.
 
+**Hai trang:** `/design-system` (token, chữ, component) và `/showcase` (Cards, Dashboard, Application, POSM, Motion). `/tokens` và `/kit` chuyển tới `/design-system`. `/preview` và `/preview-motion` chuyển tới `/showcase`.
+
+**Lớp code:**
+- `src/components/ui/` — component lõi, giữ class gốc shadcn. Chỉ thư mục này được giá trị tuỳ ý.
+- `src/components/patterns/` và `src/components/media/` — khối ráp sẵn. Kiểu dáng nằm ở đây, nhãn chữ truyền qua props.
+- `src/pages/` — chỉ ráp primitive, component và pattern. Không class trang trí (`bg-*`, `border-*`, `rounded-*`, `shadow-*`, màu chữ, giá trị tuỳ ý). Bố cục dùng `Stack`, `Inline`, `Grid`, `Box`.
+- `src/fixtures/` — dữ liệu mẫu.
+- Không dùng `shadow-*` (trừ `shadow-none`). Popup dùng viền 1px `--border`. Không sửa biến `--shadow-*` trong `theme.css`.
+
 Trao đổi và giải thích với người dùng bằng **tiếng Việt**.
 
 ---
@@ -150,12 +159,13 @@ BÁO CÁO CHO CLAUDE
 1. Bố cục chỉ dùng `Box`, `Stack`, `Inline`, `Grid`, `Container`. Chữ chỉ dùng `Text` hoặc component của kit.
 2. Không margin. Không giá trị tuỳ ý. Không mã màu. Không inline style.
 3. Chữ và link màu thương hiệu dùng `text-primary-text`, không dùng `text-primary`.
-4. Control (input, button, select) trong cùng một hàng phải cùng `size` (`sm` | `md` | `lg`).
+4. Control (input, button, select) trong cùng một hàng phải cùng `size` (`sm` | `default` | `lg`). Chỉ dùng giá trị trong `docs/STANDARD.md`. Cần mức mới thì dừng lại hỏi, không tự thêm.
 5. Form luôn dùng `FormField`. Không tự xếp label và input.
 6. Danh sách trống luôn dùng `EmptyState`.
 7. Thiếu component hoặc token thì dừng và báo, không tự chế.
 8. Xong việc phải chạy `npm run check:ui` và `npm run build`. Cả hai pass mới tính là xong.
 9. Chuyển động chỉ dùng `opacity`, `transform`, `clip-path`, màu, bóng. Không chuyển động width, height, top, left, margin, padding, trừ sidebar. Không `transition-all`. Thời lượng và easing chỉ lấy token CSS.
+10. Không sửa giao diện file trong `src/showcase/tweakcn/`, đây là bản đối chiếu gốc.
 
 Component kit, mỗi cái một việc:
 
@@ -167,7 +177,14 @@ Component kit, mỗi cái một việc:
 - `Checkbox` / `CheckboxField` — chọn bật tắt, luôn có label cạnh ô.
 - `RadioGroup` / `RadioField` — chọn một trong vài mục, mỗi mục có label.
 - `Switch` / `SwitchField` — bật tắt ngay, luôn có label cạnh nút.
-- `Badge` — trạng thái ngắn, một dòng.
+- `Badge` — trạng thái ngắn, một dòng. Nhãn phân loại dùng `outline`.
+- `StatusBadge` — trạng thái chuẩn, nền nhạt: `pending` warning, `in_progress` info, `done` success, `failed` destructive, `draft` neutral.
+- `Alert` — thông báo info, success, warning, error, có nút đóng.
+- `InputGroup` — ô chữ có tiền tố hoặc hậu tố.
+- `PasswordInput` — mật khẩu, nút ẩn/hiện.
+- `DateInput` — ngày, icon lịch mở Calendar.
+- `NumberInput` — số, nút giảm và tăng.
+- `TagsInput` — danh sách tag, Enter để thêm, nút x để xoá.
 - `Card` — khối nội dung có viền.
 - `Table` — bảng dữ liệu. Cột số dùng `numeric`. Cột cần xuống dòng dùng `wrap`.
 - `Dialog` — hộp thoại giữa màn hình. Nội dung dài để trong `DialogBody`.
@@ -189,9 +206,16 @@ Pattern dựng sẵn:
 - `AppShell` — khung app: sidebar, topbar, nội dung. Dưới 768px sidebar mở bằng Sheet.
 - `PageHeader` — tiêu đề trang, mô tả, breadcrumb, nút bên phải.
 - `FilterBar` — ô tìm, select lọc, xoá lọc, số kết quả. Mọi control size md.
-- `DataTable` — bảng có sắp xếp, phân trang, chọn nhiều dòng, cuộn ngang, chế độ thẻ trên mobile.
 - `FormLayout` — form chia section, nút Lưu/Huỷ dính đáy.
-- `StatCard` — số liệu tóm tắt.
+- `StatCard` — số liệu: nhãn, số, Badge xu hướng, dòng chính, dòng phụ.
+- `DataTable` — bảng có sắp xếp, phân trang, chọn nhiều dòng. Phân trang ghi số dòng đã chọn, số dòng mỗi trang, số trang và 4 nút.
+- `ChartCard` — tiêu đề, mô tả, biểu đồ, dòng cuối.
+- `Ticker` — một dòng mã, giá, phần trăm.
+- `ActivityTimeline` — mốc hoạt động.
+- `ChatPanel` — hội thoại.
+- `TransactionList` — danh sách giao dịch.
+- `RepoCard` — thẻ kho mã.
+- `ShareList` — danh sách chia sẻ.
 - `StatusTimeline` — các mốc trạng thái theo thời gian.
 
 Component cho motion-video:

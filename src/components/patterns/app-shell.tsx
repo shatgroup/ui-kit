@@ -1,10 +1,25 @@
-import { useState, type ReactNode } from "react"
+import type { ReactNode } from "react"
 import type { LucideIcon } from "lucide-react"
-import { MenuIcon, PanelLeftIcon } from "lucide-react"
-import { Box, Inline, Stack, Text } from "@/components/layout/index.ts"
+import { MoreVerticalIcon } from "lucide-react"
+import { Box, Inline, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
-import { Sheet, SheetBody, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet.tsx"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar.tsx"
 import { cn } from "@/lib/utils.ts"
 
 export type AppNavItem = {
@@ -27,147 +42,177 @@ type AppShellProps = {
   leading?: ReactNode
   topbar?: ReactNode
   footer?: ReactNode
+  sidebarAction?: ReactNode | ((collapsed: boolean) => ReactNode)
+  account?: { name: string; email: string }
+  title?: string
+  inset?: boolean
   maxWidth?: boolean
   children?: ReactNode
+  collapseLabel?: string
+  collapseAriaLabel?: string
+  expandLabel?: string
+  menuLabel?: string
+  bottomNav?: ReactNode
 }
 
-function NavButton({
-  item,
-  active,
-  collapsed,
-  onNavigate,
+function ShellTrigger({
+  collapseAriaLabel,
+  expandLabel,
+  menuLabel,
 }: {
-  item: AppNavItem
-  active: boolean
-  collapsed: boolean
-  onNavigate: (id: string) => void
+  collapseAriaLabel: string
+  expandLabel: string
+  menuLabel: string
 }) {
-  const Icon = item.icon
-  const button = (
-    <Button
-      variant="ghost"
-      className={cn(
-        "w-full justify-start",
-        collapsed && "size-8! w-8! justify-center p-0!",
-        active && "bg-sidebar-accent font-medium text-sidebar-accent-foreground",
-      )}
-      aria-current={active ? "page" : undefined}
-      aria-label={item.label}
-      onClick={() => onNavigate(item.id)}
-    >
-      <Icon className="size-4 shrink-0" />
-      {collapsed ? null : item.label}
-    </Button>
-  )
-  if (!collapsed) return button
-  return (
-    <Tooltip>
-      <TooltipTrigger render={button} />
-      <TooltipContent side="right">{item.label}</TooltipContent>
-    </Tooltip>
-  )
+  const { isMobile, state } = useSidebar()
+  const label = isMobile ? menuLabel : state === "collapsed" ? expandLabel : collapseAriaLabel
+  return <SidebarTrigger label={label} aria-label={label} />
 }
 
-function NavGroups({
+function ShellSidebar({
+  logo,
+  mark,
   groups,
   activeId,
-  collapsed,
   onNavigate,
-}: {
-  groups: AppNavGroup[]
-  activeId: string
-  collapsed: boolean
-  onNavigate: (id: string) => void
-}) {
+  footer,
+  sidebarAction,
+  account,
+}: Pick<AppShellProps, "logo" | "mark" | "groups" | "activeId" | "onNavigate" | "footer" | "sidebarAction" | "account">) {
+  const { state, isMobile, setOpenMobile } = useSidebar()
+  const collapsed = state === "collapsed" && !isMobile
+  const action = typeof sidebarAction === "function" ? sidebarAction(collapsed) : sidebarAction
+
+  function choose(id: string) {
+    onNavigate(id)
+    if (isMobile) setOpenMobile(false)
+  }
+
   return (
-    <Stack gap={4}>
-      {groups.map((group) => (
-        <Stack key={group.label} gap={1}>
-          {collapsed ? null : (
-            <Text size="sm" tone="muted" weight="medium">
-              {group.label}
-            </Text>
-          )}
-          {group.items.map((item) => (
-            <NavButton
-              key={item.id}
-              item={item}
-              active={item.id === activeId}
-              collapsed={collapsed}
-              onNavigate={onNavigate}
-            />
-          ))}
-        </Stack>
-      ))}
-    </Stack>
+    <>
+      <SidebarHeader>
+        <span className={cn("flex h-8 items-center px-2", collapsed && "justify-center px-0")}>
+          {collapsed ? (
+            <span className="flex size-8 items-center justify-center overflow-hidden">{mark ?? logo}</span>
+          ) : logo}
+        </span>
+        {action}
+      </SidebarHeader>
+      <SidebarContent>
+        {groups.map((group) => (
+          <SidebarGroup key={group.label}>
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {group.items.map((item) => {
+                  const Icon = item.icon
+                  const active = item.id === activeId
+                  return (
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton
+                        isActive={active}
+                        tooltip={item.label}
+                        aria-label={item.label}
+                        aria-current={active ? "page" : undefined}
+                        onClick={() => choose(item.id)}
+                      >
+                        <Icon />
+                        <span>{item.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  )
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
+      </SidebarContent>
+      <SidebarFooter>
+        {footer}
+        {account ? (
+          <Inline gap={2} align="center" justify={collapsed ? "center" : "between"} wrap={false}>
+            {collapsed ? null : (
+              <span className="min-w-0">
+                <Text size="sm" weight="medium">{account.name}</Text>
+                <Text size="xs" tone="muted">{account.email}</Text>
+              </span>
+            )}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="size-8 p-0" aria-label={`Menu ${account.name}`}>
+                  <MoreVerticalIcon />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem>Account</DropdownMenuItem>
+                <DropdownMenuItem>Log out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </Inline>
+        ) : null}
+      </SidebarFooter>
+    </>
   )
 }
 
-export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, topbar, footer, maxWidth = true, children }: AppShellProps) {
-  const [collapsed, setCollapsed] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
-
+export function AppShell({
+  logo,
+  mark,
+  groups,
+  activeId,
+  onNavigate,
+  leading,
+  topbar,
+  footer,
+  sidebarAction,
+  account,
+  title,
+  inset = false,
+  maxWidth = true,
+  children,
+  collapseAriaLabel = "Thu gọn sidebar",
+  expandLabel = "Mở sidebar",
+  menuLabel = "Mở menu",
+  bottomNav,
+}: AppShellProps) {
   return (
-    <Box className="min-h-dvh">
-      <Inline align="stretch" wrap={false} className="min-h-dvh">
-        <Box slot="sidebar" border className={cn("sticky top-0 hidden h-dvh shrink-0 bg-sidebar text-sidebar-foreground md:block", collapsed ? "w-12" : "w-60")}>
-          <Stack gap={4} align={collapsed ? "center" : "stretch"} className={cn("h-full", collapsed ? "p-2" : "p-3")}>
-            <span className={cn("flex items-center whitespace-nowrap", collapsed && "size-8 justify-center overflow-hidden")}>
-              {collapsed ? (mark ?? logo) : logo}
-            </span>
-            <Box className="min-h-0 flex-1 overflow-y-auto">
-              <NavGroups groups={groups} activeId={activeId} collapsed={collapsed} onNavigate={onNavigate} />
-            </Box>
-            {footer}
-            <Button
-              variant="ghost"
-              className={cn("w-full justify-start", collapsed && "size-8! w-8! justify-center p-0!")}
-              aria-label={collapsed ? "Mở sidebar" : "Thu gọn sidebar"}
-              onClick={() => setCollapsed((value) => !value)}
-            >
-              <PanelLeftIcon className="size-4" />
-              {collapsed ? null : "Thu gọn"}
-            </Button>
-          </Stack>
-        </Box>
-        <Box className="flex min-w-0 flex-1 justify-center">
-          <Stack gap={4} className={cn("min-h-dvh w-full p-4", maxWidth && "max-w-page")}>
-            <Inline gap={2} align="center" justify="between">
-              <Inline gap={2} align="center" className="min-w-0">
-                <Button
-                  variant="outline"
-                  className="w-10 px-0 md:hidden"
-                  aria-label="Mở menu"
-                  onClick={() => setMenuOpen(true)}
-                >
-                  <MenuIcon className="size-4" />
-                </Button>
+    <div data-app-shell className={cn(inset ? "h-full min-h-0" : "min-h-dvh")}>
+      <SidebarProvider mobileBreakpoint={1024} contained={inset} className={inset ? "h-full" : undefined}>
+        <Sidebar collapsible="icon">
+          <ShellSidebar
+            logo={logo}
+            mark={mark}
+            groups={groups}
+            activeId={activeId}
+            onNavigate={onNavigate}
+            footer={footer}
+            sidebarAction={sidebarAction}
+            account={account}
+          />
+        </Sidebar>
+        <SidebarInset className={cn("min-w-0", inset && "min-h-0 overflow-hidden")}>
+          <header data-app-header className="flex h-14 shrink-0 items-center border-b border-border px-4">
+            <Inline gap={2} align="center" justify="between" wrap={false} className="w-full min-w-0">
+              <Inline gap={2} align="center" wrap={false} className="min-w-0">
+                <ShellTrigger collapseAriaLabel={collapseAriaLabel} expandLabel={expandLabel} menuLabel={menuLabel} />
+                {title ? <Text weight="medium" className="truncate">{title}</Text> : null}
                 {leading}
               </Inline>
               {topbar}
             </Inline>
-            <Box className="min-w-0 flex-1">{children}</Box>
-          </Stack>
-        </Box>
-      </Inline>
-      <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-        <SheetContent side="left">
-          <SheetHeader>
-            <SheetTitle>Menu</SheetTitle>
-          </SheetHeader>
-          <SheetBody>
-            <NavGroups
-              groups={groups}
-              activeId={activeId}
-              collapsed={false}
-              onNavigate={(id) => {
-                onNavigate(id)
-                setMenuOpen(false)
-              }}
-            />
-          </SheetBody>
-        </SheetContent>
-      </Sheet>
-    </Box>
+          </header>
+          <div className="flex min-h-0 w-full flex-1 justify-center">
+            <Box slot="app-content" className={cn("flex w-full min-w-0 flex-col gap-4 px-4 py-4 md:px-6", maxWidth && "max-w-7xl")}>
+              {children}
+            </Box>
+          </div>
+          {bottomNav ? (
+            <div data-app-tabbar className="flex h-14 shrink-0 items-center border-t border-border px-4 md:hidden">
+              {bottomNav}
+            </div>
+          ) : null}
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   )
 }

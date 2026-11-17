@@ -13,6 +13,12 @@ type MediaPreviewProps = {
   alt?: string
   status?: "ready" | "empty" | "error"
   onRetry?: () => void
+  emptyTitle?: string
+  emptyDescription?: string
+  errorLabel?: string
+  retryLabel?: string
+  playLabel?: string
+  pauseLabel?: string
 }
 
 export function MediaPreview({
@@ -22,6 +28,12 @@ export function MediaPreview({
   alt = "",
   status = "ready",
   onRetry,
+  emptyTitle = "Chưa có tư liệu",
+  emptyDescription = "Thả ảnh hoặc video vào để xem trước.",
+  errorLabel = "Không tải được tư liệu.",
+  retryLabel = "Thử lại",
+  playLabel = "Phát",
+  pauseLabel = "Tạm dừng",
 }: MediaPreviewProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)
@@ -42,15 +54,15 @@ export function MediaPreview({
     <div data-ratio={ratio} className="relative w-full overflow-hidden rounded-md bg-muted">
       {status === "empty" || (status !== "error" && !src) ? (
         <Box className="flex h-full items-center justify-center p-4">
-          <EmptyState title="Chưa có tư liệu" description="Thả ảnh hoặc video vào để xem trước." />
+          <EmptyState title={emptyTitle} description={emptyDescription} />
         </Box>
       ) : null}
       {status === "error" ? (
         <Stack gap={3} align="center" className="h-full justify-center p-4">
-          <Text tone="destructive">Không tải được tư liệu.</Text>
+          <Text tone="destructive">{errorLabel}</Text>
           {onRetry ? (
             <Button variant="outline" onClick={onRetry}>
-              Thử lại
+              {retryLabel}
             </Button>
           ) : null}
         </Stack>
@@ -68,9 +80,9 @@ export function MediaPreview({
             onPause={() => setPlaying(false)}
           />
           <Box className="absolute inset-0 flex items-center justify-center">
-            <Button variant="secondary" aria-label={playing ? "Tạm dừng" : "Phát"} onClick={() => void toggle()}>
+            <Button variant="secondary" aria-label={playing ? pauseLabel : playLabel} onClick={() => void toggle()}>
               {playing ? <PauseIcon className="size-4" /> : <PlayIcon className="size-4" />}
-              {playing ? "Tạm dừng" : "Phát"}
+              {playing ? pauseLabel : playLabel}
             </Button>
           </Box>
         </>

@@ -19,7 +19,7 @@ describe("cn", () => {
   })
 
   it("chiều cao control sau thắng chiều cao trước", () => {
-    expect(cn("h-control-sm", "h-control-md")).toBe("h-control-md")
+    expect(cn("h-control-sm", "h-control-default")).toBe("h-control-default")
   })
 
   it("nền sau thắng nền trước", () => {
