@@ -195,19 +195,19 @@ describe("kiểm showcase", () => {
                 const style = getComputedStyle(el)
                 return `${style.backgroundColor}|${style.transform}`
               })
-              const switchEl = page.getByRole("switch", { name: "Light", exact: true })
-              const boxEl = page.getByRole("checkbox", { name: "Checked", exact: true })
+              const switchEl = page.getByRole("switch", { name: "Switch tắt", exact: true })
+              const boxEl = page.getByRole("checkbox", { name: "Checkbox bật", exact: true })
               const beforeSwitch = await readPaint(switchEl)
               const beforeBox = await readPaint(boxEl)
               const beforeDark = await page.evaluate(() => document.documentElement.classList.contains("dark"))
               await switchEl.click()
               await boxEl.click()
-              await page.getByRole("radio", { name: "Unchecked", exact: true }).click()
-              await page.getByRole("button", { name: /^(Sáng|Tối)$/ }).first().click()
+              await page.getByRole("radio", { name: "Radio tắt", exact: true }).click()
+              await page.getByRole("radio", { name: theme === "dark" ? "Sáng" : "Tối", exact: true }).click()
               await page.waitForFunction((was) => document.documentElement.classList.contains("dark") !== was, beforeDark, { timeout: 2000 }).catch(() => undefined)
               const afterSwitch = await readPaint(switchEl)
               const afterBox = await readPaint(boxEl)
-              const radioChecked = await page.getByRole("radio", { name: "Unchecked", exact: true }).getAttribute("data-state")
+              const radioChecked = await page.getByRole("radio", { name: "Radio tắt", exact: true }).getAttribute("data-state")
               const afterDark = await page.evaluate(() => document.documentElement.classList.contains("dark"))
               if (beforeSwitch === afterSwitch) failures.push(`${theme}: Switch không đổi`)
               if (beforeBox === afterBox) failures.push(`${theme}: Checkbox không đổi`)
@@ -570,8 +570,8 @@ describe("kiểm showcase", () => {
         const off = dark ? sample("color-mix(in oklab, var(--input) 80%, transparent)") : sample("var(--input)")
         return { primary, off, primaryPaint: paint(primary), inputPaint: paint(off) }
       }, theme === "dark")
-      const off = await read("Light")
-      const on = await read("Dark")
+      const off = await read("Switch tắt")
+      const on = await read("Switch bật")
       if (!off || !on) {
         failures.push(`${theme}: không thấy switch`)
         continue
@@ -582,11 +582,11 @@ describe("kiểm showcase", () => {
       if (on.state !== "checked" || on.side !== "right" || !near(on.paint, colors.primaryPaint)) {
         failures.push(`${theme}: bật sai ${on.state} ${on.side} nền ${on.bg} (kỳ vọng ${colors.primary})`)
       }
-      await page.getByRole("switch", { name: "Light", exact: true }).click()
-      await page.getByRole("switch", { name: "Dark", exact: true }).click()
+      await page.getByRole("switch", { name: "Switch tắt", exact: true }).click()
+      await page.getByRole("switch", { name: "Switch bật", exact: true }).click()
       await page.waitForTimeout(400)
-      const offAfter = await read("Light")
-      const onAfter = await read("Dark")
+      const offAfter = await read("Switch tắt")
+      const onAfter = await read("Switch bật")
       if (!offAfter || !onAfter) {
         failures.push(`${theme}: mất switch sau click`)
         continue
@@ -610,7 +610,7 @@ describe("kiểm showcase", () => {
       "1440 dark": "docs/reference/ket-qua-ds-dark-1440.png",
       "375 light": "docs/reference/ket-qua-ds-375.png",
     }
-    for (const width of widths) {
+    for (const width of [...widths, 1920]) {
       await page.setViewportSize({ width, height: 900 })
       for (const theme of themes) {
         const where = `${width} ${theme}`
@@ -720,6 +720,14 @@ describe("kiểm showcase", () => {
               if (wordBox.top < titleBox.bottom - 1) notes.push("tên font chưa xuống dưới tiêu đề")
             }
           }
+          const frame = document.querySelector("[data-slot=container]")
+          if (frame instanceof HTMLElement && scroller instanceof HTMLElement && window.innerWidth >= 1440) {
+            const box = frame.getBoundingClientRect()
+            const host = scroller.getBoundingClientRect()
+            if (box.width > 1280.5) notes.push(`khung rộng ${Math.round(box.width)}px`)
+            const delta = Math.abs(box.left + box.width / 2 - (host.left + host.width / 2))
+            if (delta > 2) notes.push(`khung lệch giữa ${delta.toFixed(1)}px`)
+          }
           const shadow = [...document.querySelectorAll("[data-swatch], [data-slot=card]")].some((node) => {
             if (!(node instanceof HTMLElement)) return false
             const value = getComputedStyle(node).boxShadow
@@ -727,6 +735,69 @@ describe("kiểm showcase", () => {
             return value !== "none" && lengths.some((item) => Math.abs(Number.parseFloat(item)) > 0.5)
           })
           if (shadow) notes.push("còn shadow")
+          const header = document.querySelector("header")
+          if (header instanceof HTMLElement) {
+            const box = header.getBoundingClientRect()
+            if (Math.abs(box.height - 56) > 1) notes.push(`header cao ${box.height.toFixed(1)}px`)
+            header.querySelectorAll("[data-slot=toggle-group-item]").forEach((item) => {
+              if (!(item instanceof HTMLElement)) return
+              const itemBox = item.getBoundingClientRect()
+              if (itemBox.top < box.top - 1 || itemBox.bottom > box.bottom + 1 || itemBox.left < box.left - 1 || itemBox.right > box.right + 1) {
+                notes.push("nút header bị cắt")
+              }
+              const mid = itemBox.top + itemBox.height / 2
+              if (Math.abs(mid - (box.top + box.height / 2)) > 2) notes.push("nút header lệch giữa")
+            })
+          }
+          document.querySelectorAll(".kit-grid").forEach((grid) => {
+            const cards = [...grid.children].flatMap((child) => {
+              if (!(child instanceof HTMLElement)) return []
+              if (child.getAttribute("data-slot") === "card") return [child]
+              const nested = child.querySelector("[data-slot=card]")
+              return nested instanceof HTMLElement ? [nested] : []
+            })
+            const rows: Array<{ top: number; heights: number[] }> = []
+            for (const card of cards) {
+              const rect = card.getBoundingClientRect()
+              const row = rows.find((item) => Math.abs(item.top - rect.top) <= 2)
+              if (row) row.heights.push(rect.height)
+              else rows.push({ top: rect.top, heights: [rect.height] })
+            }
+            for (const row of rows) {
+              if (row.heights.length < 2) continue
+              const delta = Math.max(...row.heights) - Math.min(...row.heights)
+              if (delta > 1) notes.push(`card cùng hàng lệch ${delta.toFixed(1)}px`)
+            }
+          })
+          const named = (role: string, name: string) => [...document.querySelectorAll(`[role="${role}"]`)].find((el) => {
+            const id = el.getAttribute("id")
+            const label = id ? document.querySelector(`label[for="${CSS.escape(id)}"]`) : null
+            return (label?.textContent ?? el.getAttribute("aria-label") ?? "").trim() === name
+          })
+          const states: Array<[string, string, string]> = [
+            ["checkbox", "Checkbox bật", "checked"],
+            ["checkbox", "Checkbox tắt", "unchecked"],
+            ["checkbox", "Checkbox disabled bật", "checked"],
+            ["checkbox", "Checkbox disabled tắt", "unchecked"],
+            ["checkbox", "Checkbox indeterminate", "indeterminate"],
+            ["radio", "Radio bật", "checked"],
+            ["radio", "Radio tắt", "unchecked"],
+            ["radio", "Radio disabled bật", "checked"],
+            ["radio", "Radio disabled tắt", "unchecked"],
+            ["switch", "Switch bật", "checked"],
+            ["switch", "Switch tắt", "unchecked"],
+            ["switch", "Switch disabled bật", "checked"],
+            ["switch", "Switch disabled tắt", "unchecked"],
+          ]
+          for (const [role, name, state] of states) {
+            const el = named(role, name)
+            if (!(el instanceof HTMLElement)) notes.push(`thiếu ${name}`)
+            else if (el.getAttribute("data-state") !== state) notes.push(`${name} đang ${el.getAttribute("data-state")}`)
+          }
+          for (const name of ["background", "card", "popover"]) {
+            const node = document.querySelector(`[data-swatch="${name}"]`)
+            if (!(node instanceof HTMLElement) || getComputedStyle(node).borderTopWidth !== "1px") notes.push(`${name} thiếu viền`)
+          }
           return notes
         })
         for (const note of found) failures.push(`${where}: ${note}`)
@@ -758,16 +829,16 @@ describe("kiểm showcase", () => {
         if (!before || !after || before === after) failures.push(`${where}: hex nền không đổi (${before} → ${after})`)
         await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
 
-        const switchEl = page.getByRole("switch", { name: "Light", exact: true })
+        const switchEl = page.getByRole("switch", { name: "Switch tắt", exact: true })
         const beforeSwitch = await switchEl.getAttribute("data-state")
         await switchEl.click()
         if ((await switchEl.getAttribute("data-state")) === beforeSwitch) failures.push(`${where}: Switch không đổi`)
-        const box = page.getByRole("checkbox", { name: "Checked", exact: true })
+        const box = page.getByRole("checkbox", { name: "Checkbox bật", exact: true })
         const beforeBox = await box.getAttribute("data-state")
         await box.click()
         if ((await box.getAttribute("data-state")) === beforeBox) failures.push(`${where}: Checkbox không đổi`)
-        await page.getByRole("radio", { name: "Unchecked", exact: true }).click()
-        if ((await page.getByRole("radio", { name: "Unchecked", exact: true }).getAttribute("data-state")) !== "checked") {
+        await page.getByRole("radio", { name: "Radio tắt", exact: true }).click()
+        if ((await page.getByRole("radio", { name: "Radio tắt", exact: true }).getAttribute("data-state")) !== "checked") {
           failures.push(`${where}: Radio không đổi`)
         }
 
@@ -785,11 +856,43 @@ describe("kiểm showcase", () => {
         })
         if (covered) failures.push(`${where}: select ${covered}`)
         await page.keyboard.press("Escape")
+
+        const stuck = await page.evaluate(() => {
+          const scroller = document.querySelector(".h-dvh > div")
+          const nav = document.querySelector("[data-slot=section-nav]")
+          if (!(scroller instanceof HTMLElement) || !(nav instanceof HTMLElement)) return "thiếu thanh nhảy"
+          scroller.scrollTop = 700
+          const navBox = nav.getBoundingClientRect()
+          const host = scroller.getBoundingClientRect()
+          return Math.abs(navBox.top - host.top) > 2 ? `thanh không dính (${navBox.top.toFixed(1)} / ${host.top.toFixed(1)})` : ""
+        })
+        if (stuck) failures.push(`${where}: ${stuck}`)
+        await page.getByRole("tab", { name: "Token", exact: true }).click()
+        await page.waitForTimeout(1000)
+        const landed = await page.evaluate(() => {
+          const nav = document.querySelector("[data-slot=section-nav]")
+          const heading = document.getElementById("token")
+          if (!(nav instanceof HTMLElement) || !(heading instanceof HTMLElement)) return "thiếu mục Token"
+          const bar = nav.getBoundingClientRect().bottom
+          const top = heading.getBoundingClientRect().top
+          if (top < bar - 1) return "tiêu đề bị che"
+          const active = document.querySelector("[data-slot=section-nav] [role=tab][data-state=active]")
+          if (active?.textContent?.trim() !== "Token") return "mục sáng sai"
+          return ""
+        })
+        if (landed) failures.push(`${where}: ${landed}`)
+        await page.getByLabel("Tìm icon").fill("Sun")
+        const filtered = await page.waitForFunction(() => document.querySelectorAll("[data-icon-name]").length === 1).then(() => true).catch(() => false)
+        const matches = await page.locator("[data-icon-name]").count()
+        if (!filtered || matches !== 1) failures.push(`${where}: lọc icon còn ${matches}`)
+        await page.locator("[data-icon-name=Sun]").click()
+        const copied = await page.getByText("Đã copy", { exact: true }).last().waitFor({ state: "visible", timeout: 2000 }).then(() => true).catch(() => false)
+        if (!copied) failures.push(`${where}: không thấy toast copy`)
       }
     }
     await page.close()
     expect(failures, failures.join("\n")).toEqual([])
-  }, 180_000)
+  }, 240_000)
 
   it("viền Card, Input, Table bằng --border", async () => {
     const page = await browser.newPage()

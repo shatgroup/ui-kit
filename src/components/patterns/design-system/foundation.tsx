@@ -1,10 +1,9 @@
-import { useLayoutEffect, useRef, useState } from "react"
-import { Inline, Stack, Text } from "@/components/layout/index.ts"
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react"
+import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
 import { Card, CardContent } from "@/components/ui/card.tsx"
-import { InputGroup } from "@/components/ui/input-group.tsx"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx"
-import { Swatch, useTokenHex } from "./swatch.tsx"
+import { Swatch, useColorChoice, useTokenHex } from "./swatch.tsx"
 
 const STACK = [
   { name: "background", bg: "bg-background", fg: "text-foreground" },
@@ -153,18 +152,13 @@ function Header() {
         </Stack>
         <span className="specimen-word block min-w-0 font-medium break-words text-muted-foreground xl:shrink-0 xl:text-right">Be Vietnam Pro</span>
       </div>
-      <Inline gap={4}>
-        <a href="#chu"><Text size="sm" tone="primary">Chữ</Text></a>
-        <a href="#mau"><Text size="sm" tone="primary">Màu</Text></a>
-        <a href="#token"><Text size="sm" tone="primary">Token</Text></a>
-        <a href="#component"><Text size="sm" tone="primary">Component</Text></a>
-      </Inline>
     </Stack>
   )
 }
 
 function TypeAndColor() {
   const hex = useTokenHex()
+  const choice = useColorChoice()
   const [metrics, setMetrics] = useState<Array<{ weight: string; size: string; line: string; tracking: string }>>([])
 
   useLayoutEffect(() => {
@@ -180,8 +174,9 @@ function TypeAndColor() {
   }, [])
 
   return (
-    <Stack gap={6} className="scroll-mt-4" slot="chu">
-      <div id="chu" className="grid min-w-0 scroll-mt-4 items-start gap-6 md:grid-cols-auto-fr">
+    <Stack gap={4}>
+      <Text as="h2" id="nen-tang" size="xl" weight="semibold" className="scroll-mt-16">Nền tảng</Text>
+      <div className="grid min-w-0 items-start gap-6 md:grid-cols-auto-fr">
         <Stack gap={4} className="min-w-0">
           <Card className="min-w-0">
             <CardContent>
@@ -198,12 +193,20 @@ function TypeAndColor() {
           </Card>
           <div className="swatch-stack">
             {STACK.map((item) => (
-              <Swatch key={item.name} name={item.name} bg={item.bg} fg={item.fg} hex={hex[item.name] ?? ""} />
+              <Swatch
+                key={item.name}
+                name={item.name}
+                bg={item.bg}
+                fg={item.name === "border" ? choice[item.name]?.ink : item.fg}
+                hex={hex[item.name] ?? ""}
+                bordered={choice[item.name]?.edge}
+              />
             ))}
           </div>
         </Stack>
         <Card className="min-w-0">
           <CardContent>
+            <div className="min-w-0 overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -227,6 +230,8 @@ function TypeAndColor() {
                 ))}
               </TableBody>
             </Table>
+            </div>
+            <ColorRows />
           </CardContent>
         </Card>
       </div>
@@ -234,135 +239,95 @@ function TypeAndColor() {
   )
 }
 
-function ColorGroup({ title, names }: { title: string; names: string[] }) {
+const COLOR_GROUPS = [
+  { title: "Nền và chữ", names: ["background", "card", "popover", "muted", "secondary", "accent", "border", "input", "ring"] },
+  { title: "Thương hiệu", names: ["primary"] },
+  { title: "Trạng thái", names: ["success", "warning", "info", "destructive", "badge-neutral", "badge-success", "badge-warning", "badge-info", "badge-destructive", "badge-primary"] },
+  { title: "Chart", names: ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"] },
+  { title: "Sidebar", names: ["sidebar", "sidebar-primary", "sidebar-accent", "sidebar-border", "sidebar-ring"] },
+] as const
+
+function ColorRows() {
   const hex = useTokenHex()
-  const items = names.flatMap((name) => {
-    const item = SWATCHES.find((entry) => entry.name === name)
-    return item ? [item] : []
-  })
+  const choice = useColorChoice()
   return (
-    <Stack gap={3}>
-      <Text as="h3" size="lg" weight="semibold">{title}</Text>
-      <div className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-        {items.map((item) => (
-          <Swatch key={item.name} name={item.name} bg={item.bg} fg={item.fg} hex={hex[item.name] ?? ""} />
-        ))}
-      </div>
+    <Stack gap={4}>
+      {COLOR_GROUPS.map((group) => (
+        <Stack key={group.title} gap={2}>
+          <Text size="sm" weight="medium">{group.title}</Text>
+          <Inline gap={3}>
+            {group.names.map((name) => {
+              const item = SWATCHES.find((entry) => entry.name === name)
+              if (!item) return null
+              return (
+                <Stack key={name} gap={1} align="center">
+                  <div data-swatch={name} data-hex={hex[name] ?? ""} className={`size-14 rounded-md ${item.bg} ${choice[name]?.edge ? "border border-border" : ""}`} />
+                  <Text size="xs">{name}</Text>
+                  <Text size="xs" tone="muted">{hex[name] || "…"}</Text>
+                </Stack>
+              )
+            })}
+          </Inline>
+        </Stack>
+      ))}
     </Stack>
   )
 }
 
-function Palette() {
+function TokenCard({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <Stack gap={6} className="scroll-mt-4">
-      <Text as="h2" id="mau" size="2xl" weight="bold">Màu</Text>
-      <ColorGroup title="Nền và chữ" names={["background", "card", "popover", "muted", "secondary", "accent", "border", "input", "ring"]} />
-      <ColorGroup title="Thương hiệu" names={["primary"]} />
-      <Stack gap={2}>
-        <Text size="sm" tone="primary">primary-text</Text>
-        <Text size="xs" tone="muted">Chữ thương hiệu nằm trên nền, không có màu nền riêng.</Text>
-      </Stack>
-      <ColorGroup title="Trạng thái" names={["success", "warning", "info", "destructive", "badge-neutral", "badge-success", "badge-warning", "badge-info", "badge-destructive", "badge-primary"]} />
-      <ColorGroup title="Chart" names={["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"]} />
-      <ColorGroup title="Sidebar" names={["sidebar", "sidebar-primary", "sidebar-accent", "sidebar-border", "sidebar-ring"]} />
-    </Stack>
+    <Card className="h-full min-w-0">
+      <CardContent>
+        <Stack gap={3}>
+          <Text size="sm" weight="medium">{title}</Text>
+          {children}
+        </Stack>
+      </CardContent>
+    </Card>
   )
 }
 
 function Tokens() {
   return (
     <Stack gap={4}>
-      <Text as="h2" id="token" size="2xl" weight="bold">Token</Text>
-      <div className="grid min-w-0 items-start gap-4 md:grid-cols-2">
-        <Card className="min-w-0">
-          <CardContent>
-            <Stack gap={3}>
-              <Text size="sm" weight="medium">Khoảng cách</Text>
-              {SPACE_BARS.map((item) => (
-                <Inline key={item.level} gap={3} align="center">
-                  <span className={`h-3 ${item.bar} rounded-sm bg-primary`} />
-                  <Text size="xs" tone="muted">{item.level} · {item.px}</Text>
-                </Inline>
-              ))}
-            </Stack>
-          </CardContent>
-        </Card>
-        <Card className="min-w-0">
-          <CardContent>
-            <Stack gap={3}>
-              <Text size="sm" weight="medium">Bo góc</Text>
-              <Inline gap={3}>
-                {RADII.map((item) => (
-                  <Stack key={item.name} gap={1} align="center">
-                    <span className={`size-16 border border-border bg-muted ${item.className}`} />
-                    <Text size="xs" tone="muted">{item.name}</Text>
-                  </Stack>
-                ))}
+      <Text as="h2" id="token" size="xl" weight="semibold" className="scroll-mt-16">Token</Text>
+      <Grid columns={{ base: 1, md: 2, xl: 4 }} gap={4} className="kit-grid items-stretch">
+        <TokenCard title="Khoảng cách">
+          <Grid columns={2} gap={2}>
+            {SPACE_BARS.map((item) => (
+              <Inline key={item.level} gap={2} align="center">
+                <span className={`h-3 ${item.bar} rounded-sm bg-primary`} />
+                <Text size="xs" tone="muted">{item.level} · {item.px}</Text>
               </Inline>
-            </Stack>
-          </CardContent>
-        </Card>
-        <Card className="min-w-0">
-          <CardContent>
-            <Stack gap={3}>
-              <Text size="sm" weight="medium">Chiều cao control</Text>
-              <Stack gap={2}>
-                <Stack gap={1}>
-                  <Button size="sm">sm</Button>
-                  <Text size="xs" tone="muted">32</Text>
-                </Stack>
-                <Stack gap={1}>
-                  <Button size="default">md</Button>
-                  <Text size="xs" tone="muted">36</Text>
-                </Stack>
-                <Stack gap={1}>
-                  <Button size="lg">lg</Button>
-                  <Text size="xs" tone="muted">40</Text>
-                </Stack>
+            ))}
+          </Grid>
+        </TokenCard>
+        <TokenCard title="Bo góc">
+          <Inline gap={3}>
+            {RADII.map((item) => (
+              <Stack key={item.name} gap={1} align="center">
+                <span className={`size-16 border border-border bg-muted ${item.className}`} />
+                <Text size="xs" tone="muted">{item.name}</Text>
               </Stack>
-              <Stack gap={2}>
-                <Stack gap={1}>
-                  <InputGroup size="sm" aria-label="Cỡ nhỏ" defaultValue="sm" />
-                  <Text size="xs" tone="muted">32</Text>
-                </Stack>
-                <Stack gap={1}>
-                  <InputGroup aria-label="Cỡ vừa" defaultValue="md" />
-                  <Text size="xs" tone="muted">36</Text>
-                </Stack>
-                <Stack gap={1}>
-                  <InputGroup size="lg" aria-label="Cỡ lớn" defaultValue="lg" />
-                  <Text size="xs" tone="muted">40</Text>
-                </Stack>
-              </Stack>
+            ))}
+          </Inline>
+        </TokenCard>
+        <TokenCard title="Chuyển động">
+          {MOTION.map((item) => (
+            <MotionRow key={item.token} label={item.label} token={item.token} ease={item.ease} />
+          ))}
+        </TokenCard>
+        <TokenCard title="Breakpoint">
+          {BREAKS.map((item) => (
+            <Stack key={item.name} gap={1}>
+              <span className={`h-2 ${item.width} rounded-full bg-primary`} />
+              <Text size="xs" tone="muted">{item.name} · {item.value}</Text>
             </Stack>
-          </CardContent>
-        </Card>
-        <Card className="min-w-0">
-          <CardContent>
-            <Stack gap={3}>
-              <Text size="sm" weight="medium">Chuyển động</Text>
-              {MOTION.map((item) => (
-                <MotionRow key={item.token} label={item.label} token={item.token} ease={item.ease} />
-              ))}
-            </Stack>
-          </CardContent>
-        </Card>
-        <Card className="min-w-0">
-          <CardContent>
-            <Stack gap={3}>
-              <Text size="sm" weight="medium">Breakpoint</Text>
-              {BREAKS.map((item) => (
-                <Stack key={item.name} gap={1}>
-                  <span className={`h-2 ${item.width} rounded-full bg-primary`} />
-                  <Text size="xs" tone="muted">{item.name} · {item.value}</Text>
-                </Stack>
-              ))}
-            </Stack>
-          </CardContent>
-        </Card>
-      </div>
+          ))}
+        </TokenCard>
+      </Grid>
     </Stack>
   )
 }
 
-export { Header, Palette, Tokens, TypeAndColor }
+export { Header, Tokens, TypeAndColor }

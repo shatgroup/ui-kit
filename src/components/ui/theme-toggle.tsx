@@ -1,5 +1,6 @@
-import { useState, type MouseEvent } from "react"
-import { Button } from "@/components/ui/button.tsx"
+import { useLayoutEffect, useState, type MouseEvent } from "react"
+import { MoonIcon, SunIcon } from "lucide-react"
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx"
 
 function isReduced() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches || document.documentElement.dataset.reduceMotion === "true"
@@ -8,12 +9,19 @@ function isReduced() {
 function useThemeTransition(onChange?: (dark: boolean) => void) {
   const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"))
 
+  useLayoutEffect(() => {
+    const sync = () => setDark(document.documentElement.classList.contains("dark"))
+    const observer = new MutationObserver(sync)
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] })
+    return () => observer.disconnect()
+  }, [])
+
   function toggle(event: MouseEvent<HTMLButtonElement>) {
     const next = !document.documentElement.classList.contains("dark")
+    setDark(next)
     const root = document.documentElement
     const apply = () => {
       root.classList.toggle("dark", next)
-      setDark(next)
       onChange?.(next)
     }
     if (isReduced() || typeof document.startViewTransition !== "function") {
@@ -33,38 +41,18 @@ function useThemeTransition(onChange?: (dark: boolean) => void) {
   return { dark, toggle }
 }
 
-function ThemeToggle({
-  lightLabel = "Sáng",
-  darkLabel = "Tối",
-  onChange,
-}: {
-  lightLabel?: string
-  darkLabel?: string
-  onChange?: (dark: boolean) => void
-}) {
+function ThemeToggle({ onChange }: { onChange?: (dark: boolean) => void }) {
   const { dark, toggle } = useThemeTransition(onChange)
   return (
-    <Button variant="secondary" onClick={toggle}>
-      {dark ? lightLabel : darkLabel}
-    </Button>
+    <ToggleGroup type="single" variant="outline" size="default" value={dark ? "dark" : "light"} onValueChange={() => undefined} aria-label="Sáng hoặc tối">
+      <ToggleGroupItem value="light" aria-label="Sáng" onClick={(event) => { if (document.documentElement.classList.contains("dark")) toggle(event) }}>
+        <SunIcon />
+      </ToggleGroupItem>
+      <ToggleGroupItem value="dark" aria-label="Tối" onClick={(event) => { if (!document.documentElement.classList.contains("dark")) toggle(event) }}>
+        <MoonIcon />
+      </ToggleGroupItem>
+    </ToggleGroup>
   )
 }
 
-function MotionReduceToggle() {
-  const [on, setOn] = useState(() => document.documentElement.dataset.reduceMotion === "true")
-
-  function click() {
-    const next = document.documentElement.dataset.reduceMotion !== "true"
-    if (next) document.documentElement.dataset.reduceMotion = "true"
-    else delete document.documentElement.dataset.reduceMotion
-    setOn(next)
-  }
-
-  return (
-    <Button variant="outline" aria-pressed={on} onClick={click}>
-      Giảm chuyển động
-    </Button>
-  )
-}
-
-export { MotionReduceToggle, ThemeToggle, isReduced, useThemeTransition }
+export { ThemeToggle, isReduced, useThemeTransition }

@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { Inline, Text } from "@/components/layout/index.ts"
-import { MotionReduceToggle, ThemeToggle } from "@/components/ui/theme-toggle.tsx"
+import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 
 function currentPath() {
   return window.location.pathname.replace(/\/$/, "") || "/"
@@ -25,7 +25,7 @@ function SiteBar() {
   }, [showcase])
 
   return (
-    <header className="flex h-10 shrink-0 items-center justify-between border-b border-border bg-background px-4">
+    <header className="flex h-14 shrink-0 items-center justify-between border-b border-border bg-background px-4">
       <Inline gap={4} align="center">
         <Text size="sm" weight="semibold">UI Kit</Text>
         <a href="/design-system" className={design ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
@@ -35,10 +35,7 @@ function SiteBar() {
           Showcase
         </a>
       </Inline>
-      <Inline gap={2} align="center">
-        <MotionReduceToggle />
-        <ThemeToggle lightLabel="Sáng" darkLabel="Tối" />
-      </Inline>
+      <ThemeToggle />
     </header>
   )
 }

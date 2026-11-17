@@ -20,7 +20,7 @@ type ContainerProps = {
 export function Container({ size = "lg", className, children }: ContainerProps) {
   return (
     <div className="grid w-full justify-items-center">
-      <div className={cn("w-full min-w-0 px-4", SIZE[size], className)}>{children}</div>
+      <div data-slot="container" className={cn("w-full min-w-0 px-4 py-6 md:px-6", SIZE[size], className)}>{children}</div>
     </div>
   )
 }
