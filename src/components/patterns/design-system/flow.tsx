@@ -194,17 +194,36 @@ function WorkflowSample() {
 
 function pair(prefix: string, extra?: Partial<Node>): Node[] {
   return [
-    { id: `${prefix}-a`, position: { x: 0, y: 40 }, data: { label: "Source", amount: "12" }, width: 96, height: 40, ...extra },
-    { id: `${prefix}-b`, position: { x: 200, y: 40 }, data: { label: "Target" }, width: 96, height: 40 },
+    {
+      id: `${prefix}-a`,
+      position: { x: 0, y: 0 },
+      data: { label: "Source", amount: "12" },
+      sourcePosition: Position.Right,
+      targetPosition: Position.Left,
+      width: 96,
+      height: 40,
+      ...extra,
+    },
+    {
+      id: `${prefix}-b`,
+      position: { x: 220, y: 0 },
+      data: { label: "Target" },
+      sourcePosition: Position.Right,
+      targetPosition: Position.Left,
+      width: 96,
+      height: 40,
+    },
   ]
 }
 
 function AppendixNode() {
   return (
-    <BaseNode className="px-3 py-2">
-      <Text size="sm">Topic</Text>
-      <NodeAppendix position="top">Note</NodeAppendix>
-    </BaseNode>
+    <div className="pt-12">
+      <BaseNode className="px-3 py-2">
+        <Text size="sm">Topic</Text>
+        <NodeAppendix position="top">Note</NodeAppendix>
+      </BaseNode>
+    </div>
   )
 }
 
@@ -219,17 +238,34 @@ function TooltipNode() {
   )
 }
 
-function SchemaNode() {
+type SchemaColumn = { name: string; type: string; side?: "source" | "target" }
+
+function readColumns(data: Record<string, unknown>): SchemaColumn[] {
+  if (!Array.isArray(data.columns)) return []
+  return data.columns.flatMap((item) => {
+    if (!item || typeof item !== "object") return []
+    const row = item as Record<string, unknown>
+    if (typeof row.name !== "string" || typeof row.type !== "string") return []
+    const side = row.side === "source" || row.side === "target" ? row.side : undefined
+    return [{ name: row.name, type: row.type, side }]
+  })
+}
+
+function SchemaNode({ data }: NodeProps) {
+  const record = data as Record<string, unknown>
+  const title = typeof record.title === "string" ? record.title : ""
   return (
     <DatabaseSchemaNode>
-      <DatabaseSchemaNodeHeader>orders</DatabaseSchemaNodeHeader>
+      <DatabaseSchemaNodeHeader>{title}</DatabaseSchemaNodeHeader>
       <DatabaseSchemaNodeBody>
-        <DatabaseSchemaTableRow>
-          <DatabaseSchemaTableCell>
-            <LabeledHandle type="target" position={Position.Left} title="id" />
-          </DatabaseSchemaTableCell>
-          <DatabaseSchemaTableCell>uuid</DatabaseSchemaTableCell>
-        </DatabaseSchemaTableRow>
+        {readColumns(record).map((column) => (
+          <DatabaseSchemaTableRow key={column.name}>
+            {column.side === "target" ? <LabeledHandle type="target" position={Position.Left} id={column.name} title="" /> : null}
+            <DatabaseSchemaTableCell><Text size="xs">{column.name}</Text></DatabaseSchemaTableCell>
+            <DatabaseSchemaTableCell align="end"><Text size="xs" tone="muted">{column.type}</Text></DatabaseSchemaTableCell>
+            {column.side === "source" ? <LabeledHandle type="source" position={Position.Right} id={column.name} title="" /> : null}
+          </DatabaseSchemaTableRow>
+        ))}
       </DatabaseSchemaNodeBody>
     </DatabaseSchemaNode>
   )
@@ -241,19 +277,22 @@ function GroupDemoNode() {
 
 function HandleDemoNode() {
   return (
-    <BaseNode className="px-3 py-2">
-      <Text size="sm">Step</Text>
-      <ButtonHandle type="source" position={Position.Right}>
-        <Button size="sm" variant="outline" className="nodrag">Add</Button>
-      </ButtonHandle>
-    </BaseNode>
+    <div className="flex items-center">
+      <BaseNode className="px-3 py-2">
+        <Text size="sm">Step</Text>
+        <ButtonHandle type="source" position={Position.Right}>
+          <Button size="sm" variant="outline" className="nodrag">Add</Button>
+        </ButtonHandle>
+      </BaseNode>
+      <div className="w-32" />
+    </div>
   )
 }
 
 function ButtonEdgeDemo(props: EdgeProps) {
   return (
     <ButtonEdge {...props}>
-      <Button size="sm" variant="outline" className="nodrag">Run</Button>
+      <Button size="sm" variant="secondary" className="nodrag rounded-full border-0 bg-card">Run</Button>
     </ButtonEdge>
   )
 }
@@ -340,12 +379,21 @@ function FlowSection() {
             <CardHeader><Text size="sm" tone="muted">Flow components</Text></CardHeader>
             <CardContent>
             <Grid className="kit-grid items-stretch">
-              <DemoFrame title="Appendix" id="demo-appendix" nodes={[{ id: "n", type: "appendix", position: { x: 40, y: 48 }, data: {}, width: 120, height: 40 }]} edges={[]} nodeTypes={appendixTypes} />
+              <DemoFrame title="Appendix" id="demo-appendix" nodes={[{ id: "n", type: "appendix", position: { x: 40, y: 48 }, data: {} }]} edges={[]} nodeTypes={appendixTypes} />
               <DemoFrame title="Tooltip" id="demo-tooltip" nodes={[{ id: "n", type: "tooltip", position: { x: 40, y: 40 }, data: {}, width: 120, height: 40 }]} edges={[]} nodeTypes={tooltipTypes} />
-              <DemoFrame title="Database Schema" id="demo-schema" nodes={[{ id: "n", type: "schema", position: { x: 16, y: 8 }, data: {}, width: 180, height: 96 }]} edges={[]} nodeTypes={schemaTypes} />
+              <DemoFrame
+                title="Database Schema"
+                id="demo-schema"
+                nodes={[
+                  { id: "orders", type: "schema", position: { x: 0, y: 0 }, width: 210, data: { title: "orders", columns: [{ name: "id", type: "uuid" }, { name: "user_id", type: "uuid", side: "source" }] } },
+                  { id: "users", type: "schema", position: { x: 280, y: 0 }, width: 180, data: { title: "users", columns: [{ name: "id", type: "uuid", side: "target" }, { name: "name", type: "text" }] } },
+                ]}
+                edges={[{ id: "fk", source: "orders", sourceHandle: "user_id", target: "users", targetHandle: "id" }]}
+                nodeTypes={schemaTypes}
+              />
               <DemoFrame title="Placeholder" id="demo-placeholder" nodes={[{ id: "n", type: "placeholder", position: { x: 40, y: 40 }, data: { label: "Add step" }, width: 144, height: 40 }]} edges={[]} nodeTypes={placeholderTypes} />
               <DemoFrame title="Labeled Group" id="demo-group" nodes={[{ id: "n", type: "labeledGroup", position: { x: 16, y: 8 }, data: {}, width: 180, height: 96 }]} edges={[]} nodeTypes={groupTypes} />
-              <DemoFrame title="Button Handle" id="demo-handle" nodes={[{ id: "n", type: "handle", position: { x: 24, y: 40 }, data: {}, width: 120, height: 40 }]} edges={[]} nodeTypes={handleTypes} />
+              <DemoFrame title="Button Handle" id="demo-handle" nodes={[{ id: "n", type: "handle", position: { x: 24, y: 40 }, data: {} }]} edges={[]} nodeTypes={handleTypes} />
               <DemoFrame title="Edge with Button" id="demo-button-edge" nodes={pair("button")} edges={[{ id: "e", source: "button-a", target: "button-b", type: "button" }]} edgeTypes={buttonEdgeTypes} />
               <DemoFrame title="Edge with Node Data" id="demo-data-edge" nodes={pair("data")} edges={[{ id: "e", source: "data-a", target: "data-b", type: "data", data: { key: "amount" } }]} edgeTypes={dataEdgeTypes} />
               <DemoFrame title="Animated SVG Edge" id="demo-animated" nodes={pair("move")} edges={[{ id: "e", source: "move-a", target: "move-b", type: "animated", data: { duration: 2, shape: "circle" } }]} edgeTypes={animatedTypes} />

@@ -72,13 +72,42 @@ function useWideScreen() {
   return wide
 }
 
-function FitFrame({ padding, enabled }: { padding: number | { top: number; right: number; bottom: number; left: number }; enabled: boolean }) {
-  const { fitView } = useReactFlow()
+type FramePadding = number | { top: number; right: number; bottom: number; left: number }
+
+function FitFrame({ flowId, padding, enabled }: { flowId: string; padding: FramePadding; enabled: boolean }) {
+  const { fitBounds, fitView, screenToFlowPosition } = useReactFlow()
   useEffect(() => {
     if (!enabled) return
-    const frame = requestAnimationFrame(() => { void fitView({ padding, duration: 0 }) })
-    return () => cancelAnimationFrame(frame)
-  }, [enabled, fitView, padding])
+    const fit = () => {
+      const root = document.querySelector(`[data-flow="${flowId}"]`)
+      if (!(root instanceof HTMLElement)) {
+        void fitView({ padding, duration: 0 })
+        return
+      }
+      let minX = Number.POSITIVE_INFINITY
+      let minY = Number.POSITIVE_INFINITY
+      let maxX = Number.NEGATIVE_INFINITY
+      let maxY = Number.NEGATIVE_INFINITY
+      for (const el of root.querySelectorAll(".react-flow__node, .node-appendix, .react-flow__node button, .flow-edge-label")) {
+        if (!(el instanceof HTMLElement)) continue
+        const rect = el.getBoundingClientRect()
+        if (rect.width < 2 || rect.height < 2) continue
+        const start = screenToFlowPosition({ x: rect.left, y: rect.top })
+        const end = screenToFlowPosition({ x: rect.right, y: rect.bottom })
+        minX = Math.min(minX, start.x, end.x)
+        minY = Math.min(minY, start.y, end.y)
+        maxX = Math.max(maxX, start.x, end.x)
+        maxY = Math.max(maxY, start.y, end.y)
+      }
+      if (!Number.isFinite(minX) || maxX - minX < 1 || maxY - minY < 1) {
+        void fitView({ padding, duration: 0 })
+        return
+      }
+      void fitBounds({ x: minX, y: minY, width: maxX - minX, height: maxY - minY }, { padding, duration: 0 })
+    }
+    const timer = window.setTimeout(() => requestAnimationFrame(fit), 50)
+    return () => window.clearTimeout(timer)
+  }, [enabled, fitBounds, fitView, flowId, padding, screenToFlowPosition])
   return null
 }
 
@@ -138,7 +167,7 @@ export function FlowCanvas<NodeType extends Node = Node, EdgeType extends Edge =
             style={{ width: MINIMAP_WIDTH, height: MINIMAP_HEIGHT }}
           />
         ) : null}
-        <FitFrame padding={padding} enabled={fitView} />
+        <FitFrame flowId={id} padding={padding} enabled={fitView} />
         <CanvasWheel flowId={id} />
         {import.meta.env.DEV && devtools ? <DevTools position="top-center" /> : null}
         {children}

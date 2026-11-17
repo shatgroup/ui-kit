@@ -28,7 +28,7 @@ export function ZoomSlider({
     <Panel
       data-flow-zoom="slider"
       className={cn(
-        "nodrag nopan flex gap-1 rounded-lg border border-border bg-card p-1 text-foreground",
+        "nodrag nopan flex max-w-full gap-1 rounded-lg border border-border bg-card p-1 text-foreground",
         orientation === "horizontal" ? "flex-row" : "flex-col",
         className,
       )}
@@ -39,7 +39,7 @@ export function ZoomSlider({
           <Minus />
         </Button>
         <Slider
-          className={orientation === "horizontal" ? "w-36" : "h-36"}
+          className={orientation === "horizontal" ? "w-16 min-w-0 flex-1" : "h-16 min-h-0 flex-1"}
           orientation={orientation}
           value={[zoom]}
           min={minZoom}
@@ -51,7 +51,7 @@ export function ZoomSlider({
           <Plus />
         </Button>
       </div>
-      <Button variant="ghost" className="w-16 tabular-nums" aria-label={resetLabel} onClick={() => void zoomTo(1, { duration: 300 })}>
+      <Button variant="ghost" className="w-12 shrink-0 tabular-nums" aria-label={resetLabel} onClick={() => void zoomTo(1, { duration: 300 })}>
         {(100 * zoom).toFixed(0)}%
       </Button>
       <Button variant="ghost" size="icon" aria-label={fitLabel} onClick={() => void fitView({ duration: 300 })}>

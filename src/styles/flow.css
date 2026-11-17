@@ -75,6 +75,10 @@
   border-color: var(--foreground);
 }
 
+.react-flow__edgelabel-renderer {
+  z-index: 1000;
+}
+
 @media (width < 48rem) {
   .react-flow__minimap {
     display: none;

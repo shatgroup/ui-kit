@@ -28,11 +28,11 @@ export function LabeledHandle({
   return (
     <div
       title={title}
-      className={cn("relative flex items-center", flexDirections[position], className)}
+      className={cn("flex items-center", flexDirections[position], className)}
       ref={ref}
     >
       <BaseHandle position={position} className={handleClassName} {...handleProps} />
-      <Text as="span" size="xs" className={cn("px-3", labelClassName)}>{title}</Text>
+      {title ? <Text as="span" size="xs" className={cn("px-3", labelClassName)}>{title}</Text> : null}
     </div>
   )
 }

@@ -1137,6 +1137,61 @@ describe("kiểm showcase", () => {
           const flowAfter = paintFlow()
           document.documentElement.classList.toggle("dark", wasDark)
           if (!flowBefore || flowBefore === flowAfter) notes.push("theme flow không đổi màu")
+          const opaque = (color: string) => {
+            const match = color.match(/rgba?\(([^)]+)\)/)
+            if (!match?.[1]) return color !== "transparent" && color !== "rgba(0, 0, 0, 0)"
+            const parts = match[1].split(",").map((part) => part.trim())
+            const alpha = parts.length === 4 ? Number(parts[3]) : 1
+            return alpha > 0.98
+          }
+          for (const frame of document.querySelectorAll("[data-flow]")) {
+            const id = frame.getAttribute("data-flow") ?? ""
+            for (const piece of frame.querySelectorAll(".react-flow__node, .node-appendix, [data-flow-zoom], [data-edge-label], .react-flow__node [data-slot=button]")) {
+              if (!inside(frame, piece)) notes.push(`${id} bị cắt ${piece.className.toString().slice(0, 32)}`)
+            }
+            for (const text of frame.querySelectorAll(".flow-node p, .flow-node span, .flow-node h3")) {
+              if (!(text instanceof HTMLElement) || text.closest(".node-appendix")) continue
+              const host = text.closest(".flow-node")
+              if (!(host instanceof HTMLElement) || !inside(host, text)) notes.push(`${id} chữ tràn`)
+            }
+          }
+          const schema = document.querySelector("[data-flow=demo-schema]")
+          for (const row of schema?.querySelectorAll("[data-schema-row]") ?? []) {
+            const node = row.closest(".flow-node")
+            if (!(row instanceof HTMLElement) || !(node instanceof HTMLElement)) continue
+            const rowBox = row.getBoundingClientRect()
+            const nodeBox = node.getBoundingClientRect()
+            const border = Number.parseFloat(getComputedStyle(node).borderLeftWidth) || 0
+            if (Math.abs(rowBox.left - nodeBox.left - border) > 1.5 || Math.abs(nodeBox.right - border - rowBox.right) > 1.5) notes.push("dòng schema lệch viền node")
+            if (rowBox.top < nodeBox.top || rowBox.bottom > nodeBox.bottom + 1) notes.push("dòng schema tràn khỏi node")
+          }
+          const schemaNode = schema?.querySelector(".flow-node")
+          if (schemaNode instanceof HTMLElement) {
+            const style = getComputedStyle(schemaNode)
+            if (style.overflow === "visible") notes.push("schema thiếu overflow")
+            if (Number.parseFloat(style.borderTopWidth) < 1 || Number.parseFloat(style.borderBottomWidth) < 1) notes.push("schema thiếu viền")
+          }
+          for (const label of document.querySelectorAll("[data-flow=demo-data-edge] [data-edge-label], [data-flow=demo-button-edge] [data-edge-label]")) {
+            if (!opaque(getComputedStyle(label).backgroundColor)) notes.push("nhãn dây trong suốt")
+          }
+          const preview = document.querySelector("[data-app-preview]")
+          const jump = document.querySelector("[data-slot=section-nav]")
+          const previewSide = preview?.querySelector("[data-slot=sidebar-container]")
+          if (preview instanceof HTMLElement && jump instanceof HTMLElement && previewSide instanceof HTMLElement && previewSide.getBoundingClientRect().width > 2) {
+            const navBox = jump.getBoundingClientRect()
+            const top = preview.getBoundingClientRect().top + window.scrollY
+            window.scrollTo(0, Math.max(0, top - navBox.height - navBox.top))
+            const nextNav = jump.getBoundingClientRect()
+            const nextSide = previewSide.getBoundingClientRect()
+            const left = Math.max(nextNav.left, nextSide.left)
+            const right = Math.min(nextNav.right, nextSide.right)
+            const bandTop = Math.max(nextNav.top, nextSide.top)
+            const bandBottom = Math.min(nextNav.bottom, nextSide.bottom)
+            const overlap = right > left && bandBottom > bandTop ? (right - left) * (bandBottom - bandTop) : 0
+            if (overlap > 1) notes.push("sidebar preview đè thanh nhảy")
+            const frame = preview.getBoundingClientRect()
+            if (nextSide.top < frame.top - 1 || nextSide.left < frame.left - 1) notes.push("sidebar preview ra ngoài khung")
+          }
           return notes
         })
         for (const note of found) failures.push(`${where}: ${note}`)

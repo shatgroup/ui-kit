@@ -56,11 +56,12 @@ export function DataEdge({
       {data.key ? (
         <EdgeLabelRenderer>
           <div
-            className="absolute rounded-lg border border-border bg-card px-1 text-card-foreground"
+            data-edge-label
+            className="flow-edge-label nodrag nopan pointer-events-none absolute z-10 rounded-full border border-border bg-card px-2 py-1 text-xs text-card-foreground"
             // check-ui-ignore-next-line: vị trí nhãn dây là toạ độ động của React Flow, không có class tĩnh
             style={{ transform }}
           >
-            <pre className="text-xs">{label}</pre>
+            {label}
           </div>
         </EdgeLabelRenderer>
       ) : null}

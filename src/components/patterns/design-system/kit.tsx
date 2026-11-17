@@ -220,7 +220,7 @@ function KitCard({ title, children }: { title: string; children: ReactNode }) {
 function AppShellSample() {
   const [active, setActive] = useState("home")
   return (
-    <div className="h-96 overflow-hidden rounded-lg border border-border">
+    <div data-app-preview className="relative z-0 h-96 contain-paint overflow-hidden rounded-lg border border-border">
       <AppShell
         inset
         logo={<Text size="sm" weight="semibold">Studio</Text>}

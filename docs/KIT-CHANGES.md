@@ -120,15 +120,15 @@ File trong `src/components/flow/`, không trộn vào `ui/`:
 | button-handle.tsx | button-handle | Bỏ `gray` và giá trị tuỳ ý. Nét nối `bg-border` |
 | placeholder-node.tsx | placeholder-node | Bỏ xám, bóng, style ẩn. Nhãn mặc định `Thêm bước` |
 | labeled-group-node.tsx | labeled-group-node | Bỏ nền trắng và margin. Nền `bg-muted` |
-| database-schema-node.tsx | database-schema-node | Tiêu đề dùng `Text` |
-| button-edge.tsx | button-edge | Giữ transform động, có ngoại lệ check:ui |
-| data-edge.tsx | data-edge | Nhãn nền card, không bóng. Transform động có ngoại lệ |
+| database-schema-node.tsx | database-schema-node | Dòng full width trong node `overflow-hidden`. Handle theo dòng, tên trái, kiểu dữ liệu phải màu muted |
+| button-edge.tsx | button-edge | Nút giữa dây, nền card đặc, bo full. Transform động có ngoại lệ |
+| data-edge.tsx | data-edge | Nhãn nền card đặc, bo full, chữ xs. Transform động có ngoại lệ |
 | animated-svg-edge.tsx | animated-svg-edge | Bỏ fill hex. Tắt `animateMotion` khi reduced motion |
 | node-search.tsx | node-search | Bỏ bóng và min-width tuỳ ý. Chữ mặc định tiếng Việt |
-| zoom-slider.tsx | zoom-slider | Bỏ bề rộng tuỳ ý. Nút có tên tiếng Việt. Viền, không bóng |
+| zoom-slider.tsx | zoom-slider | Bỏ bề rộng tuỳ ý. Thanh co trong khung hẹp. Nút có tên tiếng Việt. Viền, không bóng |
 | zoom-select.tsx | zoom-select | Bỏ margin của đường kẻ. Chữ mặc định tiếng Việt |
 | devtools.tsx | devtools | Bỏ bóng và nền trắng. `import.meta.env.DEV` thì mới hiện. Nhãn tiếng Việt |
-| flow-canvas.tsx | kit | Khung React Flow: chấm, Controls, MiniMap 160×96, fitView. Từ 768px chừa góc phải-dưới cho MiniMap. Cuộn thường cuộn trang. Zoom bằng Ctrl hoặc Cmd + cuộn |
+| flow-canvas.tsx | kit | Khung React Flow: chấm, Controls, MiniMap 160×96, fitView. Appendix được tính vào fitBounds. Từ 768px chừa góc phải-dưới cho MiniMap. Cuộn thường cuộn trang. Zoom bằng Ctrl hoặc Cmd + cuộn |
 | mind-map-node.tsx | kit | 3 cấp và nét đứt |
 | workflow-node.tsx | kit | Header, hàng muted, trạng thái, handle vào/ra, nhánh đúng/sai |
 | use-tree-layout.ts | kit | dagre, khoảng cách `--space-8` và `--space-16` |
