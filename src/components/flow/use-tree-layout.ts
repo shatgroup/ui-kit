@@ -21,8 +21,8 @@ export function layoutTree<T extends Node>(nodes: T[], edges: Edge[], direction:
   })
   for (const node of nodes) {
     graph.setNode(node.id, {
-      width: node.measured?.width ?? node.width ?? 160,
-      height: node.measured?.height ?? node.height ?? 40,
+      width: node.measured?.width ?? node.width ?? node.initialWidth ?? 160,
+      height: node.measured?.height ?? node.height ?? node.initialHeight ?? 40,
     })
   }
   for (const edge of edges) graph.setEdge(edge.source, edge.target)

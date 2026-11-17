@@ -105,10 +105,12 @@ Nguồn: bản `npx shadcn@latest add https://ui.reactflow.dev/<tên>` (shadcn 4
 
 `scripts/flow-original.test.ts` so từng file với bản gốc. Dòng khác chỉ được là import, bỏ `shadow-*`, đổi hex hoặc tên màu cứng sang token, hoặc chữ mặc định thành prop. `src/components/flow/` được miễn class tuỳ ý như `src/components/ui/`, vẫn cấm shadow và hex.
 
+`zoom-select.tsx` đổi cách đọc `minZoom`/`maxZoom` sang `useMemo`. Lý do: selector trả mảng mới mỗi lần thì React 19 render lặp. Đây là chỗ duy nhất sửa logic so với bản gốc React Flow UI.
+
 | File | Dòng khác | Lý do |
 | --- | --- | --- |
 | base-node.tsx | 1 | Bỏ `in-[.selected]:shadow-lg` |
-| node-status-indicator.tsx | 12 | `blue`/`emerald`/`red` và gradient `rgb` sang `info`, `success`, `destructive` |
+| node-status-indicator.tsx | 9 | `blue`/`emerald`/`red` và gradient `rgb` sang `info`, `success`, `destructive`. Ba chỗ `rounded-[9px]` sang `calc(var(--radius-md) + 1px)` vì bo 9px lệch bo 6px của thẻ, để lại vai vuông ở góc |
 | node-appendix.tsx | 0 | Giữ nguyên |
 | node-tooltip.tsx | 0 | Giữ nguyên |
 | database-schema-node.tsx | 4 | Import `base-node` vào `flow/`. Bỏ import `React` không dùng |
@@ -122,11 +124,11 @@ Nguồn: bản `npx shadcn@latest add https://ui.reactflow.dev/<tên>` (shadcn 4
 | animated-svg-edge.tsx | 4 | `fill`/`stroke` hex sang `var(--primary)`, `var(--muted)`, `var(--foreground)` |
 | node-search.tsx | 16 | Bỏ `shadow-md`. Placeholder, câu trống và heading thành prop, mặc định tiếng Việt |
 | zoom-slider.tsx | 1 | Bỏ import `React` không dùng |
-| zoom-select.tsx | 20 | Placeholder và nhãn Best Fit thành prop, mặc định `Thu phóng` và `Vừa khung`. Bỏ import `React` không dùng. Danh sách mức zoom đưa vào `useMemo` vì React 19 báo vòng lặp khi selector trả mảng mới |
+| zoom-select.tsx | 20 | Placeholder và nhãn Best Fit thành prop, mặc định `Thu phóng` và `Vừa khung`. Bỏ import `React` không dùng. `minZoom`/`maxZoom` đọc riêng rồi tính mức zoom trong `useMemo` |
 | devtools.tsx | 61 | Bỏ `shadow-xs`, `shadow-md`, `bg-white` sang `bg-card`. Nhãn công cụ và trạng thái thành prop, mặc định tiếng Việt |
 
 Demo trong card Flow components lấy đúng node, dây và dữ liệu trên reactflow.dev/ui/components. Ô Database Schema là Products, Warehouses, Suppliers và 2 dây. Demo truyền chữ tiếng Anh của trang gốc qua prop. Ô Tooltip đổi `border-gray-300` thành `border-border` vì check:ui. Mỗi canvas có `id` riêng vì một trang có nhiều React Flow.
 
-`flow-canvas.tsx`, `mind-map-node.tsx`, `workflow-node.tsx`, `use-tree-layout.ts` là của kit. Mind map dựng trên `BaseNode` và `BaseHandle` bản gốc. Workflow dựng trên `BaseNode`, `BaseHandle` và `NodeStatusIndicator` bản gốc.
+`flow-canvas.tsx`, `mind-map-node.tsx`, `workflow-node.tsx`, `use-tree-layout.ts` là của kit. Mind map dựng trên `BaseNode` và `BaseHandle` bản gốc. Workflow dựng trên `BaseNode`, `BaseHandle` và `NodeStatusIndicator` bản gốc. Node workflow chỉ đưa `initialWidth` và `initialHeight` cho dagre. Không gán `width`/`height`, vì React Flow ép khung node theo hai số đó và viền trạng thái tràn khỏi thẻ.
 
 Không ghi đè `button`, `slider`, `select`, `table`, `dialog`, `command`, `toggle`, `toggle-group` của kit.

@@ -108,7 +108,12 @@ function changedLines(before: string, after: string) {
 }
 
 function explains(before: string, after: string) {
-  return normalize(before) === normalize(after) || importChange(before, after) || withoutUnusedReact(before) === after
+  return normalize(before) === normalize(after) || importChange(before, after) || withoutUnusedReact(before) === after || radiusFix(before, after)
+}
+
+// Bản gốc bo 9px. Bo của kit là --radius-md (6px). 9px để lại vai vuông ở góc node.
+function radiusFix(before: string, after: string) {
+  return before.replaceAll("rounded-[9px]", "RADIUS") === after.replaceAll("rounded-[calc(var(--radius-md)+1px)]", "RADIUS")
 }
 
 describe("flow giữ bản gốc React Flow UI", () => {

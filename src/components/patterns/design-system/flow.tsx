@@ -101,8 +101,8 @@ function workflowNode(
       { id: "duplicate", label: "Duplicate" },
       { id: "delete", label: "Delete" },
     ] },
-    width: 224,
-    height: 168,
+    initialWidth: 224,
+    initialHeight: 168,
   }
 }
 
