@@ -349,15 +349,18 @@ describe("kiểm showcase", () => {
           await page.goto(`${base}/showcase?tab=${tab}`, { waitUntil: "networkidle" })
           await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
           await page.waitForTimeout(400)
-          const scrolled = await page.evaluate(() => {
-            const scroller = document.querySelector("[data-showcase-scroll]")
-            if (!(scroller instanceof HTMLElement)) return "không thấy vùng cuộn"
-            if (scroller.scrollHeight <= scroller.clientHeight + 2) return `không dài hơn khung ${scroller.scrollHeight}/${scroller.clientHeight}`
-            scroller.scrollTop = scroller.scrollHeight
-            const bottom = scroller.scrollTop + scroller.clientHeight
-            if (bottom < scroller.scrollHeight - 2) return `không tới đáy ${bottom}/${scroller.scrollHeight}`
+          const scrolled = await page.evaluate((name) => {
+            const doc = document.documentElement
+            if (doc.scrollHeight <= window.innerHeight + 2) return `không dài hơn khung ${doc.scrollHeight}/${window.innerHeight}`
+            window.scrollTo(0, doc.scrollHeight)
+            const bottom = window.scrollY + window.innerHeight
+            if (bottom < doc.scrollHeight - 2) return `không tới đáy ${bottom}/${doc.scrollHeight}`
+            if (name === "dashboard" && window.innerWidth < 1400) {
+              const frame = document.querySelector("[data-showcase-scroll]")
+              if (!(frame instanceof HTMLElement) || frame.scrollWidth <= frame.clientWidth + 2) return "dashboard không cuộn ngang"
+            }
             return ""
-          })
+          }, tab)
           if (scrolled) failures.push(`${tab} ${width} ${theme}: ${scrolled}`)
           const noise = errors.filter((message) => !/favicon|Download the React DevTools/i.test(message))
           if (noise.length) failures.push(`${tab} ${width} ${theme}: ${noise.join(" | ")}`)
@@ -618,15 +621,15 @@ describe("kiểm showcase", () => {
         await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
         await page.waitForFunction(() => {
           const hex = document.querySelector("[data-swatch=background]")?.getAttribute("data-hex") ?? ""
-          const size = document.getElementById("type-text-xs")?.closest("tr")?.querySelectorAll("td")[3]?.textContent ?? ""
-          return hex.startsWith("#") && size.includes("px")
+          const meta = document.querySelector("[data-type-meta]")?.textContent ?? ""
+          return hex.startsWith("#") && /\d+\/\d+/.test(meta)
         })
         await page.waitForTimeout(600)
         const found = await page.evaluate(() => {
           const notes: string[] = []
-          const scroller = document.querySelector(".h-dvh > div")
-          if (scroller instanceof HTMLElement && scroller.scrollWidth > scroller.clientWidth + 2) {
-            notes.push(`tràn ngang ${scroller.scrollWidth}/${scroller.clientWidth}`)
+          const doc = document.documentElement
+          if (doc.scrollWidth > doc.clientWidth + 2) {
+            notes.push(`tràn ngang ${doc.scrollWidth}/${doc.clientWidth}`)
           }
           const channel = (value: number) => {
             const unit = value / 255
@@ -663,16 +666,6 @@ describe("kiểm showcase", () => {
             // Chủ ý trong theme.css: --primary-foreground và --sidebar-primary-foreground là #FFFFFF,
             // tương phản với primary dưới 4.5:1. Quyết định giữ nguyên cặp primary/primary-foreground.
             if (name === "primary" || name === "sidebar-primary") return
-            // chart và ring giữ một màu ở cả hai theme. Chữ foreground sáng lên khi tối,
-            // nên tỷ lệ còn khoảng 1.1–2.4. Vẫn dùng text-foreground, không tự tính màu chữ.
-            const flatFill = name.startsWith("chart-") || name === "ring" || name === "sidebar-ring"
-            if (flatFill) {
-              const foreground = paint(getComputedStyle(document.documentElement).getPropertyValue("--foreground").trim())
-              const text = paint(getComputedStyle(label).color)
-              const same = foreground.every((value, index) => Math.abs(value - (text[index] ?? 0)) <= 3)
-              if (!same) notes.push(`${name} không dùng chữ foreground`)
-              return
-            }
             if (ratio < 4.5) notes.push(`tương phản ${name} ${ratio.toFixed(2)}`)
           })
           const root = Number.parseFloat(getComputedStyle(document.documentElement).fontSize)
@@ -688,7 +681,7 @@ describe("kiểm showcase", () => {
           ]
           for (const row of typeScale) {
             const sample = document.getElementById(row.id)
-            if (!(sample instanceof HTMLElement) || sample.tagName === "TD" || sample.parentElement?.tagName !== "TD") {
+            if (!(sample instanceof HTMLElement)) {
               notes.push(`không đo được chữ mẫu ${row.id}`)
               continue
             }
@@ -700,11 +693,10 @@ describe("kiểm showcase", () => {
             if (style.fontWeight !== row.weight || gotSize !== size || gotLine !== line) {
               notes.push(`${row.id} đo ${style.fontWeight}/${gotSize}px/${gotLine}px, STANDARD ${row.weight}/${size}px/${line}px`)
             }
-            const cells = sample.closest("tr")?.querySelectorAll("td")
-            const shown = [cells?.[2]?.textContent?.trim(), cells?.[3]?.textContent?.trim(), cells?.[4]?.textContent?.trim()]
-            if (shown[0] !== row.weight || shown[1] !== `${size}px` || shown[2] !== `${line}px`) {
-              notes.push(`${row.id} bảng ghi ${shown.join(" · ")} thay vì ${row.weight} · ${size}px · ${line}px`)
-            }
+            const names: Record<string, string> = { "400": "Regular", "500": "Medium", "600": "Semibold", "700": "Bold" }
+            const meta = sample.closest("[data-type-row]")?.querySelector("[data-type-meta]")?.textContent?.replace(/\s+/g, " ").trim()
+            const expected = `Be Vietnam Pro / ${names[row.weight]} · ${size}/${line} · 0px`
+            if (meta !== expected) notes.push(`${row.id} bảng ghi ${meta} thay vì ${expected}`)
           }
           const word = document.querySelector(".specimen-word")
           const title = document.querySelector("h1")
@@ -721,9 +713,9 @@ describe("kiểm showcase", () => {
             }
           }
           const frame = document.querySelector("[data-slot=container]")
-          if (frame instanceof HTMLElement && scroller instanceof HTMLElement && window.innerWidth >= 1440) {
+          if (frame instanceof HTMLElement && window.innerWidth >= 1440) {
             const box = frame.getBoundingClientRect()
-            const host = scroller.getBoundingClientRect()
+            const host = document.documentElement.getBoundingClientRect()
             if (box.width > 1280.5) notes.push(`khung rộng ${Math.round(box.width)}px`)
             const delta = Math.abs(box.left + box.width / 2 - (host.left + host.width / 2))
             if (delta > 2) notes.push(`khung lệch giữa ${delta.toFixed(1)}px`)
@@ -798,6 +790,87 @@ describe("kiểm showcase", () => {
             const node = document.querySelector(`[data-swatch="${name}"]`)
             if (!(node instanceof HTMLElement) || getComputedStyle(node).borderTopWidth !== "1px") notes.push(`${name} thiếu viền`)
           }
+          if (window.innerWidth >= 1440) {
+            const vertical = [...document.querySelectorAll("body *")].filter((el) => {
+              if (!(el instanceof HTMLElement)) return false
+              const y = getComputedStyle(el).overflowY
+              if (y !== "auto" && y !== "scroll") return false
+              return el.scrollHeight > el.clientHeight + 2
+            })
+            if (vertical.length > 0) notes.push(`thừa ${vertical.length} thanh cuộn dọc`)
+          }
+          const navScroll = document.querySelector("[data-slot=section-nav-scroll]")
+          if (navScroll instanceof HTMLElement) {
+            if (navScroll.scrollHeight > navScroll.clientHeight + 1) notes.push("thanh tab cuộn dọc")
+            if (window.innerWidth >= 768 && navScroll.scrollWidth > navScroll.clientWidth + 1) notes.push("thanh tab cuộn ngang")
+          }
+          document.querySelectorAll("[data-color-grid]").forEach((grid) => {
+            const cells = [...grid.querySelectorAll("[data-swatch]")].filter((el) => el instanceof HTMLElement)
+            if (cells.length < 2) return
+            const first = cells[0].getBoundingClientRect()
+            const tops = new Set(cells.map((el) => Math.round(el.getBoundingClientRect().top)))
+            if (window.innerWidth >= 1440 && tops.size > 1) notes.push(`${grid.getAttribute("data-color-grid")} rớt hàng`)
+            const widths = cells.map((el) => el.getBoundingClientRect().width)
+            if (Math.max(...widths) - Math.min(...widths) > 1) notes.push(`${grid.getAttribute("data-color-grid")} ô lệch cỡ`)
+            const row = cells.filter((el) => Math.abs(el.getBoundingClientRect().top - first.top) < 2)
+            for (let index = 1; index < row.length; index += 1) {
+              const gap = row[index].getBoundingClientRect().left - row[index - 1].getBoundingClientRect().right
+              if (Math.abs(gap - 12) > 1.5) notes.push(`${grid.getAttribute("data-color-grid")} gap ${gap.toFixed(1)}`)
+            }
+          })
+          const matrix = document.querySelector("[data-button-matrix]")
+          if (matrix instanceof HTMLElement) {
+            const buttons = [...matrix.querySelectorAll("[data-slot=button]")].filter((el) => el instanceof HTMLElement)
+            const rows = new Map<number, DOMRect[]>()
+            for (const button of buttons) {
+              const box = button.getBoundingClientRect()
+              const key = Math.round(box.top)
+              rows.set(key, [...(rows.get(key) ?? []), box])
+            }
+            for (const list of rows.values()) {
+              list.sort((a, b) => a.left - b.left)
+              for (let index = 1; index < list.length; index += 1) {
+                const gap = list[index].left - list[index - 1].right
+                if (gap < 11.5) notes.push(`nút cách ${gap.toFixed(1)}px`)
+              }
+            }
+            const focus = matrix.querySelector("[data-variant=destructive][data-force-state=focus]")
+            if (focus instanceof HTMLElement) {
+              const ring = getComputedStyle(focus).boxShadow
+              const destructive = paint(getComputedStyle(document.documentElement).getPropertyValue("--destructive"))
+              const hit = (ring.match(/(?:rgba?|oklab|oklch)\([^)]+\)/g) ?? []).some((color) => {
+                const rgb = paint(color.replace(/\/\s*[\d.]+\)$/, "/ 1)"))
+                return destructive.slice(0, 3).every((value, index) => Math.abs(value - (rgb[index] ?? 0)) <= 8)
+              })
+              if (!hit) notes.push("focus destructive không phải màu destructive")
+            }
+          }
+          document.querySelectorAll("[data-slot=alert]").forEach((alert) => {
+            if (!(alert instanceof HTMLElement)) return
+            const icon = [...alert.querySelectorAll("svg")].find((node) => !node.closest("button"))
+            const title = alert.querySelector("span")
+            const close = alert.querySelector("button")
+            if (!(icon instanceof Element) || !(title instanceof HTMLElement) || !(close instanceof HTMLElement)) return
+            const mid = (el: Element) => {
+              const box = el.getBoundingClientRect()
+              return box.top + box.height / 2
+            }
+            const centers = [mid(icon), mid(title), mid(close)]
+            if (Math.max(...centers) - Math.min(...centers) > 1) notes.push(`alert lệch ${ (Math.max(...centers) - Math.min(...centers)).toFixed(1) }px`)
+          })
+          const levels = [...document.querySelectorAll("[data-space-level]")].map((el) => {
+            const row = el.parentElement?.parentElement
+            const box = row instanceof HTMLElement ? row.getBoundingClientRect() : { left: 0, top: 0 }
+            return { level: el.getAttribute("data-space-level"), x: box.left, y: box.top }
+          })
+          levels.sort((a, b) => a.x - b.x || a.y - b.y)
+          const order = levels.map((item) => item.level).join(",")
+          if (order !== "0,1,2,3,4,5,6,8,10,12,16") notes.push(`khoảng cách ${order}`)
+          const track = document.querySelector("[data-space-level]")?.parentElement
+          if (track instanceof HTMLElement && Math.abs(track.getBoundingClientRect().width - 64) > 1) notes.push("cột thanh khoảng cách không phải 64px")
+          document.querySelectorAll("[data-space-grid] p").forEach((label) => {
+            if (label.getClientRects().length > 1) notes.push(`nhãn khoảng cách rớt dòng: ${label.textContent}`)
+          })
           return notes
         })
         for (const note of found) failures.push(`${where}: ${note}`)
@@ -805,19 +878,12 @@ describe("kiểm showcase", () => {
         const shot = shots[where]
         if (shot) {
           const height = await page.evaluate(() => {
-            const shell = document.querySelector(".h-dvh")
-            const scroller = document.querySelector(".h-dvh > div")
             window.scrollTo(0, 0)
-            if (scroller instanceof HTMLElement) scroller.scrollTo(0, 0)
-            if (!(shell instanceof HTMLElement) || !(scroller instanceof HTMLElement)) return 900
-            return Math.ceil(scroller.scrollHeight + shell.getBoundingClientRect().height - scroller.clientHeight + 8)
+            return Math.ceil(document.documentElement.scrollHeight)
           })
           if (height > 16000) failures.push(`${where}: trang cao ${height}px, ảnh bị cắt`)
           await page.setViewportSize({ width, height: Math.min(height, 16000) })
-          await page.evaluate(() => {
-            window.scrollTo(0, 0)
-            document.querySelector(".h-dvh > div")?.scrollTo(0, 0)
-          })
+          await page.evaluate(() => window.scrollTo(0, 0))
           await page.screenshot({ path: shot, fullPage: true })
           await page.setViewportSize({ width, height: 900 })
         }
@@ -858,13 +924,14 @@ describe("kiểm showcase", () => {
         await page.keyboard.press("Escape")
 
         const stuck = await page.evaluate(() => {
-          const scroller = document.querySelector(".h-dvh > div")
           const nav = document.querySelector("[data-slot=section-nav]")
-          if (!(scroller instanceof HTMLElement) || !(nav instanceof HTMLElement)) return "thiếu thanh nhảy"
-          scroller.scrollTop = 700
+          const header = document.querySelector("header")
+          if (!(nav instanceof HTMLElement) || !(header instanceof HTMLElement)) return "thiếu thanh nhảy"
+          window.scrollTo(0, 700)
           const navBox = nav.getBoundingClientRect()
-          const host = scroller.getBoundingClientRect()
-          return Math.abs(navBox.top - host.top) > 2 ? `thanh không dính (${navBox.top.toFixed(1)} / ${host.top.toFixed(1)})` : ""
+          const bar = header.getBoundingClientRect()
+          if (Math.abs(bar.top) > 2) return `header không dính (${bar.top.toFixed(1)})`
+          return Math.abs(navBox.top - bar.bottom) > 2 ? `thanh không dính dưới header (${navBox.top.toFixed(1)} / ${bar.bottom.toFixed(1)})` : ""
         })
         if (stuck) failures.push(`${where}: ${stuck}`)
         await page.getByRole("tab", { name: "Token", exact: true }).click()
@@ -885,8 +952,11 @@ describe("kiểm showcase", () => {
         const filtered = await page.waitForFunction(() => document.querySelectorAll("[data-icon-name]").length === 1).then(() => true).catch(() => false)
         const matches = await page.locator("[data-icon-name]").count()
         if (!filtered || matches !== 1) failures.push(`${where}: lọc icon còn ${matches}`)
+        await page.locator("[data-icon-name=Sun]").hover()
+        const tip = (await page.getByRole("tooltip").textContent())?.trim()
+        if (tip !== "sun") failures.push(`${where}: tooltip icon là ${tip}`)
         await page.locator("[data-icon-name=Sun]").click()
-        const copied = await page.getByText("Đã copy", { exact: true }).last().waitFor({ state: "visible", timeout: 2000 }).then(() => true).catch(() => false)
+        const copied = await page.getByText("Đã copy Sun", { exact: true }).last().waitFor({ state: "visible", timeout: 2000 }).then(() => true).catch(() => false)
         if (!copied) failures.push(`${where}: không thấy toast copy`)
       }
     }
@@ -911,26 +981,14 @@ describe("kiểm showcase", () => {
         await page.waitForTimeout(600)
         if (theme === "light" && shots[path]) {
           const height = await page.evaluate(() => {
-            const shell = document.querySelector(".h-dvh")
-            const inner = document.querySelector("[data-showcase-scroll]")
-            const scroller = document.querySelector(".h-dvh > div")
             window.scrollTo(0, 0)
-            if (scroller instanceof HTMLElement) scroller.scrollTo(0, 0)
-            if (inner instanceof HTMLElement) inner.scrollTo(0, 0)
-            if (!(shell instanceof HTMLElement)) return 900
-            if (inner instanceof HTMLElement && inner.scrollHeight > inner.clientHeight + 2) {
-              return Math.ceil(inner.scrollHeight + shell.getBoundingClientRect().height - inner.getBoundingClientRect().height + 8)
-            }
-            if (scroller instanceof HTMLElement) {
-              return Math.ceil(scroller.scrollHeight + shell.getBoundingClientRect().height - scroller.clientHeight + 8)
-            }
-            return 900
+            document.querySelector("[data-showcase-scroll]")?.scrollTo(0, 0)
+            return Math.ceil(document.documentElement.scrollHeight)
           })
           if (height > 16000) failures.push(`${path}: trang cao ${height}px, ảnh bị cắt`)
           await page.setViewportSize({ width: 1440, height: Math.min(height, 16000) })
           await page.evaluate(() => {
             window.scrollTo(0, 0)
-            document.querySelector(".h-dvh > div")?.scrollTo(0, 0)
             document.querySelector("[data-showcase-scroll]")?.scrollTo(0, 0)
           })
           await page.screenshot({ path: shots[path], fullPage: true })

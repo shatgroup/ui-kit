@@ -23,6 +23,8 @@ import { Button } from "@/components/ui/button.tsx"
 import { Card, CardContent } from "@/components/ui/card.tsx"
 import { EmptyState } from "@/components/ui/empty-state.tsx"
 import { Input } from "@/components/ui/input.tsx"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
 
 const GROUPS: Array<{ title: string; icons: LucideIcon[] }> = [
   { title: "Điều hướng và mũi tên", icons: [ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, ArrowDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, ChevronDownIcon, ChevronsUpDownIcon, MoveIcon] },
@@ -39,54 +41,78 @@ const GROUPS: Array<{ title: string; icons: LucideIcon[] }> = [
   { title: "Thiết bị và hệ thống", icons: [SettingsIcon, MonitorIcon, SmartphoneIcon, SunIcon, MoonIcon, LaptopIcon, TabletIcon, WifiIcon, BatteryIcon, PowerIcon, PrinterIcon] },
 ]
 
+const POPULAR = ["Search", "Plus", "X", "Check", "ChevronDown", "ChevronRight", "ChevronLeft", "ChevronUp", "Settings", "User", "Users", "Mail", "Bell", "Trash2", "Pencil", "Copy", "Download", "Upload", "Share2", "Filter", "Eye", "EyeOff", "Lock", "Calendar", "Clock", "Sun", "Moon", "Info", "CircleAlert", "CircleCheck", "CircleX", "Loader", "ArrowLeft", "ArrowRight"]
+
 function iconName(icon: LucideIcon) {
   return icon.displayName?.replace(/Icon$/, "") || "Icon"
 }
 
+function kebab(name: string) {
+  return name.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z]+)([A-Z][a-z])/g, "$1-$2").toLowerCase()
+}
+
+function byPopular(left: LucideIcon, right: LucideIcon) {
+  const rank = (icon: LucideIcon) => {
+    const index = POPULAR.indexOf(iconName(icon))
+    return index === -1 ? POPULAR.length : index
+  }
+  return rank(left) - rank(right) || iconName(left).localeCompare(iconName(right))
+}
+
 function Icons() {
   const [query, setQuery] = useState("")
+  const [group, setGroup] = useState("all")
+  const total = GROUPS.reduce((sum, item) => sum + item.icons.length, 0)
   const needle = query.trim().toLowerCase()
-  const groups = useMemo(() => GROUPS.map((group) => ({
-    title: group.title,
-    icons: group.icons.filter((icon) => iconName(icon).toLowerCase().includes(needle)),
-  })).filter((group) => group.icons.length > 0), [needle])
+  const icons = useMemo(() => {
+    const source = group === "all" ? GROUPS.flatMap((item) => item.icons) : GROUPS.find((item) => item.title === group)?.icons ?? []
+    return [...source].sort(byPopular).filter((icon) => {
+      const name = iconName(icon)
+      return name.toLowerCase().includes(needle) || kebab(name).includes(needle)
+    })
+  }, [group, needle])
 
   function copy(name: string) {
     void navigator.clipboard?.writeText(name).catch(() => undefined)
-    toast("Đã copy")
+    toast(`Đã copy ${name}`)
   }
 
   return (
     <Stack gap={4}>
-      <Text as="h2" id="icons" size="xl" weight="semibold" className="scroll-mt-16">Icons</Text>
+      <Text as="h2" id="icons" size="xl" weight="semibold" className="scroll-mt-nav">Icons</Text>
       <Card>
         <CardContent>
           <Stack gap={4}>
-            <Grid columns={{ base: 1, md: 2 }} gap={3} className="items-center">
-              <Input aria-label="Tìm icon" placeholder="Tìm icon" value={query} onChange={(event) => setQuery(event.target.value)} />
+            <Grid columns={{ base: 1, md: 3 }} gap={3} className="items-center">
+              <Input aria-label="Tìm icon" placeholder={`Tìm trong ${total} icon…`} value={query} onChange={(event) => setQuery(event.target.value)} />
+              <Select value={group} onValueChange={setGroup}>
+                <SelectTrigger aria-label="Nhóm icon"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tất cả</SelectItem>
+                  {GROUPS.map((item) => <SelectItem key={item.title} value={item.title}>{item.title}</SelectItem>)}
+                </SelectContent>
+              </Select>
               <a href="https://lucide.dev" target="_blank" rel="noreferrer" className="md:justify-self-end">
-                <Text size="sm" tone="primary">Xem đủ 2.000+ icon tại lucide.dev</Text>
+                <Text size="sm" tone="primary">Xem đủ tại lucide.dev</Text>
               </a>
             </Grid>
-            {groups.length === 0 ? <EmptyState title="Không có icon" description="Thử tên khác." /> : null}
-            {groups.map((group) => (
-              <Stack key={group.title} gap={2}>
-                <Text size="sm" weight="medium">{group.title}</Text>
-                <Grid columns={{ base: 4, md: 8, xl: 12 }} gap={3}>
-                  {group.icons.map((Icon) => {
-                    const name = iconName(Icon)
-                    return (
-                      <Stack key={name} gap={1} align="center">
-                        <Button variant="ghost" size="icon" className="size-14" aria-label={name} data-icon-name={name} onClick={() => copy(name)}>
+            {icons.length === 0 ? <EmptyState title="Không có icon" description="Thử tên khác." /> : (
+              <Grid columns={{ base: 4, md: 8, xl: 12 }} gap={2}>
+                {icons.map((Icon) => {
+                  const name = iconName(Icon)
+                  return (
+                    <Tooltip key={name}>
+                      <TooltipTrigger asChild>
+                        <Button variant="ghost" className="size-14 bg-muted p-0 hover:bg-accent" aria-label={kebab(name)} data-icon-name={name} onClick={() => copy(name)}>
                           <Icon className="size-5 text-foreground" />
                         </Button>
-                        <Text size="xs" tone="muted" className="break-all text-center">{name}</Text>
-                      </Stack>
-                    )
-                  })}
-                </Grid>
-              </Stack>
-            ))}
+                      </TooltipTrigger>
+                      <TooltipContent>{kebab(name)}</TooltipContent>
+                    </Tooltip>
+                  )
+                })}
+              </Grid>
+            )}
           </Stack>
         </CardContent>
       </Card>

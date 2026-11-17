@@ -80,7 +80,9 @@ function Button({
         buttonVariants({ variant, size, className }),
         forceState === "hover" && forceHover[name],
         forceState === "pressed" && forcePressed[name],
-        forceState === "focus" && "border-ring ring-[3px] ring-ring/50",
+        forceState === "focus" && (name === "destructive"
+          ? "border-ring ring-[3px] ring-destructive/20 dark:ring-destructive/40"
+          : "border-ring ring-[3px] ring-ring/50"),
       )}
       {...props}
     />

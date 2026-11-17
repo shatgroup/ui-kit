@@ -36,8 +36,8 @@ function Alert({
 }) {
   const line = variant === "line"
   return (
-    <div data-slot="alert" role="status" className={cn("flex items-start gap-3 rounded-lg border p-3 text-sm", line ? "border-border bg-card" : TONE[tone])}>
-      {line ? <span className={cn("h-4 w-1 shrink-0 self-center rounded-full", BAR[tone])} /> : null}
+    <div data-slot="alert" role="status" className={cn("relative flex items-center gap-3 overflow-hidden rounded-lg border p-3 text-sm", line ? "border-border bg-card" : TONE[tone])}>
+      {line ? <span className={cn("absolute inset-y-0 left-0 w-1", BAR[tone])} /> : null}
       {icon}
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <span className="font-medium">{title}</span>

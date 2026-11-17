@@ -49,7 +49,7 @@ Bỏ mọi class `shadow-*` trừ `shadow-none`. Popup đã có `border` sẵn (
 
 ## Button
 
-`button.tsx` — thêm prop `forceState?: "hover" | "pressed" | "focus"`. Chỉ `/design-system` dùng, để xem trạng thái khi không rê chuột. Class gắn thêm trùng màu hover của variant; `pressed` đậm hơn một nấc; `focus` dùng cùng ring với `focus-visible`.
+`button.tsx` — thêm prop `forceState?: "hover" | "pressed" | "focus"`. Chỉ `/design-system` dùng, để xem trạng thái khi không rê chuột. Class gắn thêm trùng màu hover của variant; `pressed` đậm hơn một nấc. `focus` dùng đúng vòng `focus-visible` của từng variant: `destructive` là `ring-destructive/20` và `dark:ring-destructive/40`; variant còn lại là `ring-ring/50` cùng `border-ring`. Cả hai đều `ring-[3px]`.
 
 ## Checkbox
 

@@ -61,7 +61,7 @@ const chartConfig = { value: { label: "Mẫu", color: "var(--chart-1)" } }
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
     <Stack gap={4}>
-      <Text as="h2" id={id} size="xl" weight="semibold" className="scroll-mt-16">{title}</Text>
+      <Text as="h2" id={id} size="xl" weight="semibold" className="scroll-mt-nav">{title}</Text>
       <Grid columns={{ base: 1, md: 6, xl: 12 }} gap={4} className="kit-grid items-stretch">{children}</Grid>
     </Stack>
   )
@@ -108,26 +108,31 @@ function Kit() {
       <Section id="hanh-dong" title="Hành động">
         <Span at="md:col-span-4 xl:col-span-8">
           <KitCard title="Buttons">
-            <Grid columns={5} gap={2}>
-              <span />
-              {STATES.map((state) => <Text key={state.key} size="xs" tone="muted">{state.label}</Text>)}
-              {VARIANTS.map((variant) => (
-                <span key={variant} className="contents">
-                  <Text size="xs">{variant}</Text>
-                  <Button variant={variant}>Button</Button>
-                  <Button variant={variant} forceState="hover">Button</Button>
-                  <Button variant={variant} forceState="focus">Button</Button>
-                  <Button variant={variant} disabled>Button</Button>
-                </span>
-              ))}
-            </Grid>
-            <Grid columns={{ base: 2, md: 5 }} gap={2}>
-              <Button size="sm">sm</Button>
-              <Button>default</Button>
-              <Button size="lg">lg</Button>
-              <Button><PlusIcon />Thêm</Button>
-              <Button size="icon" aria-label="Thêm"><PlusIcon /></Button>
-            </Grid>
+            <div data-button-matrix className="min-w-0 overflow-x-auto">
+              <Grid columns={5} gap={3} className="w-max justify-items-start">
+                <span />
+                {STATES.map((state) => <Text key={state.key} size="xs" tone="muted">{state.label}</Text>)}
+                {VARIANTS.map((variant) => (
+                  <span key={variant} className="contents">
+                    <Text size="xs">{variant}</Text>
+                    <Button variant={variant} className="w-fit">Button</Button>
+                    <Button variant={variant} forceState="hover" className="w-fit">Button</Button>
+                    <Button variant={variant} forceState="focus" className="w-fit">Button</Button>
+                    <Button variant={variant} disabled className="w-fit">Button</Button>
+                  </span>
+                ))}
+                <Text size="xs">Kích thước</Text>
+                <div className="col-span-4">
+                  <Grid columns={5} gap={3} className="w-max justify-items-start">
+                    <Button size="sm" className="w-fit">sm</Button>
+                    <Button className="w-fit">default</Button>
+                    <Button size="lg" className="w-fit">lg</Button>
+                    <Button className="w-fit"><PlusIcon />Thêm</Button>
+                    <Button size="icon" aria-label="Thêm"><PlusIcon /></Button>
+                  </Grid>
+                </div>
+              </Grid>
+            </div>
           </KitCard>
         </Span>
         <Span at="md:col-span-2 xl:col-span-4">

@@ -198,6 +198,17 @@ html {
   grid-template-columns: auto minmax(0, 1fr);
 }
 
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility scroll-mt-nav {
+  scroll-margin-top: 7rem;
+}
+
 @media (min-width: 48rem) {
   .kit-masonry {
     columns: 2;

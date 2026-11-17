@@ -27,7 +27,7 @@ export function ShowcasePage() {
   }
 
   return (
-    <Box className="flex h-full min-h-0 flex-col">
+    <Box className="min-w-0">
       <Box padding={4} className="shrink-0">
         <Tabs value={tab} onValueChange={choose}>
           <TabsList>

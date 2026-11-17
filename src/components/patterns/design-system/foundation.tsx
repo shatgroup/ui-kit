@@ -1,8 +1,9 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react"
+import { cn } from "@/lib/utils.ts"
 import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
 import { Card, CardContent } from "@/components/ui/card.tsx"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
 import { Swatch, useColorChoice, useTokenHex } from "./swatch.tsx"
 
 const STACK = [
@@ -15,14 +16,21 @@ const STACK = [
 ] as const
 
 const TYPE_ROWS = [
-  { name: "Nhỏ", token: "text-xs", size: "xs", weight: "normal" },
-  { name: "Chú thích", token: "text-sm", size: "sm", weight: "normal" },
-  { name: "Nội dung", token: "text-base", size: "base", weight: "normal" },
-  { name: "Lớn", token: "text-lg", size: "lg", weight: "normal" },
-  { name: "Tiêu đề", token: "text-xl", size: "xl", weight: "medium" },
-  { name: "Tiêu đề lớn", token: "text-2xl", size: "2xl", weight: "semibold" },
-  { name: "Tiêu đề trang", token: "text-3xl", size: "3xl", weight: "bold" },
+  { name: "Nhỏ", token: "text-xs", size: "xs", weight: "normal", tone: "muted", color: "muted-foreground" },
+  { name: "Chú thích", token: "text-sm", size: "sm", weight: "normal", tone: "muted", color: "muted-foreground" },
+  { name: "Nội dung", token: "text-base", size: "base", weight: "normal", tone: "default", color: "foreground" },
+  { name: "Lớn", token: "text-lg", size: "lg", weight: "normal", tone: "default", color: "foreground" },
+  { name: "Tiêu đề", token: "text-xl", size: "xl", weight: "medium", tone: "default", color: "foreground" },
+  { name: "Tiêu đề lớn", token: "text-2xl", size: "2xl", weight: "semibold", tone: "default", color: "foreground" },
+  { name: "Tiêu đề trang", token: "text-3xl", size: "3xl", weight: "bold", tone: "default", color: "foreground" },
 ] as const
+
+const WEIGHT_NAME: Record<string, string> = {
+  "400": "Regular",
+  "500": "Medium",
+  "600": "Semibold",
+  "700": "Bold",
+}
 
 const WEIGHTS = [
   { label: "regular", className: "font-normal" },
@@ -175,7 +183,7 @@ function TypeAndColor() {
 
   return (
     <Stack gap={4}>
-      <Text as="h2" id="nen-tang" size="xl" weight="semibold" className="scroll-mt-16">Nền tảng</Text>
+      <Text as="h2" id="nen-tang" size="xl" weight="semibold" className="scroll-mt-nav">Nền tảng</Text>
       <div className="grid min-w-0 items-start gap-6 md:grid-cols-auto-fr">
         <Stack gap={4} className="min-w-0">
           <Card className="min-w-0">
@@ -206,31 +214,35 @@ function TypeAndColor() {
         </Stack>
         <Card className="min-w-0">
           <CardContent>
-            <div className="min-w-0 overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  {["Tên", "Class", "Độ đậm", "Cỡ chữ", "Line-height", "Letter spacing"].map((label) => (
-                    <TableHead key={label}>{label}</TableHead>
-                  ))}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {TYPE_ROWS.map((row, index) => (
-                  <TableRow key={row.token}>
-                    <TableCell>
-                      <Text id={`type-${row.token}`} as="span" size={row.size} weight={row.weight}>{row.name}</Text>
-                    </TableCell>
-                    <TableCell>{row.token}</TableCell>
-                    <TableCell>{metrics[index]?.weight}</TableCell>
-                    <TableCell>{metrics[index]?.size}</TableCell>
-                    <TableCell>{metrics[index]?.line}</TableCell>
-                    <TableCell>{metrics[index]?.tracking}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <div className="flex min-w-0 items-end border-b border-border pb-2">
+              <Text size="xs" tone="muted" className="w-1/3">KIỂU</Text>
+              <Text size="xs" tone="muted" className="min-w-0 flex-1 border-l border-dashed border-border px-3">MẪU</Text>
+              <Text size="xs" tone="muted" className="w-32 text-right">ÁP DỤNG</Text>
             </div>
+            {TYPE_ROWS.map((row, index) => {
+              const metric = metrics[index]
+              const weight = metric ? WEIGHT_NAME[metric.weight] ?? metric.weight : "…"
+              const size = metric?.size.replace("px", "") ?? "…"
+              const line = metric?.line.replace("px", "") ?? "…"
+              const tracking = metric?.tracking ?? "…"
+              return (
+                <div key={row.token} data-type-row={row.token} className="flex min-w-0 items-center border-b border-border py-3">
+                  <Stack gap={1} className="w-1/3 pe-3">
+                    <Text size="xs" weight="semibold">{row.name}</Text>
+                    <span data-type-meta>
+                      <Text size="xs" tone="muted">Be Vietnam Pro / {weight} · {size}/{line} · {tracking}</Text>
+                    </span>
+                  </Stack>
+                  <div className="min-w-0 flex-1 border-l border-dashed border-border px-3">
+                    <Text id={`type-${row.token}`} as="span" size={row.size} weight={row.weight} tone={row.tone}>{row.name}</Text>
+                  </div>
+                  <Stack gap={1} align="end" className="w-32">
+                    <Text size="xs">{row.token}</Text>
+                    <Text size="xs" tone="muted">{row.color}</Text>
+                  </Stack>
+                </div>
+              )
+            })}
             <ColorRows />
           </CardContent>
         </Card>
@@ -242,32 +254,48 @@ function TypeAndColor() {
 const COLOR_GROUPS = [
   { title: "Nền và chữ", names: ["background", "card", "popover", "muted", "secondary", "accent", "border", "input", "ring"] },
   { title: "Thương hiệu", names: ["primary"] },
-  { title: "Trạng thái", names: ["success", "warning", "info", "destructive", "badge-neutral", "badge-success", "badge-warning", "badge-info", "badge-destructive", "badge-primary"] },
+  { title: "Trạng thái", names: ["success", "warning", "info", "destructive"] },
+  { title: "Trạng thái nhạt", names: ["badge-neutral", "badge-primary", "badge-success", "badge-warning", "badge-info", "badge-destructive"] },
   { title: "Chart", names: ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"] },
   { title: "Sidebar", names: ["sidebar", "sidebar-primary", "sidebar-accent", "sidebar-border", "sidebar-ring"] },
 ] as const
 
+function shortColorName(name: string) {
+  if (name.startsWith("badge-")) return name.slice("badge-".length)
+  if (name.startsWith("chart-")) return name.slice("chart-".length)
+  if (name.startsWith("sidebar-")) return name.slice("sidebar-".length)
+  return name
+}
+
 function ColorRows() {
   const hex = useTokenHex()
   const choice = useColorChoice()
+  const paired = new Set<string>(PAIRS.map((item) => item.name))
   return (
-    <Stack gap={4}>
+    <Stack gap={6}>
       {COLOR_GROUPS.map((group) => (
-        <Stack key={group.title} gap={2}>
+        <Stack key={group.title} gap={3}>
           <Text size="sm" weight="medium">{group.title}</Text>
-          <Inline gap={3}>
+          <div data-color-grid={group.title} className="grid grid-cols-3 gap-3 md:grid-cols-4 xl:grid-cols-9">
             {group.names.map((name) => {
               const item = SWATCHES.find((entry) => entry.name === name)
               if (!item) return null
+              const ink = paired.has(name) ? item.fg : choice[name]?.ink
               return (
-                <Stack key={name} gap={1} align="center">
-                  <div data-swatch={name} data-hex={hex[name] ?? ""} className={`size-14 rounded-md ${item.bg} ${choice[name]?.edge ? "border border-border" : ""}`} />
-                  <Text size="xs">{name}</Text>
-                  <Text size="xs" tone="muted">{hex[name] || "…"}</Text>
-                </Stack>
+                <Tooltip key={name}>
+                  <TooltipTrigger
+                    data-swatch={name}
+                    data-hex={hex[name] ?? ""}
+                    className={cn("flex aspect-square w-full flex-col items-center justify-center rounded-md border-0 p-1 text-center", item.bg, ink, choice[name]?.edge && "border border-border")}
+                  >
+                    <span className="text-xs font-medium">{shortColorName(name)}</span>
+                    <span className="text-xs">{hex[name] || "…"}</span>
+                  </TooltipTrigger>
+                  <TooltipContent>{name}</TooltipContent>
+                </Tooltip>
               )
             })}
-          </Inline>
+          </div>
         </Stack>
       ))}
     </Stack>
@@ -290,17 +318,19 @@ function TokenCard({ title, children }: { title: string; children: ReactNode }) 
 function Tokens() {
   return (
     <Stack gap={4}>
-      <Text as="h2" id="token" size="xl" weight="semibold" className="scroll-mt-16">Token</Text>
+      <Text as="h2" id="token" size="xl" weight="semibold" className="scroll-mt-nav">Token</Text>
       <Grid columns={{ base: 1, md: 2, xl: 4 }} gap={4} className="kit-grid items-stretch">
         <TokenCard title="Khoảng cách">
-          <Grid columns={2} gap={2}>
+          <div data-space-grid className="grid grid-flow-col grid-rows-6 gap-2">
             {SPACE_BARS.map((item) => (
-              <Inline key={item.level} gap={2} align="center">
-                <span className={`h-3 ${item.bar} rounded-sm bg-primary`} />
-                <Text size="xs" tone="muted">{item.level} · {item.px}</Text>
+              <Inline key={item.level} gap={2} align="center" wrap={false}>
+                <span className="flex w-16 shrink-0">
+                  <span data-space-level={item.level} className={`h-3 ${item.bar} rounded-sm bg-primary`} />
+                </span>
+                <Text size="xs" tone="muted" className="whitespace-nowrap">{item.level} · {item.px}</Text>
               </Inline>
             ))}
-          </Grid>
+          </div>
         </TokenCard>
         <TokenCard title="Bo góc">
           <Inline gap={3}>

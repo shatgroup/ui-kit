@@ -53,6 +53,12 @@ Cỡ và line-height mặc định Tailwind. Ngoại lệ tiếng Việt: `--tex
 | text-2xl | 1.5rem | 1.333 | 2 |
 | text-3xl | 1.875rem | 1.3 | 3 |
 
+## Thanh cuộn
+
+`scrollbar-none` ẩn thanh cuộn nhưng vẫn cuộn được: `scrollbar-width: none` và `::-webkit-scrollbar { display: none }`.
+
+`scroll-mt-nav` là 7rem (112px): 56px của SiteBar cộng 56px của thanh nhảy nhanh, để tiêu đề không bị hai thanh sticky che.
+
 ## Breakpoint
 
 | Tên | Rộng | Nơi dùng |

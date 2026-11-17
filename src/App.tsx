@@ -9,10 +9,8 @@ import type { ReactNode } from "react"
 function Frame({ children }: { children: ReactNode }) {
   return (
     <TooltipProvider>
-      <div className="flex h-dvh flex-col">
-        <SiteBar />
-        <div className="min-h-0 flex-1 overflow-auto">{children}</div>
-      </div>
+      <SiteBar />
+      {children}
       <Toaster />
     </TooltipProvider>
   )
