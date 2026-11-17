@@ -105,12 +105,14 @@ Nguồn: bản `npx shadcn@latest add https://ui.reactflow.dev/<tên>` (shadcn 4
 
 `scripts/flow-original.test.ts` so từng file với bản gốc. Dòng khác chỉ được là import, bỏ `shadow-*`, đổi hex hoặc tên màu cứng sang token, hoặc chữ mặc định thành prop. `src/components/flow/` được miễn class tuỳ ý như `src/components/ui/`, vẫn cấm shadow và hex.
 
-`zoom-select.tsx` đổi cách đọc `minZoom`/`maxZoom` sang `useMemo`. Lý do: selector trả mảng mới mỗi lần thì React 19 render lặp. Đây là chỗ duy nhất sửa logic so với bản gốc React Flow UI.
+`zoom-select.tsx` đổi cách đọc `minZoom`/`maxZoom` sang `useMemo`. Lý do: selector trả mảng mới mỗi lần thì React 19 render lặp. Đây là chỗ sửa logic so với bản gốc React Flow UI.
+
+`node-status-indicator.tsx` đổi tên keyframe `spin` thành `rf-status-spin`. Keyframe gốc trùng `animate-spin` của Tailwind nên vòng xoay của kit bị kéo lên nửa chiều cao.
 
 | File | Dòng khác | Lý do |
 | --- | --- | --- |
 | base-node.tsx | 1 | Bỏ `in-[.selected]:shadow-lg` |
-| node-status-indicator.tsx | 9 | `blue`/`emerald`/`red` và gradient `rgb` sang `info`, `success`, `destructive`. Ba chỗ `rounded-[9px]` sang `calc(var(--radius-md) + 1px)` vì bo 9px lệch bo 6px của thẻ, để lại vai vuông ở góc |
+| node-status-indicator.tsx | 11 | `blue`/`emerald`/`red` và gradient `rgb` sang `info`, `success`, `destructive`. Ba chỗ `rounded-[9px]` sang `calc(var(--radius-md) + 1px)`. Keyframe `spin` đổi tên `rf-status-spin` để không đè `animate-spin` |
 | node-appendix.tsx | 0 | Giữ nguyên |
 | node-tooltip.tsx | 0 | Giữ nguyên |
 | database-schema-node.tsx | 4 | Import `base-node` vào `flow/`. Bỏ import `React` không dùng |

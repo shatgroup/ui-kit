@@ -42,12 +42,12 @@ export const BorderLoadingIndicator = ({
       <div className="absolute -left-px -top-px h-[calc(100%+2px)] w-[calc(100%+2px)]">
         <style>
           {`
-        @keyframes spin {
+        @keyframes rf-status-spin {
           from { transform: translate(-50%, -50%) rotate(0deg); }
           to { transform: translate(-50%, -50%) rotate(360deg); }
         }
         .spinner {
-          animation: spin 2s linear infinite;
+          animation: rf-status-spin 2s linear infinite;
           position: absolute;
           left: 50%;
           top: 50%;

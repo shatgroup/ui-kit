@@ -108,7 +108,11 @@ function changedLines(before: string, after: string) {
 }
 
 function explains(before: string, after: string) {
-  return normalize(before) === normalize(after) || importChange(before, after) || withoutUnusedReact(before) === after || radiusFix(before, after)
+  return normalize(before) === normalize(after) || importChange(before, after) || withoutUnusedReact(before) === after || radiusFix(before, after) || spinName(before, after)
+}
+
+function spinName(before: string, after: string) {
+  return before.replaceAll("spin", "SPIN") === after.replaceAll("rf-status-spin", "SPIN").replaceAll("spin", "SPIN")
 }
 
 // Bản gốc bo 9px. Bo của kit là --radius-md (6px). 9px để lại vai vuông ở góc node.

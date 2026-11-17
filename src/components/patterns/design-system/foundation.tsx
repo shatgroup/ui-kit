@@ -284,34 +284,52 @@ function shortColorName(name: string) {
   return name
 }
 
+function ColorSwatch({ name, hex, ink, edge }: { name: string; hex: string; ink?: string; edge?: boolean }) {
+  const item = SWATCHES.find((entry) => entry.name === name)
+  if (!item) return null
+  return (
+    <Tooltip>
+      <TooltipTrigger
+        data-swatch={name}
+        data-hex={hex}
+        className={cn("flex aspect-square w-full flex-col items-center justify-center rounded-md border-0 p-1 text-center", item.bg, ink, edge && "border border-border")}
+      >
+        <span className="text-xs font-medium">{shortColorName(name)}</span>
+        <span className="text-xs">{hex || "…"}</span>
+      </TooltipTrigger>
+      <TooltipContent>{name}</TooltipContent>
+    </Tooltip>
+  )
+}
+
 function ColorRows() {
   const hex = useTokenHex()
   const choice = useColorChoice()
   const paired = new Set<string>(PAIRS.map((item) => item.name))
+  const paint = (name: string) => {
+    const item = SWATCHES.find((entry) => entry.name === name)
+    if (!item) return null
+    return <ColorSwatch key={name} name={name} hex={hex[name] ?? ""} ink={paired.has(name) ? item.fg : choice[name]?.ink} edge={choice[name]?.edge} />
+  }
+  const rest = COLOR_GROUPS.filter((group) => group.title !== "Brand" && group.title !== "Status")
+  const brand = COLOR_GROUPS.find((group) => group.title === "Brand")
+  const status = COLOR_GROUPS.find((group) => group.title === "Status")
   return (
     <Stack gap={6}>
-      {COLOR_GROUPS.map((group) => (
+      <Stack gap={3}>
+        <Grid columns={{ base: 3, md: 4, xl: 9 }} gap={3}>
+          <Text size="sm" weight="medium">Brand</Text>
+          <Text size="sm" weight="medium" className="col-span-2 md:col-span-3 xl:col-span-8">Status</Text>
+        </Grid>
+        <Grid data-color-grid="Status" columns={{ base: 3, md: 4, xl: 9 }} gap={3}>
+          {[...(brand?.names ?? []), ...(status?.names ?? [])].map((name) => paint(name))}
+        </Grid>
+      </Stack>
+      {rest.map((group) => (
         <Stack key={group.title} gap={3}>
           <Text size="sm" weight="medium">{group.title}</Text>
           <Grid data-color-grid={group.title} columns={{ base: 3, md: 4, xl: 9 }} gap={3}>
-            {group.names.map((name) => {
-              const item = SWATCHES.find((entry) => entry.name === name)
-              if (!item) return null
-              const ink = paired.has(name) ? item.fg : choice[name]?.ink
-              return (
-                <Tooltip key={name}>
-                  <TooltipTrigger
-                    data-swatch={name}
-                    data-hex={hex[name] ?? ""}
-                    className={cn("flex aspect-square w-full flex-col items-center justify-center rounded-md border-0 p-1 text-center", item.bg, ink, choice[name]?.edge && "border border-border")}
-                  >
-                    <span className="text-xs font-medium">{shortColorName(name)}</span>
-                    <span className="text-xs">{hex[name] || "…"}</span>
-                  </TooltipTrigger>
-                  <TooltipContent>{name}</TooltipContent>
-                </Tooltip>
-              )
-            })}
+            {group.names.map((name) => paint(name))}
           </Grid>
         </Stack>
       ))}
