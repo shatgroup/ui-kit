@@ -51,6 +51,18 @@ Bỏ mọi class `shadow-*` trừ `shadow-none`. Popup đã có `border` sẵn (
 
 `button.tsx` — thêm prop `forceState?: "hover" | "pressed" | "focus"`. Chỉ `/design-system` dùng, để xem trạng thái khi không rê chuột. Class gắn thêm trùng màu hover của variant; `pressed` đậm hơn một nấc. `focus` dùng đúng vòng `focus-visible` của từng variant: `destructive` là `ring-destructive/20` và `dark:ring-destructive/40`; variant còn lại là `ring-ring/50` cùng `border-ring`. Cả hai đều `ring-[3px]`.
 
+`input.tsx` — thêm `forceState?: "focus"`. Class gắn thêm trùng `focus-visible` của Input: `border-ring ring-[3px] ring-ring/50`.
+
+`slider.tsx` — thêm `tip?: string`. Khi có tip, nút kéo bọc trong Tooltip và hiện đúng chuỗi đó.
+
+## component thêm mới
+
+| File | Việc |
+|---|---|
+| `progress-circle.tsx` | Vòng tròn `stroke-primary` trên nền `stroke-muted`, chữ ở giữa. |
+| `progress-segments.tsx` | Các đoạn ngắn bằng nhau. Đoạn đã xong dùng `bg-primary`, đoạn còn lại `bg-muted`. |
+| `steps-bar.tsx` | Thanh bước dạng mũi tên. Bước xong nền `bg-primary` và có dấu check. Bước đang làm nền `bg-accent`. Bước chưa tới nền `bg-muted`. |
+
 ## Checkbox
 
 `checkbox.tsx` — khi `checked="indeterminate"` hiện `MinusIcon` thay vì dấu tick. Radix không có icon riêng cho trạng thái này. DataTable và `/design-system` dùng cho ô chọn cả trang.

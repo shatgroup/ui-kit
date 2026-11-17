@@ -1,6 +1,7 @@
 import * as React from "react"
 import { cn } from "cn"
 import { Slider as SliderPrimitive } from "radix-ui"
+import { Tooltip, TooltipContent, TooltipTrigger } from "./tooltip.tsx"
 
 function Slider({
   className,
@@ -8,8 +9,9 @@ function Slider({
   value,
   min = 0,
   max = 100,
+  tip,
   ...props
-}: React.ComponentProps<typeof SliderPrimitive.Root>) {
+}: React.ComponentProps<typeof SliderPrimitive.Root> & { tip?: string }) {
   const _values = React.useMemo(
     () =>
       Array.isArray(value)
@@ -46,13 +48,20 @@ function Slider({
           )}
         />
       </SliderPrimitive.Track>
-      {Array.from({ length: _values.length }, (_, index) => (
-        <SliderPrimitive.Thumb
-          data-slot="slider-thumb"
-          key={index}
-          className="block size-4 shrink-0 rounded-full border border-primary bg-white ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
-        />
-      ))}
+      {Array.from({ length: _values.length }, (_, index) => {
+        const thumbClass = "block size-4 shrink-0 rounded-full border border-primary bg-white ring-ring/50 transition-[color,box-shadow] hover:ring-4 focus-visible:ring-4 focus-visible:outline-hidden disabled:pointer-events-none disabled:opacity-50"
+        if (!tip) {
+          return <SliderPrimitive.Thumb key={index} data-slot="slider-thumb" className={thumbClass} />
+        }
+        return (
+          <Tooltip key={index}>
+            <TooltipTrigger asChild>
+              <SliderPrimitive.Thumb data-slot="slider-thumb" className={thumbClass} />
+            </TooltipTrigger>
+            <TooltipContent side="top">{tip}</TooltipContent>
+          </Tooltip>
+        )
+      })}
     </SliderPrimitive.Root>
   )
 }

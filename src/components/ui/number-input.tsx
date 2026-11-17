@@ -10,6 +10,8 @@ function NumberInput({
   min,
   max,
   step = 1,
+  id,
+  label = "Số",
 }: {
   size?: ControlSize
   value: number
@@ -17,6 +19,8 @@ function NumberInput({
   min?: number
   max?: number
   step?: number
+  id?: string
+  label?: string
 }) {
   function set(next: number) {
     const low = min ?? next
@@ -26,9 +30,10 @@ function NumberInput({
   return (
     <InputGroup
       size={size}
+      id={id}
       inputMode="numeric"
       value={String(value)}
-      aria-label="Số"
+      aria-label={label}
       onChange={(event) => {
         const next = Number(event.target.value)
         if (!Number.isNaN(next)) set(next)

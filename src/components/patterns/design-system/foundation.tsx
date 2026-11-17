@@ -16,13 +16,13 @@ const STACK = [
 ] as const
 
 const TYPE_ROWS = [
-  { name: "Nhỏ", token: "text-xs", size: "xs", weight: "normal", tone: "muted", color: "muted-foreground" },
-  { name: "Chú thích", token: "text-sm", size: "sm", weight: "normal", tone: "muted", color: "muted-foreground" },
-  { name: "Nội dung", token: "text-base", size: "base", weight: "normal", tone: "default", color: "foreground" },
-  { name: "Lớn", token: "text-lg", size: "lg", weight: "normal", tone: "default", color: "foreground" },
-  { name: "Tiêu đề", token: "text-xl", size: "xl", weight: "medium", tone: "default", color: "foreground" },
-  { name: "Tiêu đề lớn", token: "text-2xl", size: "2xl", weight: "semibold", tone: "default", color: "foreground" },
-  { name: "Tiêu đề trang", token: "text-3xl", size: "3xl", weight: "bold", tone: "default", color: "foreground" },
+  { name: "Caption", token: "text-xs", size: "xs", weight: "normal", tone: "muted", color: "muted-foreground" },
+  { name: "Small", token: "text-sm", size: "sm", weight: "normal", tone: "muted", color: "muted-foreground" },
+  { name: "Body", token: "text-base", size: "base", weight: "normal", tone: "default", color: "foreground" },
+  { name: "Large", token: "text-lg", size: "lg", weight: "normal", tone: "default", color: "foreground" },
+  { name: "Title", token: "text-xl", size: "xl", weight: "medium", tone: "default", color: "foreground" },
+  { name: "Heading", token: "text-2xl", size: "2xl", weight: "semibold", tone: "default", color: "foreground" },
+  { name: "Page title", token: "text-3xl", size: "3xl", weight: "bold", tone: "default", color: "foreground" },
 ] as const
 
 const WEIGHT_NAME: Record<string, string> = {
@@ -69,9 +69,9 @@ const BREAKS = [
 ] as const
 
 const MOTION = [
-  { label: "Nhanh", token: "--duration-fast", ease: "--ease-standard" },
-  { label: "Vừa", token: "--duration-normal", ease: "--ease-standard" },
-  { label: "Chậm", token: "--duration-slow", ease: "--ease-standard" },
+  { label: "Fast", token: "--duration-fast", ease: "--ease-standard" },
+  { label: "Normal", token: "--duration-normal", ease: "--ease-standard" },
+  { label: "Slow", token: "--duration-slow", ease: "--ease-standard" },
   { label: "Theme", token: "--duration-theme", ease: "--ease-out" },
 ] as const
 
@@ -141,7 +141,7 @@ function MotionRow({ label, token, ease }: { label: string; token: string; ease:
 
   return (
     <Inline gap={3} align="center">
-      <Button type="button" size="sm" variant="outline" onClick={run}>Chạy</Button>
+      <Button type="button" size="sm" variant="outline" onClick={run}>Run</Button>
       <div className="relative h-3 min-w-0 flex-1 overflow-hidden rounded-full bg-muted">
         <span ref={dot} className="absolute top-0 left-0 size-3 rounded-full bg-primary" />
       </div>
@@ -156,7 +156,7 @@ function Header() {
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <Stack gap={2} className="max-w-md">
           <Text as="h1" size="3xl" weight="bold">Design System</Text>
-          <Text size="sm" tone="muted">Bộ token, chữ và component dùng chung cho mọi màn hình.</Text>
+          <Text size="sm" tone="muted">Tokens, type, and components shared across every screen.</Text>
         </Stack>
         <span className="specimen-word block min-w-0 font-medium break-words text-muted-foreground xl:shrink-0 xl:text-right">Be Vietnam Pro</span>
       </div>
@@ -168,22 +168,24 @@ function TypeAndColor() {
   const hex = useTokenHex()
   const choice = useColorChoice()
   const [metrics, setMetrics] = useState<Array<{ weight: string; size: string; line: string; tracking: string }>>([])
+  const [viMetric, setViMetric] = useState<{ weight: string; size: string; line: string; tracking: string } | null>(null)
 
   useLayoutEffect(() => {
-    setMetrics(TYPE_ROWS.map((row) => {
-      const node = document.getElementById(`type-${row.token}`)
+    const read = (node: HTMLElement | null) => {
       if (!node) return { weight: "", size: "", line: "", tracking: "" }
       const style = getComputedStyle(node)
       const size = Math.round(Number.parseFloat(style.fontSize))
       const line = Math.round(Number.parseFloat(style.lineHeight))
       const tracking = style.letterSpacing === "normal" ? "0px" : style.letterSpacing
       return { weight: style.fontWeight, size: `${size}px`, line: `${line}px`, tracking }
-    }))
+    }
+    setMetrics(TYPE_ROWS.map((row) => read(document.getElementById(`type-${row.token}`))))
+    setViMetric(read(document.getElementById("type-vi")))
   }, [])
 
   return (
     <Stack gap={4}>
-      <Text as="h2" id="nen-tang" size="xl" weight="semibold" className="scroll-mt-nav">Nền tảng</Text>
+      <Text as="h2" id="nen-tang" size="xl" weight="semibold" className="scroll-mt-nav">Foundations</Text>
       <div className="grid min-w-0 items-start gap-6 md:grid-cols-auto-fr">
         <Stack gap={4} className="min-w-0">
           <Card className="min-w-0">
@@ -215,9 +217,9 @@ function TypeAndColor() {
         <Card className="min-w-0">
           <CardContent>
             <div className="flex min-w-0 items-end border-b border-border pb-2">
-              <Text size="xs" tone="muted" className="w-1/3">KIỂU</Text>
-              <Text size="xs" tone="muted" className="min-w-0 flex-1 border-l border-dashed border-border px-3">MẪU</Text>
-              <Text size="xs" tone="muted" className="w-32 text-right">ÁP DỤNG</Text>
+              <Text size="xs" tone="muted" className="w-1/3">STYLE</Text>
+              <Text size="xs" tone="muted" className="min-w-0 flex-1 border-l border-dashed border-border px-3">SAMPLE</Text>
+              <Text size="xs" tone="muted" className="w-32 text-right">APPLIED</Text>
             </div>
             {TYPE_ROWS.map((row, index) => {
               const metric = metrics[index]
@@ -243,6 +245,21 @@ function TypeAndColor() {
                 </div>
               )
             })}
+            <div data-type-row="vi" className="flex min-w-0 items-center border-b border-border py-3">
+              <Stack gap={1} className="w-1/3 pe-3">
+                <Text size="xs" weight="semibold">Vietnamese</Text>
+                <span data-type-meta>
+                  <Text size="xs" tone="muted">Be Vietnam Pro / {viMetric ? WEIGHT_NAME[viMetric.weight] ?? viMetric.weight : "…"} · {viMetric?.size.replace("px", "") ?? "…"}/{viMetric?.line.replace("px", "") ?? "…"} · {viMetric?.tracking ?? "…"}</Text>
+                </span>
+              </Stack>
+              <div className="min-w-0 flex-1 border-l border-dashed border-border px-3">
+                <Text id="type-vi" as="span" size="base">{`Tiếng Việt có dấu`}</Text>
+              </div>
+              <Stack gap={1} align="end" className="w-32">
+                <Text size="xs">text-base</Text>
+                <Text size="xs" tone="muted">foreground</Text>
+              </Stack>
+            </div>
             <ColorRows />
           </CardContent>
         </Card>
@@ -252,10 +269,10 @@ function TypeAndColor() {
 }
 
 const COLOR_GROUPS = [
-  { title: "Nền và chữ", names: ["background", "card", "popover", "muted", "secondary", "accent", "border", "input", "ring"] },
-  { title: "Thương hiệu", names: ["primary"] },
-  { title: "Trạng thái", names: ["success", "warning", "info", "destructive"] },
-  { title: "Trạng thái nhạt", names: ["badge-neutral", "badge-primary", "badge-success", "badge-warning", "badge-info", "badge-destructive"] },
+  { title: "Surface and text", names: ["background", "card", "popover", "muted", "secondary", "accent", "border", "input", "ring"] },
+  { title: "Brand", names: ["primary"] },
+  { title: "Status", names: ["success", "warning", "info", "destructive"] },
+  { title: "Soft status", names: ["badge-neutral", "badge-primary", "badge-success", "badge-warning", "badge-info", "badge-destructive"] },
   { title: "Chart", names: ["chart-1", "chart-2", "chart-3", "chart-4", "chart-5"] },
   { title: "Sidebar", names: ["sidebar", "sidebar-primary", "sidebar-accent", "sidebar-border", "sidebar-ring"] },
 ] as const
@@ -318,9 +335,9 @@ function TokenCard({ title, children }: { title: string; children: ReactNode }) 
 function Tokens() {
   return (
     <Stack gap={4}>
-      <Text as="h2" id="token" size="xl" weight="semibold" className="scroll-mt-nav">Token</Text>
+      <Text as="h2" id="token" size="xl" weight="semibold" className="scroll-mt-nav">Tokens</Text>
       <Grid columns={{ base: 1, md: 2, xl: 4 }} gap={4} className="kit-grid items-stretch">
-        <TokenCard title="Khoảng cách">
+        <TokenCard title="Spacing">
           <div data-space-grid className="grid grid-flow-col grid-rows-6 gap-2">
             {SPACE_BARS.map((item) => (
               <Inline key={item.level} gap={2} align="center" wrap={false}>
@@ -332,7 +349,7 @@ function Tokens() {
             ))}
           </div>
         </TokenCard>
-        <TokenCard title="Bo góc">
+        <TokenCard title="Radius">
           <Inline gap={3}>
             {RADII.map((item) => (
               <Stack key={item.name} gap={1} align="center">
@@ -342,7 +359,7 @@ function Tokens() {
             ))}
           </Inline>
         </TokenCard>
-        <TokenCard title="Chuyển động">
+        <TokenCard title="Motion">
           {MOTION.map((item) => (
             <MotionRow key={item.token} label={item.label} token={item.token} ease={item.ease} />
           ))}

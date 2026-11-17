@@ -120,7 +120,8 @@ function scan() {
 
   if (document.documentElement.scrollWidth > window.innerWidth + 2) failures.push("tràn trang")
   const controls = [...document.querySelectorAll("button, input, [data-slot=select-trigger]")].filter(
-    (el) => el instanceof HTMLElement && !hidden(el) && !el.closest("[data-slot=calendar], [data-slot=tabs-list], [data-slot=toggle-group], [data-slot=input-group], [data-slot=badge]") && getComputedStyle(el).position !== "absolute",
+    // Hàng Sizes cố ý khác chiều cao và canh đáy, không so tâm.
+    (el) => el instanceof HTMLElement && !hidden(el) && !el.closest("[data-slot=calendar], [data-slot=tabs-list], [data-slot=toggle-group], [data-slot=input-group], [data-slot=badge], [data-button-sizes]") && getComputedStyle(el).position !== "absolute",
   )
   const groups = new Map<Element, HTMLElement[]>()
   for (const el of controls) {
@@ -195,19 +196,19 @@ describe("kiểm showcase", () => {
                 const style = getComputedStyle(el)
                 return `${style.backgroundColor}|${style.transform}`
               })
-              const switchEl = page.getByRole("switch", { name: "Switch tắt", exact: true })
-              const boxEl = page.getByRole("checkbox", { name: "Checkbox bật", exact: true })
+              const switchEl = page.getByRole("switch", { name: "Switch off", exact: true })
+              const boxEl = page.getByRole("checkbox", { name: "Checkbox on", exact: true })
               const beforeSwitch = await readPaint(switchEl)
               const beforeBox = await readPaint(boxEl)
               const beforeDark = await page.evaluate(() => document.documentElement.classList.contains("dark"))
               await switchEl.click()
               await boxEl.click()
-              await page.getByRole("radio", { name: "Radio tắt", exact: true }).click()
-              await page.getByRole("radio", { name: theme === "dark" ? "Sáng" : "Tối", exact: true }).click()
+              await page.getByRole("radio", { name: "Radio off", exact: true }).click()
+              await page.getByRole("radio", { name: theme === "dark" ? "Light" : "Dark", exact: true }).click()
               await page.waitForFunction((was) => document.documentElement.classList.contains("dark") !== was, beforeDark, { timeout: 2000 }).catch(() => undefined)
               const afterSwitch = await readPaint(switchEl)
               const afterBox = await readPaint(boxEl)
-              const radioChecked = await page.getByRole("radio", { name: "Radio tắt", exact: true }).getAttribute("data-state")
+              const radioChecked = await page.getByRole("radio", { name: "Radio off", exact: true }).getAttribute("data-state")
               const afterDark = await page.evaluate(() => document.documentElement.classList.contains("dark"))
               if (beforeSwitch === afterSwitch) failures.push(`${theme}: Switch không đổi`)
               if (beforeBox === afterBox) failures.push(`${theme}: Checkbox không đổi`)
@@ -573,8 +574,8 @@ describe("kiểm showcase", () => {
         const off = dark ? sample("color-mix(in oklab, var(--input) 80%, transparent)") : sample("var(--input)")
         return { primary, off, primaryPaint: paint(primary), inputPaint: paint(off) }
       }, theme === "dark")
-      const off = await read("Switch tắt")
-      const on = await read("Switch bật")
+      const off = await read("Switch off")
+      const on = await read("Switch on")
       if (!off || !on) {
         failures.push(`${theme}: không thấy switch`)
         continue
@@ -585,11 +586,11 @@ describe("kiểm showcase", () => {
       if (on.state !== "checked" || on.side !== "right" || !near(on.paint, colors.primaryPaint)) {
         failures.push(`${theme}: bật sai ${on.state} ${on.side} nền ${on.bg} (kỳ vọng ${colors.primary})`)
       }
-      await page.getByRole("switch", { name: "Switch tắt", exact: true }).click()
-      await page.getByRole("switch", { name: "Switch bật", exact: true }).click()
+      await page.getByRole("switch", { name: "Switch off", exact: true }).click()
+      await page.getByRole("switch", { name: "Switch on", exact: true }).click()
       await page.waitForTimeout(400)
-      const offAfter = await read("Switch tắt")
-      const onAfter = await read("Switch bật")
+      const offAfter = await read("Switch off")
+      const onAfter = await read("Switch on")
       if (!offAfter || !onAfter) {
         failures.push(`${theme}: mất switch sau click`)
         continue
@@ -671,13 +672,13 @@ describe("kiểm showcase", () => {
           const root = Number.parseFloat(getComputedStyle(document.documentElement).fontSize)
           // docs/STANDARD.md: cỡ rem, line-height, độ đậm normal/medium/semibold/bold.
           const typeScale = [
-            { id: "type-text-xs", weight: "400", rem: 0.75, line: 1 / 0.75 },
-            { id: "type-text-sm", weight: "400", rem: 0.875, line: 1.25 / 0.875 },
-            { id: "type-text-base", weight: "400", rem: 1, line: 1.5 },
-            { id: "type-text-lg", weight: "400", rem: 1.125, line: 1.75 / 1.125 },
-            { id: "type-text-xl", weight: "500", rem: 1.25, line: 1.75 / 1.25 },
-            { id: "type-text-2xl", weight: "600", rem: 1.5, line: 2 / 1.5 },
-            { id: "type-text-3xl", weight: "700", rem: 1.875, line: 1.3 },
+            { id: "type-text-xs", weight: "400", rem: 0.75, line: 1 / 0.75, color: "muted-foreground" },
+            { id: "type-text-sm", weight: "400", rem: 0.875, line: 1.25 / 0.875, color: "muted-foreground" },
+            { id: "type-text-base", weight: "400", rem: 1, line: 1.5, color: "foreground" },
+            { id: "type-text-lg", weight: "400", rem: 1.125, line: 1.75 / 1.125, color: "foreground" },
+            { id: "type-text-xl", weight: "500", rem: 1.25, line: 1.75 / 1.25, color: "foreground" },
+            { id: "type-text-2xl", weight: "600", rem: 1.5, line: 2 / 1.5, color: "foreground" },
+            { id: "type-text-3xl", weight: "700", rem: 1.875, line: 1.3, color: "foreground" },
           ]
           for (const row of typeScale) {
             const sample = document.getElementById(row.id)
@@ -694,9 +695,18 @@ describe("kiểm showcase", () => {
               notes.push(`${row.id} đo ${style.fontWeight}/${gotSize}px/${gotLine}px, STANDARD ${row.weight}/${size}px/${line}px`)
             }
             const names: Record<string, string> = { "400": "Regular", "500": "Medium", "600": "Semibold", "700": "Bold" }
-            const meta = sample.closest("[data-type-row]")?.querySelector("[data-type-meta]")?.textContent?.replace(/\s+/g, " ").trim()
+            const typeRow = sample.closest("[data-type-row]")
+            const meta = typeRow?.querySelector("[data-type-meta]")?.textContent?.replace(/\s+/g, " ").trim()
             const expected = `Be Vietnam Pro / ${names[row.weight]} · ${size}/${line} · 0px`
             if (meta !== expected) notes.push(`${row.id} bảng ghi ${meta} thay vì ${expected}`)
+            const applied = typeRow?.lastElementChild?.lastElementChild?.textContent?.trim() ?? ""
+            if (applied !== row.color) notes.push(`${row.id} cột áp dụng ghi ${applied} thay vì ${row.color}`)
+            const token = getComputedStyle(document.documentElement).getPropertyValue(`--${row.color}`).trim()
+            const got = paint(style.color)
+            const want = paint(token)
+            if (got.some((channel, index) => Math.abs(channel - (want[index] ?? 0)) > 1)) {
+              notes.push(`${row.id} chữ mẫu ${got.join(",")} khác --${row.color} ${want.join(",")}`)
+            }
           }
           const word = document.querySelector(".specimen-word")
           const title = document.querySelector("h1")
@@ -767,19 +777,19 @@ describe("kiểm showcase", () => {
             return (label?.textContent ?? el.getAttribute("aria-label") ?? "").trim() === name
           })
           const states: Array<[string, string, string]> = [
-            ["checkbox", "Checkbox bật", "checked"],
-            ["checkbox", "Checkbox tắt", "unchecked"],
-            ["checkbox", "Checkbox disabled bật", "checked"],
-            ["checkbox", "Checkbox disabled tắt", "unchecked"],
+            ["checkbox", "Checkbox on", "checked"],
+            ["checkbox", "Checkbox off", "unchecked"],
+            ["checkbox", "Checkbox disabled on", "checked"],
+            ["checkbox", "Checkbox disabled off", "unchecked"],
             ["checkbox", "Checkbox indeterminate", "indeterminate"],
-            ["radio", "Radio bật", "checked"],
-            ["radio", "Radio tắt", "unchecked"],
-            ["radio", "Radio disabled bật", "checked"],
-            ["radio", "Radio disabled tắt", "unchecked"],
-            ["switch", "Switch bật", "checked"],
-            ["switch", "Switch tắt", "unchecked"],
-            ["switch", "Switch disabled bật", "checked"],
-            ["switch", "Switch disabled tắt", "unchecked"],
+            ["radio", "Radio on", "checked"],
+            ["radio", "Radio off", "unchecked"],
+            ["radio", "Radio disabled on", "checked"],
+            ["radio", "Radio disabled off", "unchecked"],
+            ["switch", "Switch on", "checked"],
+            ["switch", "Switch off", "unchecked"],
+            ["switch", "Switch disabled on", "checked"],
+            ["switch", "Switch disabled off", "unchecked"],
           ]
           for (const [role, name, state] of states) {
             const el = named(role, name)
@@ -871,6 +881,80 @@ describe("kiểm showcase", () => {
           document.querySelectorAll("[data-space-grid] p").forEach((label) => {
             if (label.getClientRects().length > 1) notes.push(`nhãn khoảng cách rớt dòng: ${label.textContent}`)
           })
+          const vi = /[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđÀÁẢÃẠĂẰẮẲẴẶÂẦẤẨẪẬÈÉẺẼẸÊỀẾỂỄỆÌÍỈĨỊÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢÙÚỦŨỤƯỪỨỬỮỰỲÝỶỸỴĐ]/
+          const allowed = "Tiếng Việt có dấu"
+          const visible = document.body.innerText.split(allowed).join("")
+          const viIndex = visible.search(vi)
+          if (viIndex >= 0) notes.push(`chữ Việt: ${visible.slice(Math.max(0, viIndex - 20), viIndex + 24)}`)
+          if (!document.body.innerText.includes(allowed)) notes.push("thiếu dòng tiếng Việt có dấu")
+          document.querySelectorAll("input, textarea").forEach((field) => {
+            const placeholder = field.getAttribute("placeholder") ?? ""
+            if (vi.test(placeholder)) notes.push(`placeholder ${placeholder}`)
+          })
+          const matrixBox = document.querySelector("[data-button-matrix]")?.getBoundingClientRect()
+          const sizeRow = document.querySelector("[data-button-sizes]")
+          if (matrixBox && sizeRow instanceof HTMLElement) {
+            const sizeBox = sizeRow.getBoundingClientRect()
+            if (sizeBox.top < matrixBox.bottom - 1) notes.push("hàng Sizes nằm trong bảng")
+            const sizeButtons = [...sizeRow.querySelectorAll("[data-slot=button]")].filter((el) => el instanceof HTMLElement)
+            const bottoms = sizeButtons.map((el) => el.getBoundingClientRect().bottom)
+            if (bottoms.length === 5 && Math.max(...bottoms) - Math.min(...bottoms) > 1) notes.push("nút kích thước lệch đáy")
+            const sizeItems = [...sizeRow.querySelectorAll("[data-slot=size-item]")].filter((el) => el instanceof HTMLElement).map((el) => el.getBoundingClientRect()).sort((a, b) => a.left - b.left)
+            const gaps = sizeItems.slice(1).map((box, index) => box.left - (sizeItems[index]?.right ?? 0))
+            if (gaps.some((gap) => gap < 11.5)) notes.push(`Sizes cách ${gaps.map((gap) => gap.toFixed(1)).join(",")}`)
+            if (gaps.length > 1 && Math.max(...gaps) - Math.min(...gaps) > 1.5) notes.push("Sizes khoảng cách không đều")
+          } else notes.push("thiếu hàng Sizes")
+          const typeGrid = document.querySelector("[data-input-types]")
+          if (typeGrid instanceof HTMLElement) {
+            if (typeGrid.scrollWidth > typeGrid.clientWidth + 2) notes.push("input types tràn")
+            const cells = [...typeGrid.querySelectorAll("[data-input-type]")].filter((el) => el instanceof HTMLElement)
+            if (cells.length !== 11) notes.push(`input types ${cells.length} ô`)
+            cells.forEach((cell, index) => {
+              const style = getComputedStyle(cell)
+              if (style.borderRightWidth !== "1px" || style.borderBottomWidth !== "1px") notes.push(`ô input ${index} thiếu kẻ`)
+              const name = cell.querySelector("[data-type-name]")
+              if (!(name instanceof HTMLElement) || getComputedStyle(name).textAlign !== "center") notes.push(`tên loại ${index} chưa giữa`)
+              if (index > 0) {
+                const prev = cells[index - 1]
+                if (prev instanceof HTMLElement) {
+                  const gap = cell.getBoundingClientRect().left - prev.getBoundingClientRect().right
+                  const sameRow = Math.abs(cell.getBoundingClientRect().top - prev.getBoundingClientRect().top) < 2
+                  if (sameRow && Math.abs(gap) > 1) notes.push(`kẻ input lệch ${gap.toFixed(1)}`)
+                }
+              }
+            })
+          } else notes.push("thiếu input types")
+          const progress = [...document.querySelectorAll("[data-progress-sample]")].filter((el) => el instanceof HTMLElement)
+          const progressOrder = progress.map((el) => el.getAttribute("data-progress-sample")).join(",")
+          if (progressOrder !== "1,2,3,4,5,6,7,8") notes.push(`progress ${progressOrder}`)
+          if (window.innerWidth >= 768 && progress.length === 8) {
+            const box = (n: number) => progress[n]?.getBoundingClientRect()
+            const first = box(0)
+            const second = box(1)
+            const fifth = box(4)
+            if (first && second && fifth) {
+              if (fifth.left <= first.left) notes.push("progress chưa 2 cột")
+              if (second.top <= first.top) notes.push("progress sai thứ tự cột")
+              if (Math.abs(first.top - fifth.top) > 2) notes.push("progress hàng đầu lệch")
+            }
+          }
+          if (window.innerWidth < 768 && progress.some((el, index) => index > 0 && el.getBoundingClientRect().top <= (progress[index - 1]?.getBoundingClientRect().top ?? 0))) {
+            notes.push("progress 375 chưa 1 cột")
+          }
+          const mid = (el: HTMLElement) => {
+            const box = el.getBoundingClientRect()
+            return box.top + box.height / 2
+          }
+          document.querySelectorAll("[data-field-sample], [data-progress-sample]").forEach((sample) => {
+            const badge = sample.querySelector("[data-sample-index]")
+            const control = sample.querySelector("[data-sample-control]")
+            if (!(badge instanceof HTMLElement) || !(control instanceof HTMLElement)) {
+              notes.push("thiếu số mẫu")
+              return
+            }
+            const delta = Math.abs(mid(badge) - mid(control))
+            if (delta > 2) notes.push(`số ${badge.textContent?.trim()} lệch control ${delta.toFixed(1)}px`)
+          })
           return notes
         })
         for (const note of found) failures.push(`${where}: ${note}`)
@@ -895,16 +979,16 @@ describe("kiểm showcase", () => {
         if (!before || !after || before === after) failures.push(`${where}: hex nền không đổi (${before} → ${after})`)
         await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
 
-        const switchEl = page.getByRole("switch", { name: "Switch tắt", exact: true })
+        const switchEl = page.getByRole("switch", { name: "Switch off", exact: true })
         const beforeSwitch = await switchEl.getAttribute("data-state")
         await switchEl.click()
         if ((await switchEl.getAttribute("data-state")) === beforeSwitch) failures.push(`${where}: Switch không đổi`)
-        const box = page.getByRole("checkbox", { name: "Checkbox bật", exact: true })
+        const box = page.getByRole("checkbox", { name: "Checkbox on", exact: true })
         const beforeBox = await box.getAttribute("data-state")
         await box.click()
         if ((await box.getAttribute("data-state")) === beforeBox) failures.push(`${where}: Checkbox không đổi`)
-        await page.getByRole("radio", { name: "Radio tắt", exact: true }).click()
-        if ((await page.getByRole("radio", { name: "Radio tắt", exact: true }).getAttribute("data-state")) !== "checked") {
+        await page.getByRole("radio", { name: "Radio off", exact: true }).click()
+        if ((await page.getByRole("radio", { name: "Radio off", exact: true }).getAttribute("data-state")) !== "checked") {
           failures.push(`${where}: Radio không đổi`)
         }
 
@@ -934,21 +1018,21 @@ describe("kiểm showcase", () => {
           return Math.abs(navBox.top - bar.bottom) > 2 ? `thanh không dính dưới header (${navBox.top.toFixed(1)} / ${bar.bottom.toFixed(1)})` : ""
         })
         if (stuck) failures.push(`${where}: ${stuck}`)
-        await page.getByRole("tab", { name: "Token", exact: true }).click()
+        await page.getByRole("tab", { name: "Tokens", exact: true }).click()
         await page.waitForTimeout(1000)
         const landed = await page.evaluate(() => {
           const nav = document.querySelector("[data-slot=section-nav]")
           const heading = document.getElementById("token")
-          if (!(nav instanceof HTMLElement) || !(heading instanceof HTMLElement)) return "thiếu mục Token"
+          if (!(nav instanceof HTMLElement) || !(heading instanceof HTMLElement)) return "thiếu mục Tokens"
           const bar = nav.getBoundingClientRect().bottom
           const top = heading.getBoundingClientRect().top
           if (top < bar - 1) return "tiêu đề bị che"
           const active = document.querySelector("[data-slot=section-nav] [role=tab][data-state=active]")
-          if (active?.textContent?.trim() !== "Token") return "mục sáng sai"
+          if (active?.textContent?.trim() !== "Tokens") return "mục sáng sai"
           return ""
         })
         if (landed) failures.push(`${where}: ${landed}`)
-        await page.getByLabel("Tìm icon").fill("Sun")
+        await page.getByLabel("Search icons").fill("Sun")
         const filtered = await page.waitForFunction(() => document.querySelectorAll("[data-icon-name]").length === 1).then(() => true).catch(() => false)
         const matches = await page.locator("[data-icon-name]").count()
         if (!filtered || matches !== 1) failures.push(`${where}: lọc icon còn ${matches}`)
@@ -956,8 +1040,13 @@ describe("kiểm showcase", () => {
         const tip = (await page.getByRole("tooltip").textContent())?.trim()
         if (tip !== "sun") failures.push(`${where}: tooltip icon là ${tip}`)
         await page.locator("[data-icon-name=Sun]").click()
-        const copied = await page.getByText("Đã copy Sun", { exact: true }).last().waitFor({ state: "visible", timeout: 2000 }).then(() => true).catch(() => false)
+        const copied = await page.getByText("Copied Sun", { exact: true }).last().waitFor({ state: "visible", timeout: 2000 }).then(() => true).catch(() => false)
         if (!copied) failures.push(`${where}: không thấy toast copy`)
+        const sliderThumb = page.locator("[data-slider-tip] [data-slot=slider-thumb]")
+        await sliderThumb.evaluate((el) => el.scrollIntoView({ block: "center" }))
+        await sliderThumb.focus()
+        const sliderTip = (await page.locator("[role=tooltip]").filter({ hasText: "40%" }).textContent({ timeout: 2000 }).catch(() => "")) ?? ""
+        if (!sliderTip.includes("40%")) failures.push(`${where}: slider tooltip ${sliderTip || "trống"}`)
       }
     }
     await page.close()
@@ -1037,7 +1126,7 @@ describe("kiểm showcase", () => {
             return true
           }
           const cards = [...document.querySelectorAll("[data-slot=card]")].filter(shown)
-          const inputs = [...document.querySelectorAll("[data-slot=input]")].filter((el) => shown(el) && el.getAttribute("aria-invalid") !== "true")
+          const inputs = [...document.querySelectorAll("[data-slot=input]")].filter((el) => shown(el) && el.getAttribute("aria-invalid") !== "true" && el.getAttribute("data-force-state") !== "focus")
           if (!cards.length) report("không thấy Card")
           const borderedInputs = inputs.filter((el) => check(el, "top", "Input"))
           if (flags.input && !borderedInputs.length) report("không thấy Input")

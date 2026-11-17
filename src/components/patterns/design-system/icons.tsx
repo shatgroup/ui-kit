@@ -27,18 +27,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
 
 const GROUPS: Array<{ title: string; icons: LucideIcon[] }> = [
-  { title: "Điều hướng và mũi tên", icons: [ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, ArrowDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, ChevronDownIcon, ChevronsUpDownIcon, MoveIcon] },
-  { title: "Thao tác", icons: [PlusIcon, MinusIcon, PencilIcon, Trash2Icon, SaveIcon, CopyIcon, UploadIcon, DownloadIcon, Share2Icon, FilterIcon, ArrowUpDownIcon, SearchIcon] },
-  { title: "File và thư mục", icons: [FileIcon, FileTextIcon, FolderIcon, FolderOpenIcon, FolderPlusIcon, FilesIcon, ArchiveIcon, PaperclipIcon, ClipboardIcon, BookOpenIcon] },
-  { title: "Giao tiếp", icons: [MailIcon, MessageCircleIcon, MessageSquareIcon, BellIcon, PhoneIcon, SendIcon, InboxIcon, AtSignIcon, MicIcon] },
-  { title: "Người dùng và bảo mật", icons: [UserIcon, UsersIcon, UserPlusIcon, LockIcon, KeyIcon, ShieldIcon, ShieldCheckIcon, EyeIcon, EyeOffIcon, LogInIcon, LogOutIcon] },
-  { title: "Trạng thái", icons: [CheckIcon, XIcon, CircleCheckIcon, CircleXIcon, CircleAlertIcon, TriangleAlertIcon, InfoIcon, CircleHelpIcon, LoaderIcon, BanIcon] },
+  { title: "Navigation", icons: [ArrowLeftIcon, ArrowRightIcon, ArrowUpIcon, ArrowDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, ChevronDownIcon, ChevronsUpDownIcon, MoveIcon] },
+  { title: "Actions", icons: [PlusIcon, MinusIcon, PencilIcon, Trash2Icon, SaveIcon, CopyIcon, UploadIcon, DownloadIcon, Share2Icon, FilterIcon, ArrowUpDownIcon, SearchIcon] },
+  { title: "Files", icons: [FileIcon, FileTextIcon, FolderIcon, FolderOpenIcon, FolderPlusIcon, FilesIcon, ArchiveIcon, PaperclipIcon, ClipboardIcon, BookOpenIcon] },
+  { title: "Communication", icons: [MailIcon, MessageCircleIcon, MessageSquareIcon, BellIcon, PhoneIcon, SendIcon, InboxIcon, AtSignIcon, MicIcon] },
+  { title: "Users", icons: [UserIcon, UsersIcon, UserPlusIcon, LockIcon, KeyIcon, ShieldIcon, ShieldCheckIcon, EyeIcon, EyeOffIcon, LogInIcon, LogOutIcon] },
+  { title: "Status", icons: [CheckIcon, XIcon, CircleCheckIcon, CircleXIcon, CircleAlertIcon, TriangleAlertIcon, InfoIcon, CircleHelpIcon, LoaderIcon, BanIcon] },
   { title: "Media", icons: [ImageIcon, PlayIcon, PauseIcon, Volume2Icon, VolumeXIcon, CameraIcon, MusicIcon, FilmIcon, HeadphonesIcon, ClapperboardIcon] },
-  { title: "Thương mại", icons: [ShoppingCartIcon, ShoppingBagIcon, TagIcon, CreditCardIcon, PackageIcon, TruckIcon, StoreIcon, ReceiptIcon, WalletIcon, GiftIcon] },
-  { title: "Thời gian và lịch", icons: [CalendarIcon, CalendarDaysIcon, ClockIcon, TimerIcon, HourglassIcon, AlarmClockIcon, HistoryIcon, CalendarCheckIcon, WatchIcon] },
-  { title: "Biểu đồ và dữ liệu", icons: [ChartColumnIcon, ChartLineIcon, ChartPieIcon, TrendingUpIcon, TrendingDownIcon, ActivityIcon, DatabaseIcon, Table2Icon, SigmaIcon] },
-  { title: "Bố cục", icons: [LayoutDashboardIcon, LayoutGridIcon, ListIcon, PanelLeftIcon, Columns2Icon, Rows3Icon, GalleryHorizontalIcon, AlignLeftIcon, GripVerticalIcon, StretchHorizontalIcon] },
-  { title: "Thiết bị và hệ thống", icons: [SettingsIcon, MonitorIcon, SmartphoneIcon, SunIcon, MoonIcon, LaptopIcon, TabletIcon, WifiIcon, BatteryIcon, PowerIcon, PrinterIcon] },
+  { title: "Commerce", icons: [ShoppingCartIcon, ShoppingBagIcon, TagIcon, CreditCardIcon, PackageIcon, TruckIcon, StoreIcon, ReceiptIcon, WalletIcon, GiftIcon] },
+  { title: "Time", icons: [CalendarIcon, CalendarDaysIcon, ClockIcon, TimerIcon, HourglassIcon, AlarmClockIcon, HistoryIcon, CalendarCheckIcon, WatchIcon] },
+  { title: "Charts", icons: [ChartColumnIcon, ChartLineIcon, ChartPieIcon, TrendingUpIcon, TrendingDownIcon, ActivityIcon, DatabaseIcon, Table2Icon, SigmaIcon] },
+  { title: "Layout", icons: [LayoutDashboardIcon, LayoutGridIcon, ListIcon, PanelLeftIcon, Columns2Icon, Rows3Icon, GalleryHorizontalIcon, AlignLeftIcon, GripVerticalIcon, StretchHorizontalIcon] },
+  { title: "Devices", icons: [SettingsIcon, MonitorIcon, SmartphoneIcon, SunIcon, MoonIcon, LaptopIcon, TabletIcon, WifiIcon, BatteryIcon, PowerIcon, PrinterIcon] },
 ]
 
 const POPULAR = ["Search", "Plus", "X", "Check", "ChevronDown", "ChevronRight", "ChevronLeft", "ChevronUp", "Settings", "User", "Users", "Mail", "Bell", "Trash2", "Pencil", "Copy", "Download", "Upload", "Share2", "Filter", "Eye", "EyeOff", "Lock", "Calendar", "Clock", "Sun", "Moon", "Info", "CircleAlert", "CircleCheck", "CircleX", "Loader", "ArrowLeft", "ArrowRight"]
@@ -74,7 +74,7 @@ function Icons() {
 
   function copy(name: string) {
     void navigator.clipboard?.writeText(name).catch(() => undefined)
-    toast(`Đã copy ${name}`)
+    toast(`Copied ${name}`)
   }
 
   return (
@@ -84,19 +84,19 @@ function Icons() {
         <CardContent>
           <Stack gap={4}>
             <Grid columns={{ base: 1, md: 3 }} gap={3} className="items-center">
-              <Input aria-label="Tìm icon" placeholder={`Tìm trong ${total} icon…`} value={query} onChange={(event) => setQuery(event.target.value)} />
+              <Input aria-label="Search icons" placeholder={`Search ${total} icons…`} value={query} onChange={(event) => setQuery(event.target.value)} />
               <Select value={group} onValueChange={setGroup}>
-                <SelectTrigger aria-label="Nhóm icon"><SelectValue /></SelectTrigger>
+                <SelectTrigger aria-label="Icon group"><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   {GROUPS.map((item) => <SelectItem key={item.title} value={item.title}>{item.title}</SelectItem>)}
                 </SelectContent>
               </Select>
               <a href="https://lucide.dev" target="_blank" rel="noreferrer" className="md:justify-self-end">
-                <Text size="sm" tone="primary">Xem đủ tại lucide.dev</Text>
+                <Text size="sm" tone="primary">See all on lucide.dev</Text>
               </a>
             </Grid>
-            {icons.length === 0 ? <EmptyState title="Không có icon" description="Thử tên khác." /> : (
+            {icons.length === 0 ? <EmptyState title="No icons" description="Try another name." /> : (
               <Grid columns={{ base: 4, md: 8, xl: 12 }} gap={2}>
                 {icons.map((Icon) => {
                   const name = iconName(Icon)

@@ -1,8 +1,9 @@
-import { useState, type ReactNode } from "react"
+import { cloneElement, useId, useState, type ReactElement, type ReactNode } from "react"
 import { Bar, BarChart, Cell, XAxis } from "recharts"
 import { toast } from "sonner"
-import { CircleAlertIcon, CircleCheckIcon, InfoIcon, PlusIcon, TriangleAlertIcon } from "lucide-react"
+import { CircleAlertIcon, CircleCheckIcon, InfoIcon, PlusIcon, SearchIcon, TriangleAlertIcon, UserIcon } from "lucide-react"
 import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
+import { Stepper } from "@/components/media/stepper.tsx"
 import { Alert } from "@/components/ui/alert.tsx"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx"
 import { Badge } from "@/components/ui/badge.tsx"
@@ -17,7 +18,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer.tsx"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx"
 import { EmptyState } from "@/components/ui/empty-state.tsx"
-import { FormField } from "@/components/ui/form-field.tsx"
+import { Label } from "@/components/ui/label.tsx"
+import { ProgressCircle } from "@/components/ui/progress-circle.tsx"
+import { ProgressSegments } from "@/components/ui/progress-segments.tsx"
+import { StepsBar } from "@/components/ui/steps-bar.tsx"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card.tsx"
 import { Input } from "@/components/ui/input.tsx"
 import { InputGroup } from "@/components/ui/input-group.tsx"
@@ -56,7 +60,127 @@ const CHART = [
   { name: "4", value: 80, fill: "var(--chart-4)" },
   { name: "5", value: 50, fill: "var(--chart-5)" },
 ]
-const chartConfig = { value: { label: "Mẫu", color: "var(--chart-1)" } }
+const chartConfig = { value: { label: "Sample", color: "var(--chart-1)" } }
+
+type Wired = {
+  id?: string
+  "aria-invalid"?: boolean
+  "aria-describedby"?: string
+}
+
+function ProgressSample({ n, children, extra }: { n: number; children: ReactNode; extra?: ReactNode }) {
+  return (
+    <div data-progress-sample={n}>
+      <Stack gap={1}>
+        <Inline gap={3} align="center" wrap={false}>
+          <SampleIndex n={n} />
+          <div data-sample-control className="min-w-0 flex-1">{children}</div>
+        </Inline>
+        {extra ? (
+          <Inline gap={3} wrap={false}>
+            <span className="w-8 shrink-0" aria-hidden="true" />
+            <div className="min-w-0 flex-1">{extra}</div>
+          </Inline>
+        ) : null}
+      </Stack>
+    </div>
+  )
+}
+
+function SampleIndex({ n }: { n: number }) {
+  return (
+    <span data-sample-index={n} className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted">
+      <Text as="span" size="xs" weight="semibold">{n}</Text>
+    </span>
+  )
+}
+
+function FieldSample({
+  n,
+  label,
+  hint,
+  error,
+  inline = false,
+  children,
+}: {
+  n: number
+  label: string
+  hint?: string
+  error?: string
+  inline?: boolean
+  children: ReactElement<Wired>
+}) {
+  const id = useId()
+  const message = error || hint || ""
+  const messageId = message ? `${id}-message` : undefined
+  const control = cloneElement(children, {
+    id,
+    "aria-invalid": error ? true : undefined,
+    "aria-describedby": messageId,
+  })
+  const note = message ? (
+    <Text id={messageId} as="p" size="sm" tone={error ? "destructive" : "muted"}>{message}</Text>
+  ) : null
+  if (inline) {
+    return (
+      <div data-field-sample={n}>
+        <Inline gap={3} align="center" wrap={false}>
+          <SampleIndex n={n} />
+          <Inline gap={3} align="center" wrap={false} className="min-w-0 flex-1">
+            <Label htmlFor={id}>{label}</Label>
+            <div data-sample-control className="min-w-0 flex-1">{control}</div>
+          </Inline>
+        </Inline>
+      </div>
+    )
+  }
+  return (
+    <div data-field-sample={n}>
+      <Stack gap={1}>
+        <Inline gap={3} align="end" wrap={false}>
+          <span className="w-8 shrink-0" aria-hidden="true" />
+          <Label htmlFor={id} className="min-w-0 flex-1">{label}</Label>
+        </Inline>
+        <Inline gap={3} align="center" wrap={false}>
+          <SampleIndex n={n} />
+          <div data-sample-control className="min-w-0 flex-1">{control}</div>
+        </Inline>
+        {note ? (
+          <Inline gap={3} wrap={false}>
+            <span className="w-8 shrink-0" aria-hidden="true" />
+            <div className="min-w-0 flex-1">{note}</div>
+          </Inline>
+        ) : null}
+      </Stack>
+    </div>
+  )
+}
+
+function TypeCell({
+  name,
+  label,
+  children,
+  note,
+  className,
+}: {
+  name: string
+  label: string
+  children: ReactNode
+  note?: ReactNode
+  className?: string
+}) {
+  return (
+    <div data-input-type={name} className={`flex h-full min-w-0 flex-col gap-3 border-r border-b border-border p-6 ${className ?? ""}`}>
+      <Label>{label}</Label>
+      <div data-sample-control className="min-w-0">{children}</div>
+      {note}
+      <span className="flex-1" />
+      <span data-type-name className="block text-center">
+        <Text size="sm" weight="medium">{name}</Text>
+      </span>
+    </div>
+  )
+}
 
 function Section({ id, title, children }: { id: string; title: string; children: ReactNode }) {
   return (
@@ -92,53 +216,72 @@ function Kit() {
   const [boxOn, setBoxOn] = useState(true)
   const [boxOff, setBoxOff] = useState(false)
   const [partial, setPartial] = useState(true)
-  const [radioOn, setRadioOn] = useState("bat")
-  const [radioOff, setRadioOff] = useState("khac")
+  const [radioOn, setRadioOn] = useState("on")
+  const [radioOff, setRadioOff] = useState("other")
   const [choice, setChoice] = useState("selected")
   const [switchOn, setSwitchOn] = useState(true)
   const [switchOff, setSwitchOff] = useState(false)
   const [amount, setAmount] = useState(12)
-  const [tags, setTags] = useState(["Keyword", "Keyword"])
+  const [tags, setTags] = useState(["Design", "System"])
   const [date, setDate] = useState<Date | undefined>(new Date(2026, 0, 20))
   const [segment, setSegment] = useState("bookings")
   const [alerts, setAlerts] = useState({ info: true, success: true, warning: true, error: true })
 
   return (
     <Stack gap={8}>
-      <Section id="hanh-dong" title="Hành động">
+      <Section id="hanh-dong" title="Actions">
         <Span at="md:col-span-4 xl:col-span-8">
           <KitCard title="Buttons">
-            <div data-button-matrix className="min-w-0 overflow-x-auto">
-              <Grid columns={5} gap={3} className="w-max justify-items-start">
-                <span />
-                {STATES.map((state) => <Text key={state.key} size="xs" tone="muted">{state.label}</Text>)}
-                {VARIANTS.map((variant) => (
-                  <span key={variant} className="contents">
-                    <Text size="xs">{variant}</Text>
-                    <Button variant={variant} className="w-fit">Button</Button>
-                    <Button variant={variant} forceState="hover" className="w-fit">Button</Button>
-                    <Button variant={variant} forceState="focus" className="w-fit">Button</Button>
-                    <Button variant={variant} disabled className="w-fit">Button</Button>
-                  </span>
-                ))}
-                <Text size="xs">Kích thước</Text>
-                <div className="col-span-4">
-                  <Grid columns={5} gap={3} className="w-max justify-items-start">
-                    <Button size="sm" className="w-fit">sm</Button>
-                    <Button className="w-fit">default</Button>
-                    <Button size="lg" className="w-fit">lg</Button>
-                    <Button className="w-fit"><PlusIcon />Thêm</Button>
-                    <Button size="icon" aria-label="Thêm"><PlusIcon /></Button>
-                  </Grid>
+            <Stack gap={6}>
+              <div data-button-matrix className="min-w-0 overflow-x-auto">
+                <Grid columns={5} gap={3} className="w-max justify-items-start">
+                  <span />
+                  {STATES.map((state) => <Text key={state.key} size="xs" tone="muted">{state.label}</Text>)}
+                  {VARIANTS.map((variant) => (
+                    <span key={variant} className="contents">
+                      <Text size="xs">{variant}</Text>
+                      <Button variant={variant} className="w-fit">Button</Button>
+                      <Button variant={variant} forceState="hover" className="w-fit">Button</Button>
+                      <Button variant={variant} forceState="focus" className="w-fit">Button</Button>
+                      <Button variant={variant} disabled className="w-fit">Button</Button>
+                    </span>
+                  ))}
+                </Grid>
+              </div>
+              <Stack gap={3}>
+                <Text size="xs" tone="muted">Sizes</Text>
+                <div data-button-sizes className="min-w-0 overflow-x-auto">
+                  <div className="flex w-max items-end gap-3">
+                    <Stack slot="size-item" gap={1} align="center">
+                      <Button size="sm" className="w-fit">Small</Button>
+                      <Text size="xs" tone="muted" className="whitespace-nowrap">Small · 32px</Text>
+                    </Stack>
+                    <Stack slot="size-item" gap={1} align="center">
+                      <Button className="w-fit">Default</Button>
+                      <Text size="xs" tone="muted" className="whitespace-nowrap">Default · 36px</Text>
+                    </Stack>
+                    <Stack slot="size-item" gap={1} align="center">
+                      <Button size="lg" className="w-fit">Large</Button>
+                      <Text size="xs" tone="muted" className="whitespace-nowrap">Large · 40px</Text>
+                    </Stack>
+                    <Stack slot="size-item" gap={1} align="center">
+                      <Button className="w-fit"><PlusIcon />With icon</Button>
+                      <Text size="xs" tone="muted" className="whitespace-nowrap">With icon · 36px</Text>
+                    </Stack>
+                    <Stack slot="size-item" gap={1} align="center">
+                      <Button size="icon" aria-label="Add"><PlusIcon /></Button>
+                      <Text size="xs" tone="muted" className="whitespace-nowrap">Icon only · 36px</Text>
+                    </Stack>
+                  </div>
                 </div>
-              </Grid>
-            </div>
+              </Stack>
+            </Stack>
           </KitCard>
         </Span>
         <Span at="md:col-span-2 xl:col-span-4">
           <KitCard title="Controls">
             <div className="min-w-0 overflow-x-auto">
-            <ToggleGroup type="single" variant="outline" value={segment} onValueChange={(value) => { if (value) setSegment(value) }} aria-label="Nhóm">
+            <ToggleGroup type="single" variant="outline" value={segment} onValueChange={(value) => { if (value) setSegment(value) }} aria-label="Segments">
               <ToggleGroupItem value="bookings">Bookings</ToggleGroupItem>
               <ToggleGroupItem value="coaches">Coaches</ToggleGroupItem>
               <ToggleGroupItem value="notes">Notes</ToggleGroupItem>
@@ -157,100 +300,124 @@ function Kit() {
         </Span>
       </Section>
 
-      <Section id="nhap-lieu" title="Nhập liệu">
+      <Section id="nhap-lieu" title="Inputs">
+        <Span at="md:col-span-6 xl:col-span-12">
+          <KitCard title="Input states">
+            <div data-input-states className="grid grid-cols-1 gap-6 md:grid-flow-col md:grid-cols-2 md:grid-rows-4">
+              <FieldSample n={1} label="Default"><Input placeholder="Type here" /></FieldSample>
+              <FieldSample n={2} label="Filled"><Input defaultValue="Alex Kim" /></FieldSample>
+              <FieldSample n={3} label="With icon"><InputGroup prefix={<UserIcon className="size-4" />} aria-label="Username" placeholder="Username" /></FieldSample>
+              <FieldSample n={4} label="Focus"><Input forceState="focus" defaultValue="Focused" /></FieldSample>
+              <FieldSample n={5} label="Error" error="This field is invalid"><Input defaultValue="???" /></FieldSample>
+              <FieldSample n={6} label="Disabled"><Input defaultValue="Not editable" disabled /></FieldSample>
+              <FieldSample n={7} label="Email" inline><Input placeholder="name@studio.com" /></FieldSample>
+              <FieldSample n={8} label="With helper text" hint="Shown under the field"><Input placeholder="Add a note" /></FieldSample>
+            </div>
+          </KitCard>
+        </Span>
+        <Span at="md:col-span-6 xl:col-span-12">
+          <KitCard title="Input types">
+            <div data-input-types className="grid min-w-0 grid-cols-1 border-l border-t border-border md:grid-cols-2 xl:grid-cols-3">
+              <TypeCell name="Text input" label="Name">
+                <Input placeholder="Text" />
+              </TypeCell>
+              <TypeCell name="Search field" label="Search">
+                <InputGroup prefix={<SearchIcon className="size-4" />} aria-label="Search field" placeholder="Search" />
+              </TypeCell>
+              <TypeCell name="Textarea" label="Note" className="xl:row-span-2" note={<Text size="xs" tone="muted" className="text-right">0 / 320</Text>}>
+                <Textarea className="min-h-16 flex-1" placeholder="Write a note" />
+              </TypeCell>
+              <TypeCell name="Date" label="Date">
+                <DateInput value={date} onValueChange={setDate} placeholder="Select a date" />
+              </TypeCell>
+              <TypeCell name="Select" label="Tool">
+                <Select defaultValue="figma">
+                  <SelectTrigger aria-label="Tool"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="framer">Framer</SelectItem>
+                    <SelectItem value="sketch">Sketch</SelectItem>
+                    <SelectItem value="invision">InVision Studio</SelectItem>
+                    <SelectItem value="figma">Figma</SelectItem>
+                    <SelectItem value="adobe">Adobe XD</SelectItem>
+                  </SelectContent>
+                </Select>
+              </TypeCell>
+              <TypeCell name="Prefix input" label="Website">
+                <InputGroup prefix="https://" aria-label="Website" placeholder="example.com" />
+              </TypeCell>
+              <TypeCell name="Multi-select" label="Tags">
+                <TagsInput value={tags} onValueChange={setTags} placeholder="Add a tag" />
+              </TypeCell>
+              <TypeCell name="Input with stepper" label="Quantity">
+                <NumberInput value={amount} onValueChange={setAmount} min={0} max={40} label="Quantity" />
+              </TypeCell>
+              <TypeCell name="Password" label="Password" note={<Text size="sm" tone="success">Strong</Text>}>
+                <PasswordInput aria-label="Password" defaultValue="secret" />
+              </TypeCell>
+              <TypeCell name="Number only" label="Width">
+                <InputGroup suffix="px" aria-label="Width" inputMode="numeric" defaultValue="16" />
+              </TypeCell>
+              <TypeCell name="Dropdown list" label="Apps">
+                <Command className="rounded-lg border border-border">
+                  <CommandList>
+                    <CommandGroup>
+                      <CommandItem value="framer">Framer</CommandItem>
+                      <CommandItem value="sketch">Sketch</CommandItem>
+                      <CommandItem value="invision">InVision Studio</CommandItem>
+                      <CommandItem value="figma">Figma</CommandItem>
+                      <CommandItem value="adobe">Adobe XD</CommandItem>
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </TypeCell>
+            </div>
+          </KitCard>
+        </Span>
         <Span at="md:col-span-6 xl:col-span-6">
-          <KitCard title="Text Inputs">
-            <Grid columns={{ base: 1, md: 2 }} gap={3}>
-              <FormField label="Label"><Input defaultValue="Christian Bal" /></FormField>
-              <FormField label="Lỗi" error="Không hợp lệ"><Input defaultValue="???" /></FormField>
-              <FormField label="Tắt"><Input defaultValue="Không sửa" disabled /></FormField>
-              <FormField label="Website"><InputGroup prefix="https://" aria-label="Website" placeholder="example.com" /></FormField>
-              <FormField label="Đơn vị"><InputGroup suffix="px" aria-label="Đơn vị" defaultValue="123" /></FormField>
-              <FormField label="Mật khẩu"><PasswordInput aria-label="Mật khẩu" defaultValue="secret" /></FormField>
-              <FormField label="Ngày"><DateInput value={date} onValueChange={setDate} /></FormField>
-              <FormField label="Tags"><TagsInput value={tags} onValueChange={setTags} /></FormField>
-              <FormField label="Ghi chú"><Textarea defaultValue="Nội dung nhiều dòng" /></FormField>
-            </Grid>
-          </KitCard>
-        </Span>
-        <Span at="md:col-span-3 xl:col-span-3">
-          <KitCard title="Dropdown">
-            <Select defaultValue="figma">
-              <SelectTrigger aria-label="Dropdown"><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="framer">Framer</SelectItem>
-                <SelectItem value="sketch">Sketch</SelectItem>
-                <SelectItem value="invision">InVision Studio</SelectItem>
-                <SelectItem value="figma">Figma</SelectItem>
-                <SelectItem value="adobe">Adobe XD</SelectItem>
-              </SelectContent>
-            </Select>
-            <Command className="rounded-lg border border-border">
-              <CommandList>
-                <CommandGroup>
-                  <CommandItem value="framer">Framer</CommandItem>
-                  <CommandItem value="sketch">Sketch</CommandItem>
-                  <CommandItem value="invision">InVision Studio</CommandItem>
-                  <CommandItem value="figma">Figma</CommandItem>
-                  <CommandItem value="adobe">Adobe XD</CommandItem>
-                </CommandGroup>
-              </CommandList>
-            </Command>
-          </KitCard>
-        </Span>
-        <Span at="md:col-span-3 xl:col-span-3">
-          <KitCard title="Stepper">
-            <FormField label="Mặc định"><NumberInput value={amount} onValueChange={setAmount} min={0} max={40} /></FormField>
-            <FormField label="Đơn vị"><InputGroup suffix="px" aria-label="Stepper đơn vị" defaultValue="123" /></FormField>
-            <FormField label="Lỗi" error="Không hợp lệ"><InputGroup suffix="px" aria-label="Stepper lỗi" defaultValue="123" aria-invalid /></FormField>
-            <FormField label="Tắt"><InputGroup suffix="px" aria-label="Stepper tắt" defaultValue="123" disabled /></FormField>
-          </KitCard>
-        </Span>
-        <Span at="md:col-span-6 xl:col-span-6">
-          <KitCard title="Lựa chọn">
+          <KitCard title="Selection">
             <Grid columns={6} gap={2} className="items-center">
               <span />
-              {["Bật", "Tắt", "Disabled bật", "Disabled tắt", "Indeterminate"].map((label) => (
+              {["On", "Off", "Disabled on", "Disabled off", "Indeterminate"].map((label) => (
                 <Text key={label} size="xs" tone="muted">{label}</Text>
               ))}
             </Grid>
             <Grid columns={6} gap={2} className="items-center">
               <Text size="xs">Checkbox</Text>
-              <CheckboxField label={<Quiet name="Checkbox bật" />} checked={boxOn} onCheckedChange={(value) => setBoxOn(value === true)} />
-              <CheckboxField label={<Quiet name="Checkbox tắt" />} checked={boxOff} onCheckedChange={(value) => setBoxOff(value === true)} />
-              <CheckboxField label={<Quiet name="Checkbox disabled bật" />} checked disabled />
-              <CheckboxField label={<Quiet name="Checkbox disabled tắt" />} checked={false} disabled />
+              <CheckboxField label={<Quiet name="Checkbox on" />} checked={boxOn} onCheckedChange={(value) => setBoxOn(value === true)} />
+              <CheckboxField label={<Quiet name="Checkbox off" />} checked={boxOff} onCheckedChange={(value) => setBoxOff(value === true)} />
+              <CheckboxField label={<Quiet name="Checkbox disabled on" />} checked disabled />
+              <CheckboxField label={<Quiet name="Checkbox disabled off" />} checked={false} disabled />
               <CheckboxField label={<Quiet name="Checkbox indeterminate" />} indeterminate={partial} checked={false} onCheckedChange={() => setPartial(false)} />
             </Grid>
             <Grid columns={6} gap={2} className="items-center">
               <Text size="xs">Radio</Text>
-              <RadioGroup value={radioOn} onValueChange={setRadioOn} aria-label="Radio bật">
-                <RadioField value="bat" label={<Quiet name="Radio bật" />} />
+              <RadioGroup value={radioOn} onValueChange={setRadioOn} aria-label="Radio on">
+                <RadioField value="on" label={<Quiet name="Radio on" />} />
               </RadioGroup>
-              <RadioGroup value={radioOff} onValueChange={setRadioOff} aria-label="Radio tắt">
-                <RadioField value="tat" label={<Quiet name="Radio tắt" />} />
+              <RadioGroup value={radioOff} onValueChange={setRadioOff} aria-label="Radio off">
+                <RadioField value="off" label={<Quiet name="Radio off" />} />
               </RadioGroup>
-              <RadioGroup value="bat" aria-label="Radio disabled bật">
-                <RadioField value="bat" label={<Quiet name="Radio disabled bật" />} disabled />
+              <RadioGroup value="on" aria-label="Radio disabled on">
+                <RadioField value="on" label={<Quiet name="Radio disabled on" />} disabled />
               </RadioGroup>
-              <RadioGroup value="khac" aria-label="Radio disabled tắt">
-                <RadioField value="tat" label={<Quiet name="Radio disabled tắt" />} disabled />
+              <RadioGroup value="other" aria-label="Radio disabled off">
+                <RadioField value="off" label={<Quiet name="Radio disabled off" />} disabled />
               </RadioGroup>
               <span />
             </Grid>
             <Grid columns={6} gap={2} className="items-center">
               <Text size="xs">Switch</Text>
-              <SwitchField label={<Quiet name="Switch bật" />} checked={switchOn} onCheckedChange={setSwitchOn} />
-              <SwitchField label={<Quiet name="Switch tắt" />} checked={switchOff} onCheckedChange={setSwitchOff} />
-              <SwitchField label={<Quiet name="Switch disabled bật" />} checked disabled />
-              <SwitchField label={<Quiet name="Switch disabled tắt" />} checked={false} disabled />
+              <SwitchField label={<Quiet name="Switch on" />} checked={switchOn} onCheckedChange={setSwitchOn} />
+              <SwitchField label={<Quiet name="Switch off" />} checked={switchOff} onCheckedChange={setSwitchOff} />
+              <SwitchField label={<Quiet name="Switch disabled on" />} checked disabled />
+              <SwitchField label={<Quiet name="Switch disabled off" />} checked={false} disabled />
               <span />
             </Grid>
           </KitCard>
         </Span>
         <Span at="md:col-span-3 xl:col-span-3">
           <KitCard title="Selectors">
-            <RadioGroup value={choice} onValueChange={setChoice} aria-label="Thẻ chọn">
+            <RadioGroup value={choice} onValueChange={setChoice} aria-label="Choice">
               <div className={choice === "selected" ? "rounded-lg border border-primary p-3" : "rounded-lg border border-border p-3"}>
                 <RadioField value="selected" label="Selected" />
               </div>
@@ -262,21 +429,21 @@ function Kit() {
         </Span>
         <Span at="md:col-span-3 xl:col-span-3">
           <KitCard title="Slider">
-            <Slider defaultValue={[40]} aria-label="Mức" />
+            <Slider defaultValue={[40]} aria-label="Level" />
           </KitCard>
         </Span>
       </Section>
 
-      <Section id="phan-hoi" title="Phản hồi">
+      <Section id="phan-hoi" title="Feedback">
         <Span at="md:col-span-6 xl:col-span-6">
           <KitCard title="Alerts">
-            {alerts.info ? <Alert variant="line" tone="info" title="Đây là một thông tin cần biết" icon={<InfoIcon className="size-4 text-info" />} onClose={() => setAlerts((current) => ({ ...current, info: false }))} /> : null}
-            {alerts.success ? <Alert variant="line" tone="success" title="Đã lưu thông tin" icon={<CircleCheckIcon className="size-4 text-success" />} onClose={() => setAlerts((current) => ({ ...current, success: false }))} /> : null}
-            {alerts.warning ? <Alert variant="line" tone="warning" title="Cần điền đủ dữ liệu" icon={<TriangleAlertIcon className="size-4 text-warning" />} onClose={() => setAlerts((current) => ({ ...current, warning: false }))} /> : null}
-            {alerts.error ? <Alert variant="line" tone="error" title="Không lưu được" icon={<CircleAlertIcon className="size-4 text-destructive" />} onClose={() => setAlerts((current) => ({ ...current, error: false }))} /> : null}
+            {alerts.info ? <Alert variant="line" tone="info" title="Something you should know" icon={<InfoIcon className="size-4 text-info" />} onClose={() => setAlerts((current) => ({ ...current, info: false }))} /> : null}
+            {alerts.success ? <Alert variant="line" tone="success" title="Saved" icon={<CircleCheckIcon className="size-4 text-success" />} onClose={() => setAlerts((current) => ({ ...current, success: false }))} /> : null}
+            {alerts.warning ? <Alert variant="line" tone="warning" title="Fill in the required fields" icon={<TriangleAlertIcon className="size-4 text-warning" />} onClose={() => setAlerts((current) => ({ ...current, warning: false }))} /> : null}
+            {alerts.error ? <Alert variant="line" tone="error" title="Could not save" icon={<CircleAlertIcon className="size-4 text-destructive" />} onClose={() => setAlerts((current) => ({ ...current, error: false }))} /> : null}
           </KitCard>
         </Span>
-        <Span at="md:col-span-3 xl:col-span-3">
+        <Span at="md:col-span-6 xl:col-span-6">
           <KitCard title="Badges">
             <Inline gap={2}>
               <StatusBadge status="done" label="Done" />
@@ -286,24 +453,63 @@ function Kit() {
               <StatusBadge status="draft" label="Draft" />
             </Inline>
             <Inline gap={2}>
-              <Badge variant="outline">Nhãn</Badge>
-              <Badge variant="outline">Phân loại</Badge>
+              <Badge variant="outline">Label</Badge>
+              <Badge variant="outline">Category</Badge>
               <Badge>+2</Badge>
             </Inline>
           </KitCard>
         </Span>
-        <Span at="md:col-span-3 xl:col-span-3">
+        <Span at="md:col-span-6 xl:col-span-12">
           <KitCard title="Progress">
-            {[1, 3, 5, 8].map((step) => (
-              <Stack key={step} gap={1}>
-                <Text size="xs">Step {step} of 8</Text>
-                <Progress value={(step / 8) * 100} />
-              </Stack>
-            ))}
-            <Inline gap={3} align="center">
-              <Spinner />
-              <Spinner className="size-8" />
-            </Inline>
+            <div data-progress-samples className="grid grid-cols-1 gap-6 md:grid-flow-col md:grid-cols-2 md:grid-rows-4">
+              <ProgressSample n={1}>
+                <Stepper className="flex-row" steps={[
+                  { id: "create", label: "Create", status: "done" },
+                  { id: "review", label: "Review", status: "current" },
+                  { id: "ship", label: "Ship", status: "todo" },
+                ]} />
+              </ProgressSample>
+              <ProgressSample n={2} extra={<Text size="sm" className="text-center">40%</Text>}>
+                <Progress value={40} aria-label="40 percent" />
+              </ProgressSample>
+              <ProgressSample n={3}>
+                <Slider defaultValue={[40]} tip="40%" aria-label="Percent" data-slider-tip="40%" />
+              </ProgressSample>
+              <ProgressSample n={4}>
+                <ProgressSegments value={2} max={6} />
+              </ProgressSample>
+              <ProgressSample n={5}>
+                <Inline gap={3} align="center" wrap={false}>
+                  <ProgressCircle value={2} max={5}>2 of 5</ProgressCircle>
+                  <Stack gap={1}>
+                    <Text size="sm" weight="semibold">Step name 2</Text>
+                    <Text size="xs" tone="muted">Next: Step name 3</Text>
+                  </Stack>
+                </Inline>
+              </ProgressSample>
+              <ProgressSample n={6}>
+                <Inline gap={3} align="center" wrap={false}>
+                  <Spinner />
+                  <Text size="sm">Loading… 25%</Text>
+                </Inline>
+              </ProgressSample>
+              <ProgressSample n={7}>
+                <StepsBar steps={[
+                  { label: "Step 1", status: "done" },
+                  { label: "Step 2", status: "current" },
+                  { label: "Step 3", status: "todo" },
+                ]} />
+              </ProgressSample>
+              <ProgressSample n={8}>
+                <div className="overflow-hidden rounded-md bg-muted">
+                  <Inline gap={3} align="center" wrap={false} className="p-3">
+                    <Text size="sm" className="min-w-0 flex-1">25% Update in progress…</Text>
+                    <Text size="sm" tone="muted">5s left</Text>
+                  </Inline>
+                  <Progress value={25} aria-label="Update" className="h-1 rounded-none" />
+                </div>
+              </ProgressSample>
+            </div>
           </KitCard>
         </Span>
         <Span at="md:col-span-6 xl:col-span-12">
@@ -312,64 +518,64 @@ function Kit() {
               <Dialog>
                 <DialogTrigger asChild><Button variant="outline" size="sm">Dialog</Button></DialogTrigger>
                 <DialogContent>
-                  <DialogHeader><DialogTitle>Hộp thoại</DialogTitle></DialogHeader>
-                  <Text size="sm">Nội dung trong khung.</Text>
+                  <DialogHeader><DialogTitle>Dialog</DialogTitle></DialogHeader>
+                  <Text size="sm">Content in the frame.</Text>
                 </DialogContent>
               </Dialog>
               <Sheet>
                 <SheetTrigger asChild><Button variant="outline" size="sm">Sheet</Button></SheetTrigger>
                 <SheetContent>
-                  <SheetHeader><SheetTitle>Bảng cạnh</SheetTitle></SheetHeader>
-                  <Text size="sm">Trượt từ mép màn hình.</Text>
+                  <SheetHeader><SheetTitle>Sheet</SheetTitle></SheetHeader>
+                  <Text size="sm">Slides in from the edge.</Text>
                 </SheetContent>
               </Sheet>
               <Drawer>
                 <DrawerTrigger asChild><Button variant="outline" size="sm">Drawer</Button></DrawerTrigger>
                 <DrawerContent>
-                  <DrawerHeader><DrawerTitle>Ngăn kéo</DrawerTitle></DrawerHeader>
-                  <Text size="sm">Trượt từ đáy.</Text>
+                  <DrawerHeader><DrawerTitle>Drawer</DrawerTitle></DrawerHeader>
+                  <Text size="sm">Slides up from the bottom.</Text>
                 </DrawerContent>
               </Drawer>
               <Tooltip>
                 <TooltipTrigger asChild><Button variant="outline" size="sm">Tooltip</Button></TooltipTrigger>
-                <TooltipContent>Chú thích</TooltipContent>
+                <TooltipContent>Note</TooltipContent>
               </Tooltip>
               <HoverCard>
                 <HoverCardTrigger asChild><Button variant="outline" size="sm">HoverCard</Button></HoverCardTrigger>
-                <HoverCardContent>Nội dung khi rê chuột.</HoverCardContent>
+                <HoverCardContent>Shown on hover.</HoverCardContent>
               </HoverCard>
               <Popover>
                 <PopoverTrigger asChild><Button variant="outline" size="sm">Popover</Button></PopoverTrigger>
-                <PopoverContent>Nội dung phụ.</PopoverContent>
+                <PopoverContent>Extra content.</PopoverContent>
               </Popover>
               <DropdownMenu>
-                <DropdownMenuTrigger asChild><Button variant="outline" size="sm">Mở menu</Button></DropdownMenuTrigger>
+                <DropdownMenuTrigger asChild><Button variant="outline" size="sm">Open menu</Button></DropdownMenuTrigger>
                 <DropdownMenuContent>
-                  <DropdownMenuItem>Sửa</DropdownMenuItem>
-                  <DropdownMenuItem>Xoá</DropdownMenuItem>
+                  <DropdownMenuItem>Edit</DropdownMenuItem>
+                  <DropdownMenuItem>Delete</DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button variant="outline" size="sm" onClick={() => toast("Đã lưu mẫu")}>Toast</Button>
+              <Button variant="outline" size="sm" onClick={() => toast("Sample saved")}>Toast</Button>
             </Inline>
           </KitCard>
         </Span>
       </Section>
 
-      <Section id="du-lieu" title="Dữ liệu">
+      <Section id="du-lieu" title="Data">
         <Span at="md:col-span-6 xl:col-span-6">
           <KitCard title="Table">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Tên</TableHead>
-                  <TableHead>Trạng thái</TableHead>
-                  <TableHead>Số</TableHead>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Count</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                <TableRow><TableCell>Cover</TableCell><TableCell>Xong</TableCell><TableCell>18</TableCell></TableRow>
-                <TableRow><TableCell>Summary</TableCell><TableCell>Đang làm</TableCell><TableCell>29</TableCell></TableRow>
-                <TableRow><TableCell>Appendix</TableCell><TableCell>Nháp</TableCell><TableCell>7</TableCell></TableRow>
+                <TableRow><TableCell>Cover</TableCell><TableCell>Done</TableCell><TableCell>18</TableCell></TableRow>
+                <TableRow><TableCell>Summary</TableCell><TableCell>In progress</TableCell><TableCell>29</TableCell></TableRow>
+                <TableRow><TableCell>Appendix</TableCell><TableCell>Draft</TableCell><TableCell>7</TableCell></TableRow>
               </TableBody>
             </Table>
           </KitCard>
@@ -392,7 +598,7 @@ function Kit() {
           </KitCard>
         </Span>
         <Span at="md:col-span-6 xl:col-span-12">
-          <KitCard title="Trạng thái dữ liệu">
+          <KitCard title="Empty and loading">
             <Inline gap={4} align="center">
               <Inline gap={2} align="center">
                 <Avatar size="lg"><AvatarFallback>JH</AvatarFallback></Avatar>
@@ -405,7 +611,7 @@ function Kit() {
                 <Skeleton className="h-4 w-full" />
                 <Skeleton className="h-4 w-2/3" />
               </Stack>
-              <EmptyState title="Chưa có mục" description="Danh sách trống." />
+              <EmptyState title="Nothing here" description="The list is empty." />
             </Inline>
           </KitCard>
         </Span>

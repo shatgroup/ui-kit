@@ -43,6 +43,8 @@ Nguồn: class và prop đang dùng trong `src/`, đối chiếu `node_modules/t
 
 Cỡ và line-height mặc định Tailwind. Ngoại lệ tiếng Việt: `--text-3xl--line-height: 1.3` vì mặc định 1.2 thấp hơn 1.3. `--text-2xl` giữ 1.333.
 
+Nhỏ (`text-xs`) và chú thích mô tả (`text-sm`) dùng `muted-foreground`. Các cỡ còn lại trong bảng chữ dùng `foreground`. Cột ÁP DỤNG ghi đúng tên màu đang áp lên chữ mẫu.
+
 | Token | Cỡ | Line-height | Lần dùng |
 | --- | --- | --- | --- |
 | text-xs | 0.75rem | 1.333 | 8 |

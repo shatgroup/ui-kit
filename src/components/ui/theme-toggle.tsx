@@ -44,11 +44,11 @@ function useThemeTransition(onChange?: (dark: boolean) => void) {
 function ThemeToggle({ onChange }: { onChange?: (dark: boolean) => void }) {
   const { dark, toggle } = useThemeTransition(onChange)
   return (
-    <ToggleGroup type="single" variant="outline" size="default" value={dark ? "dark" : "light"} onValueChange={() => undefined} aria-label="Sáng hoặc tối">
-      <ToggleGroupItem value="light" aria-label="Sáng" onClick={(event) => { if (document.documentElement.classList.contains("dark")) toggle(event) }}>
+    <ToggleGroup type="single" variant="outline" size="default" value={dark ? "dark" : "light"} onValueChange={() => undefined} aria-label="Light or dark">
+      <ToggleGroupItem value="light" aria-label="Light" onClick={(event) => { if (document.documentElement.classList.contains("dark")) toggle(event) }}>
         <SunIcon />
       </ToggleGroupItem>
-      <ToggleGroupItem value="dark" aria-label="Tối" onClick={(event) => { if (!document.documentElement.classList.contains("dark")) toggle(event) }}>
+      <ToggleGroupItem value="dark" aria-label="Dark" onClick={(event) => { if (!document.documentElement.classList.contains("dark")) toggle(event) }}>
         <MoonIcon />
       </ToggleGroupItem>
     </ToggleGroup>

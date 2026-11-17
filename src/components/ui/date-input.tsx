@@ -12,11 +12,13 @@ function DateInput({
   onValueChange,
   size = "default",
   placeholder = "Chọn ngày",
+  id,
 }: {
   value?: Date
   onValueChange: (value: Date | undefined) => void
   size?: ControlSize
   placeholder?: string
+  id?: string
 }) {
   const [open, setOpen] = useState(false)
   return (
@@ -24,6 +26,7 @@ function DateInput({
       <PopoverTrigger asChild>
         <span>
           <InputGroup
+            id={id}
             size={size}
             readOnly
             value={value ? format(value, "dd/MM/yyyy") : ""}

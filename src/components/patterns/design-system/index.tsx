@@ -6,12 +6,12 @@ import { Header, Tokens, TypeAndColor } from "./foundation.tsx"
 import { Kit } from "./kit.tsx"
 
 const SECTIONS = [
-  { id: "nen-tang", label: "Nền tảng" },
-  { id: "token", label: "Token" },
-  { id: "hanh-dong", label: "Hành động" },
-  { id: "nhap-lieu", label: "Nhập liệu" },
-  { id: "phan-hoi", label: "Phản hồi" },
-  { id: "du-lieu", label: "Dữ liệu" },
+  { id: "nen-tang", label: "Foundations" },
+  { id: "token", label: "Tokens" },
+  { id: "hanh-dong", label: "Actions" },
+  { id: "nhap-lieu", label: "Inputs" },
+  { id: "phan-hoi", label: "Feedback" },
+  { id: "du-lieu", label: "Data" },
   { id: "icons", label: "Icons" },
 ] as const
 
