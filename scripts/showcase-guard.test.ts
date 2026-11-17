@@ -601,4 +601,122 @@ describe("kiểm showcase", () => {
     await page.close()
     expect(failures, failures.join("\n")).toEqual([])
   }, 60_000)
+
+  it("design system: tràn, tương phản, hex, control", async () => {
+    const page = await browser.newPage()
+    const failures: string[] = []
+    const shots: Record<string, string> = {
+      "1440 light": "docs/reference/ket-qua-ds-light-1440.png",
+      "1440 dark": "docs/reference/ket-qua-ds-dark-1440.png",
+      "375 light": "docs/reference/ket-qua-ds-375.png",
+    }
+    for (const width of widths) {
+      await page.setViewportSize({ width, height: 900 })
+      for (const theme of themes) {
+        const where = `${width} ${theme}`
+        await page.goto(`${base}/design-system`, { waitUntil: "networkidle" })
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+        await page.waitForTimeout(300)
+        const found = await page.evaluate(() => {
+          const notes: string[] = []
+          const scroller = document.querySelector(".h-dvh > div")
+          if (scroller instanceof HTMLElement && scroller.scrollWidth > scroller.clientWidth + 2) {
+            notes.push(`tràn ngang ${scroller.scrollWidth}/${scroller.clientWidth}`)
+          }
+          const channel = (value: number) => {
+            const unit = value / 255
+            return unit <= 0.04045 ? unit / 12.92 : ((unit + 0.055) / 1.055) ** 2.4
+          }
+          const paint = (color: string) => {
+            const canvas = document.createElement("canvas")
+            canvas.width = 1
+            canvas.height = 1
+            const ctx = canvas.getContext("2d")
+            if (!ctx) return [0, 0, 0]
+            ctx.fillStyle = color
+            ctx.fillRect(0, 0, 1, 1)
+            const data = ctx.getImageData(0, 0, 1, 1).data
+            return [data[0] ?? 0, data[1] ?? 0, data[2] ?? 0]
+          }
+          const lum = (rgb: number[]) => 0.2126 * channel(rgb[0] ?? 0) + 0.7152 * channel(rgb[1] ?? 0) + 0.0722 * channel(rgb[2] ?? 0)
+          const ratioOf = (a: number[], b: number[]) => {
+            const left = lum(a)
+            const right = lum(b)
+            return (Math.max(left, right) + 0.05) / (Math.min(left, right) + 0.05)
+          }
+          document.querySelectorAll("[data-swatch]").forEach((node) => {
+            if (!(node instanceof HTMLElement)) return
+            const label = node.querySelector("span")
+            if (!(label instanceof HTMLElement)) return
+            const box = node.getBoundingClientRect()
+            const text = label.getBoundingClientRect()
+            if (text.width > 2 && (text.left < box.left - 1 || text.right > box.right + 1 || text.top < box.top - 1 || text.bottom > box.bottom + 1)) {
+              notes.push(`chữ tràn thẻ ${node.getAttribute("data-swatch")}`)
+            }
+            const ratio = ratioOf(paint(getComputedStyle(node).backgroundColor), paint(getComputedStyle(label).color))
+            const name = node.getAttribute("data-swatch") ?? ""
+            if (name !== "primary" && name !== "sidebar-primary" && ratio < 4.5) notes.push(`tương phản ${name} ${ratio.toFixed(2)}`)
+          })
+          const shadow = [...document.querySelectorAll("[data-swatch], [data-slot=card]")].some((node) => {
+            if (!(node instanceof HTMLElement)) return false
+            const value = getComputedStyle(node).boxShadow
+            const lengths = value.match(/-?[\d.]+px/g) ?? []
+            return value !== "none" && lengths.some((item) => Math.abs(Number.parseFloat(item)) > 0.5)
+          })
+          if (shadow) notes.push("còn shadow")
+          return notes
+        })
+        for (const note of found) failures.push(`${where}: ${note}`)
+
+        const before = await page.locator("[data-swatch=background]").first().getAttribute("data-hex")
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", !dark), theme === "dark")
+        await page.waitForTimeout(200)
+        const after = await page.locator("[data-swatch=background]").first().getAttribute("data-hex")
+        if (!before || !after || before === after) failures.push(`${where}: hex nền không đổi (${before} → ${after})`)
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+
+        const switchEl = page.getByRole("switch", { name: "Light", exact: true })
+        const beforeSwitch = await switchEl.getAttribute("data-state")
+        await switchEl.click()
+        if ((await switchEl.getAttribute("data-state")) === beforeSwitch) failures.push(`${where}: Switch không đổi`)
+        const box = page.getByRole("checkbox", { name: "Checked", exact: true })
+        const beforeBox = await box.getAttribute("data-state")
+        await box.click()
+        if ((await box.getAttribute("data-state")) === beforeBox) failures.push(`${where}: Checkbox không đổi`)
+        await page.getByRole("radio", { name: "Unchecked", exact: true }).click()
+        if ((await page.getByRole("radio", { name: "Unchecked", exact: true }).getAttribute("data-state")) !== "checked") {
+          failures.push(`${where}: Radio không đổi`)
+        }
+
+        const trigger = page.locator("[data-slot=select-trigger]").first()
+        await trigger.click()
+        await page.waitForTimeout(200)
+        const covered = await page.evaluate(() => {
+          const current = document.querySelector("[data-slot=select-trigger]")
+          const popup = document.querySelector("[data-slot=select-content]")
+          if (!(current instanceof HTMLElement) || !(popup instanceof HTMLElement)) return "không mở"
+          const rect = current.getBoundingClientRect()
+          const frame = popup.getBoundingClientRect()
+          const overlap = frame.left < rect.right - 1 && frame.right > rect.left + 1 && frame.top < rect.bottom - 1 && frame.bottom > rect.top + 1
+          return overlap ? "che ô bấm" : ""
+        })
+        if (covered) failures.push(`${where}: select ${covered}`)
+        await page.keyboard.press("Escape")
+
+        const shot = shots[where]
+        if (shot) {
+          const height = await page.evaluate(() => {
+            const scroller = document.querySelector(".h-dvh > div")
+            if (!(scroller instanceof HTMLElement)) return 900
+            return scroller.scrollHeight + 40
+          })
+          await page.setViewportSize({ width, height: Math.min(height, 8000) })
+          await page.screenshot({ path: shot, fullPage: true })
+          await page.setViewportSize({ width, height: 900 })
+        }
+      }
+    }
+    await page.close()
+    expect(failures, failures.join("\n")).toEqual([])
+  }, 180_000)
 })
