@@ -36,6 +36,10 @@ type AppShellProps = {
   inset?: boolean
   maxWidth?: boolean
   children?: ReactNode
+  collapseLabel?: string
+  collapseAriaLabel?: string
+  expandLabel?: string
+  menuLabel?: string
 }
 
 function NavButton({
@@ -110,7 +114,7 @@ function NavGroups({
   )
 }
 
-export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, topbar, footer, sidebarAction, account, title, inset = false, maxWidth = true, children }: AppShellProps) {
+export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, topbar, footer, sidebarAction, account, title, inset = false, maxWidth = true, children, collapseLabel = "Thu gọn", collapseAriaLabel = "Thu gọn sidebar", expandLabel = "Mở sidebar", menuLabel = "Mở menu" }: AppShellProps) {
   const [collapsed, setCollapsed] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
 
@@ -150,11 +154,11 @@ export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, to
               <Button
                 variant="ghost"
                 className={cn("w-full justify-start", collapsed && "size-8! w-8! justify-center p-0!")}
-                aria-label={collapsed ? "Mở sidebar" : "Thu gọn sidebar"}
+                aria-label={collapsed ? expandLabel : collapseAriaLabel}
                 onClick={() => setCollapsed((value) => !value)}
               >
                 <PanelLeftIcon className="size-4" />
-                {collapsed ? null : "Thu gọn"}
+                {collapsed ? null : collapseLabel}
               </Button>
             )}
           </Stack>
@@ -166,7 +170,7 @@ export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, to
                 <Button
                   variant="outline"
                   className="w-10 px-0 md:hidden"
-                  aria-label="Mở menu"
+                  aria-label={menuLabel}
                   onClick={() => setMenuOpen(true)}
                 >
                   <MenuIcon className="size-4" />
@@ -177,7 +181,7 @@ export function AppShell({ logo, mark, groups, activeId, onNavigate, leading, to
                       variant="ghost"
                       size="sm"
                       className="size-8 p-0"
-                      aria-label={collapsed ? "Mở sidebar" : "Thu gọn sidebar"}
+                      aria-label={collapsed ? expandLabel : collapseAriaLabel}
                       onClick={() => setCollapsed((value) => !value)}
                     >
                       <PanelLeftIcon className="size-4" />

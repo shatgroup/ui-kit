@@ -86,6 +86,8 @@ type DataTableProps<T> = {
   onRetry?: () => void
   emptyTitle?: string
   emptyDescription?: string
+  retryLabel?: string
+  selectedLabel?: (count: number) => string
   selectable?: boolean
   selectColumn?: boolean
   renderActions?: (row: T) => ReactNode
@@ -137,6 +139,8 @@ export function DataTable<T extends object>({
   onRetry,
   emptyTitle = "Không có dữ liệu",
   emptyDescription = "Đổi bộ lọc hoặc thêm dòng mới.",
+  retryLabel = "Thử lại",
+  selectedLabel = (count: number) => `Đã chọn ${count}`,
   selectable = false,
   selectColumn = false,
   renderActions,
@@ -235,7 +239,7 @@ export function DataTable<T extends object>({
         <Text tone="destructive">{error}</Text>
         {onRetry ? (
           <Button variant="outline" onClick={onRetry}>
-            Thử lại
+            {retryLabel}
           </Button>
         ) : null}
       </Stack>
@@ -252,7 +256,7 @@ export function DataTable<T extends object>({
       {selectable && selected.length > 0 && bulkActions ? (
         <Inline gap={2} align="center" className="rounded-md bg-muted px-3 py-2">
           <Text size="sm" weight="medium">
-            Đã chọn {selected.length}
+            {selectedLabel(selected.length)}
           </Text>
           {bulkActions(selected)}
         </Inline>

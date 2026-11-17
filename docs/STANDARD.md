@@ -45,15 +45,23 @@ Cỡ và line-height mặc định Tailwind. Ngoại lệ tiếng Việt: `--tex
 
 Nhỏ (`text-xs`) và chú thích mô tả (`text-sm`) dùng `muted-foreground`. Các cỡ còn lại trong bảng chữ dùng `foreground`. Cột ÁP DỤNG ghi đúng tên màu đang áp lên chữ mẫu.
 
-Nút chỉ có icon giữ tên tiếng Việt cho trình đọc. Muốn ngôn ngữ khác thì truyền prop, không sửa chữ mặc định trong component. Trang `/design-system` không truyền các prop này.
+Chữ mặc định trong component là tiếng Việt. Đổi ngôn ngữ bằng prop, không sửa chữ mặc định. Trang `/design-system` truyền tiếng Anh cho chữ hiện trên trang. Nút chỉ có icon giữ tên tiếng Việt cho trình đọc, trừ khi nơi gọi truyền prop.
 
 | Component | Prop | Mặc định |
 | --- | --- | --- |
 | Alert | `closeLabel` | Đóng |
 | NumberInput | `decrementLabel`, `incrementLabel` | Giảm, Tăng |
 | PasswordInput | `showPasswordLabel`, `hidePasswordLabel` | Hiện mật khẩu, Ẩn mật khẩu |
-| TagsInput | `removeLabel` | Xoá, kèm tên tag |
-| DateInput | `removeLabel` | Xoá |
+| TagsInput | `placeholder`, `removeLabel` | Thêm tag; Xoá, kèm tên tag |
+| DateInput | `placeholder`, `removeLabel` | Chọn ngày; Xoá |
+| Dropzone | `title`, `removeLabel`, `invalidTypeLabel`, `tooLargeLabel`, `tooManyLabel` | Thả tư liệu vào đây; Xoá; Sai loại file; Vượt dung lượng tối đa; Vượt số file tối đa |
+| DataTable | `emptyTitle`, `emptyDescription`, `retryLabel`, `selectedLabel` | Không có dữ liệu; Đổi bộ lọc hoặc thêm dòng mới.; Thử lại; Đã chọn {số} |
+| FilterBar | `searchPlaceholder`, `searchLabel`, `clearLabel`, `resultLabel`, `activeLabel` | Tìm kiếm; Xoá lọc; {số} kết quả; {số} bộ lọc đang bật |
+| FormLayout | `submitLabel`, `cancelLabel` | Lưu; Huỷ |
+| JobStatus | `statusLabels`, `cancelLabel`, `retryLabel` | Chờ, Đang chạy, Xong, Lỗi, Đã huỷ; Huỷ; Thử lại |
+| MediaPreview | `emptyTitle`, `emptyDescription`, `errorLabel`, `retryLabel`, `playLabel`, `pauseLabel` | Chưa có tư liệu; Thả ảnh hoặc video vào để xem trước.; Không tải được tư liệu.; Thử lại; Phát; Tạm dừng |
+| AudioPlayer | `label`, `playLabel`, `pauseLabel`, `seekLabel`, `speedLabel` | Trình phát; Phát; Tạm dừng; Thanh tua; Tốc độ phát |
+| AppShell | `collapseLabel`, `collapseAriaLabel`, `expandLabel`, `menuLabel` | Thu gọn; Thu gọn sidebar; Mở sidebar; Mở menu |
 
 | Token | Cỡ | Line-height | Lần dùng |
 | --- | --- | --- | --- |

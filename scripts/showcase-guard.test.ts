@@ -1004,22 +1004,34 @@ describe("kiểm showcase", () => {
             if (delta > limit) notes.push(`số ${badge.textContent?.trim()} lệch control ${delta.toFixed(1)}px`)
           })
           const fieldControl = (n: number) => document.querySelector(`[data-field-sample="${n}"] [data-sample-control]`)
-          for (const [left, right] of [[1, 5], [2, 6], [3, 7], [4, 8]]) {
-            const a = fieldControl(left)
-            const b = fieldControl(right)
-            if (!(a instanceof HTMLElement) || !(b instanceof HTMLElement)) {
-              notes.push(`thiếu cặp ${left}-${right}`)
-              continue
+          if (window.innerWidth < 768) {
+            const samples = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => document.querySelector(`[data-field-sample="${n}"]`))
+            for (let index = 1; index < samples.length; index += 1) {
+              const prev = samples[index - 1]
+              const next = samples[index]
+              if (!(prev instanceof HTMLElement) || !(next instanceof HTMLElement) || next.getBoundingClientRect().top <= prev.getBoundingClientRect().bottom - 1) {
+                notes.push("input states 375 chưa 1 cột")
+                break
+              }
             }
-            const delta = Math.abs(mid(a) - mid(b))
-            if (delta > 1) notes.push(`cặp ${left}-${right} lệch ${delta.toFixed(1)}px`)
-          }
-          for (const column of [[1, 2, 3, 4], [5, 6, 7, 8]]) {
-            const edges = column.flatMap((n) => {
-              const el = fieldControl(n)
-              return el instanceof HTMLElement ? [el.getBoundingClientRect().right] : []
-            })
-            if (edges.length === 4 && Math.max(...edges) - Math.min(...edges) > 1) notes.push(`mép phải cột ${column[0]} lệch`)
+          } else {
+            for (const [left, right] of [[1, 5], [2, 6], [3, 7], [4, 8]]) {
+              const a = fieldControl(left)
+              const b = fieldControl(right)
+              if (!(a instanceof HTMLElement) || !(b instanceof HTMLElement)) {
+                notes.push(`thiếu cặp ${left}-${right}`)
+                continue
+              }
+              const delta = Math.abs(mid(a) - mid(b))
+              if (delta > 1) notes.push(`cặp ${left}-${right} lệch ${delta.toFixed(1)}px`)
+            }
+            for (const column of [[1, 2, 3, 4], [5, 6, 7, 8]]) {
+              const edges = column.flatMap((n) => {
+                const el = fieldControl(n)
+                return el instanceof HTMLElement ? [el.getBoundingClientRect().right] : []
+              })
+              if (edges.length === 4 && Math.max(...edges) - Math.min(...edges) > 1) notes.push(`mép phải cột ${column[0]} lệch`)
+            }
           }
           return notes
         })

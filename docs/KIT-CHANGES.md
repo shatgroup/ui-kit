@@ -57,6 +57,8 @@ Bỏ mọi class `shadow-*` trừ `shadow-none`. Popup đã có `border` sẵn (
 
 Nút icon giữ tên tiếng Việt và có prop đổi tên, theo `docs/STANDARD.md`: `Alert.closeLabel`, `NumberInput.decrementLabel` / `incrementLabel`, `PasswordInput.showPasswordLabel` / `hidePasswordLabel`, `TagsInput.removeLabel`, `DateInput.removeLabel`.
 
+Chữ hiện trên kit cũng mặc định tiếng Việt và đổi bằng prop: Dropzone, DataTable, FilterBar, FormLayout, JobStatus, MediaPreview, AudioPlayer, AppShell. `/design-system` truyền tiếng Anh cho chữ nó hiện.
+
 ## component thêm mới
 
 | File | Việc |

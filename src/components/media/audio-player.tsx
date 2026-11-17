@@ -9,6 +9,10 @@ const SPEEDS = [1, 1.25, 1.5]
 type AudioPlayerProps = {
   src: string
   label?: string
+  playLabel?: string
+  pauseLabel?: string
+  seekLabel?: string
+  speedLabel?: string
 }
 
 function clock(seconds: number) {
@@ -19,7 +23,14 @@ function clock(seconds: number) {
   return `${minute}:${String(second).padStart(2, "0")}`
 }
 
-export function AudioPlayer({ src, label = "Trình phát" }: AudioPlayerProps) {
+export function AudioPlayer({
+  src,
+  label = "Trình phát",
+  playLabel = "Phát",
+  pauseLabel = "Tạm dừng",
+  seekLabel = "Thanh tua",
+  speedLabel = "Tốc độ phát",
+}: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [playing, setPlaying] = useState(false)
   const [time, setTime] = useState(0)
@@ -69,7 +80,7 @@ export function AudioPlayer({ src, label = "Trình phát" }: AudioPlayerProps) {
         onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
       />
       <Inline gap={2} align="center">
-        <Button variant="outline" size="sm" className="w-8 px-0" aria-label={playing ? "Tạm dừng" : "Phát"} onClick={toggle}>
+        <Button variant="outline" size="sm" className="w-8 px-0" aria-label={playing ? pauseLabel : playLabel} onClick={toggle}>
           {playing ? <PauseIcon className="size-4" /> : <PlayIcon className="size-4" />}
         </Button>
         <Input
@@ -78,7 +89,7 @@ export function AudioPlayer({ src, label = "Trình phát" }: AudioPlayerProps) {
           max={duration || 0}
           step={0.1}
           value={time}
-          aria-label="Thanh tua"
+          aria-label={seekLabel}
           onChange={(event) => {
             const next = Number(event.target.value)
             if (audioRef.current) audioRef.current.currentTime = next
@@ -97,7 +108,7 @@ export function AudioPlayer({ src, label = "Trình phát" }: AudioPlayerProps) {
         <Button
           variant="ghost"
           size="sm"
-          aria-label="Tốc độ phát"
+          aria-label={speedLabel}
           onClick={() => {
             const next = SPEEDS[(SPEEDS.indexOf(speed) + 1) % SPEEDS.length] ?? 1
             setSpeed(next)

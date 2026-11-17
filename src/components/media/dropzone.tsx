@@ -17,12 +17,10 @@ type DropzoneProps = {
   maxSize?: number
   maxFiles?: number
   title?: string
-}
-
-const ERROR_TEXT: Record<string, string> = {
-  "file-invalid-type": "Sai loại file",
-  "file-too-large": "Vượt dung lượng tối đa",
-  "too-many-files": "Vượt số file tối đa",
+  removeLabel?: string
+  invalidTypeLabel?: string
+  tooLargeLabel?: string
+  tooManyLabel?: string
 }
 
 function HiddenFileInput(props: ComponentProps<"input">) {
@@ -41,7 +39,16 @@ export function Dropzone({
   maxSize = 2 * 1024 * 1024,
   maxFiles = 4,
   title = "Thả tư liệu vào đây",
+  removeLabel = "Xoá",
+  invalidTypeLabel = "Sai loại file",
+  tooLargeLabel = "Vượt dung lượng tối đa",
+  tooManyLabel = "Vượt số file tối đa",
 }: DropzoneProps) {
+  const errorText: Record<string, string> = {
+    "file-invalid-type": invalidTypeLabel,
+    "file-too-large": tooLargeLabel,
+    "too-many-files": tooManyLabel,
+  }
   const [files, setFiles] = useState<ListedFile[]>([])
 
   function add(accepted: File[], rejected: FileRejection[]) {
@@ -57,7 +64,7 @@ export function Dropzone({
         name: file.name,
         size: file.size,
         progress: 0,
-        error: errors.map((item) => ERROR_TEXT[item.code] ?? item.message).join(", "),
+        error: errors.map((item) => errorText[item.code] ?? item.message).join(", "),
       })),
     ]
     setFiles((current) => [...next, ...current].slice(0, maxFiles + rejected.length))
@@ -98,7 +105,7 @@ export function Dropzone({
                 size="sm"
                 onClick={() => setFiles((current) => current.filter((item) => item.id !== file.id))}
               >
-                Xoá
+                {removeLabel}
               </Button>
             </Inline>
             <Meter value={file.progress} />

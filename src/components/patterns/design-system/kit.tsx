@@ -1,4 +1,6 @@
+import { addDays } from "date-fns"
 import { cloneElement, useId, useState, type ReactElement, type ReactNode } from "react"
+import { type DateRange } from "react-day-picker"
 import { Bar, BarChart, Cell, XAxis } from "recharts"
 import { toast } from "sonner"
 import { BoldIcon, CircleAlertIcon, CircleCheckIcon, InfoIcon, ItalicIcon, PlusIcon, SearchIcon, TriangleAlertIcon, UnderlineIcon, UserIcon } from "lucide-react"
@@ -63,6 +65,7 @@ const CHART = [
   { name: "5", value: 50, fill: "var(--chart-5)" },
 ]
 const chartConfig = { value: { label: "Sample", color: "var(--chart-1)" } }
+const RANGE_START = new Date(2025, 5, 5)
 
 type Wired = {
   id?: string
@@ -103,6 +106,7 @@ function FieldSample({
   hint,
   error,
   inline = false,
+  className,
   children,
 }: {
   n: number
@@ -110,6 +114,7 @@ function FieldSample({
   hint?: string
   error?: string
   inline?: boolean
+  className?: string
   children: ReactElement<Wired>
 }) {
   const id = useId()
@@ -124,7 +129,7 @@ function FieldSample({
     <Text id={messageId} as="p" size="sm" tone={error ? "destructive" : "muted"}>{message}</Text>
   ) : null
   return (
-    <div data-field-sample={n} className="min-w-0">
+    <div data-field-sample={n} className={`min-w-0 ${className ?? ""}`}>
       <Stack gap={1}>
         <div className="flex h-5 min-w-0 items-center">
           {inline ? null : <Label htmlFor={id} className="min-w-0 truncate">{label}</Label>}
@@ -222,6 +227,7 @@ function Kit() {
   const [amount, setAmount] = useState(12)
   const [tags, setTags] = useState(["Design", "System"])
   const [date, setDate] = useState<Date | undefined>(new Date(2026, 0, 20))
+  const [range, setRange] = useState<DateRange | undefined>({ from: RANGE_START, to: addDays(RANGE_START, 8) })
   const [segment, setSegment] = useState("bookings")
   const [alerts, setAlerts] = useState({ info: true, success: true, warning: true, error: true })
 
@@ -346,15 +352,15 @@ function Kit() {
       <Section id="nhap-lieu" title="Inputs">
         <Span at="md:col-span-6 xl:col-span-12">
           <KitCard title="Input states">
-            <div data-input-states className="grid min-w-0 grid-cols-2 gap-6 *:min-w-0">
-              <FieldSample n={1} label="Default"><Input placeholder="Type here" /></FieldSample>
-              <FieldSample n={5} label="Error" error="This field is invalid"><Input defaultValue="???" /></FieldSample>
-              <FieldSample n={2} label="Filled"><Input defaultValue="Alex Kim" /></FieldSample>
-              <FieldSample n={6} label="Disabled"><Input defaultValue="Not editable" disabled /></FieldSample>
-              <FieldSample n={3} label="With icon"><InputGroup prefix={<UserIcon className="size-4" />} aria-label="Username" placeholder="Username" /></FieldSample>
-              <FieldSample n={7} label="Email" inline><Input placeholder="name@studio.com" /></FieldSample>
-              <FieldSample n={4} label="Focus"><Input forceState="focus" defaultValue="Focused" /></FieldSample>
-              <FieldSample n={8} label="With helper text" hint="Shown under the field"><Input placeholder="Add a note" /></FieldSample>
+            <div data-input-states className="grid min-w-0 grid-cols-1 gap-6 *:min-w-0 md:grid-cols-2">
+              <FieldSample n={1} className="order-1 md:order-none" label="Default"><Input placeholder="Type here" /></FieldSample>
+              <FieldSample n={5} className="order-5 md:order-none" label="Error" error="This field is invalid"><Input defaultValue="???" /></FieldSample>
+              <FieldSample n={2} className="order-2 md:order-none" label="Filled"><Input defaultValue="Alex Kim" /></FieldSample>
+              <FieldSample n={6} className="order-6 md:order-none" label="Disabled"><Input defaultValue="Not editable" disabled /></FieldSample>
+              <FieldSample n={3} className="order-3 md:order-none" label="With icon"><InputGroup prefix={<UserIcon className="size-4" />} aria-label="Username" placeholder="Username" /></FieldSample>
+              <FieldSample n={7} className="order-7 md:order-none" label="Email" inline><Input placeholder="name@studio.com" /></FieldSample>
+              <FieldSample n={4} className="order-4 md:order-none" label="Focus"><Input forceState="focus" defaultValue="Focused" /></FieldSample>
+              <FieldSample n={8} className="order-8 md:order-none" label="With helper text" hint="Shown under the field"><Input placeholder="Add a note" /></FieldSample>
             </div>
           </KitCard>
         </Span>
@@ -371,7 +377,7 @@ function Kit() {
                 <Textarea className="min-h-16 flex-1" placeholder="Write a note" />
               </TypeCell>
               <TypeCell name="Date" label="Date">
-                <DateInput value={date} onValueChange={setDate} placeholder="Select a date" />
+                <DateInput value={date} onValueChange={setDate} placeholder="Select a date" removeLabel="Clear" />
               </TypeCell>
               <TypeCell name="Select" label="Tool">
                 <Select defaultValue="figma">
@@ -389,7 +395,7 @@ function Kit() {
                 <InputGroup prefix="https://" aria-label="Website" placeholder="example.com" />
               </TypeCell>
               <TypeCell name="Multi-select" label="Tags">
-                <TagsInput value={tags} onValueChange={setTags} placeholder="Add a tag" />
+                <TagsInput value={tags} onValueChange={setTags} placeholder="Add a tag" removeLabel="Remove" />
               </TypeCell>
               <TypeCell name="Input with stepper" label="Quantity">
                 <NumberInput value={amount} onValueChange={setAmount} min={0} max={40} label="Quantity" />
@@ -623,12 +629,21 @@ function Kit() {
             </Table>
           </KitCard>
         </Span>
-        <Span at="md:col-span-3 xl:col-span-3">
+        <Span at="md:col-span-6 xl:col-span-6">
           <KitCard title="Calendar">
-            <Calendar mode="single" selected={date} onSelect={setDate} />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <Stack gap={1}>
+                <Text size="xs" tone="muted">Single</Text>
+                <Calendar mode="single" defaultMonth={date} selected={date} onSelect={setDate} />
+              </Stack>
+              <Stack gap={1}>
+                <Text size="xs" tone="muted">Range</Text>
+                <Calendar mode="range" defaultMonth={RANGE_START} selected={range} onSelect={setRange} numberOfMonths={1} />
+              </Stack>
+            </div>
           </KitCard>
         </Span>
-        <Span at="md:col-span-3 xl:col-span-3">
+        <Span at="md:col-span-6 xl:col-span-6">
           <KitCard title="Chart">
             <ChartContainer config={chartConfig} className="aspect-auto h-32 w-full">
               <BarChart data={CHART}>
@@ -640,7 +655,7 @@ function Kit() {
             </ChartContainer>
           </KitCard>
         </Span>
-        <Span at="md:col-span-6 xl:col-span-12">
+        <Span at="md:col-span-6 xl:col-span-6">
           <KitCard title="Empty and loading">
             <Inline gap={4} align="center">
               <Inline gap={2} align="center">
