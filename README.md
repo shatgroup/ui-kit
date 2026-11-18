@@ -39,3 +39,6 @@ Chép đúng tag đang dùng:
 ## Tài liệu
 
 Quy ước kích thước, khung app và control: [docs/STANDARD.md](docs/STANDARD.md).
+
+# ui-kit
+Repo for UI Kit Shodo
