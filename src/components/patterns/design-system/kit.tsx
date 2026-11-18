@@ -4,7 +4,7 @@ import { type DateRange } from "react-day-picker"
 import { Bar, BarChart, Cell, XAxis } from "recharts"
 import { toast } from "sonner"
 import { BoldIcon, CircleAlertIcon, CircleCheckIcon, InfoIcon, ItalicIcon, LayoutDashboardIcon, ListIcon, PlusIcon, SearchIcon, SettingsIcon, TriangleAlertIcon, UnderlineIcon, UserIcon } from "lucide-react"
-import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
+import { Grid, Inline, ReadingText, Stack, Text } from "@/components/layout/index.ts"
 import { AppShell } from "@/components/patterns/app-shell.tsx"
 import { Stepper } from "@/components/media/stepper.tsx"
 import { Alert } from "@/components/ui/alert.tsx"
@@ -214,6 +214,21 @@ function KitCard({ title, children }: { title: string; children: ReactNode }) {
         <Stack gap={3}>{children}</Stack>
       </CardContent>
     </Card>
+  )
+}
+
+function ReadingSample() {
+  const [selected, setSelected] = useState("line")
+  return (
+    <ReadingText
+      selectedId={selected}
+      onSelect={setSelected}
+      sentences={[
+        { id: "field", text: "The field was split in two." },
+        { id: "line", text: "“This half is yours,” she said.", kind: "speech" },
+        { id: "well", text: "Who keeps the well?", kind: "question" },
+      ]}
+    />
   )
 }
 
@@ -714,6 +729,11 @@ function Kit() {
               </Stack>
               <EmptyState title="Nothing here" description="The list is empty." />
             </Inline>
+          </KitCard>
+        </Span>
+        <Span span="full">
+          <KitCard title="Reading text">
+            <ReadingSample />
           </KitCard>
         </Span>
         <Span span="full">

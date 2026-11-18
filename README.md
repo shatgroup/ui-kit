@@ -16,6 +16,26 @@ npm test
 
 `npm run dev` mở trang kit. `npm test` chạy kiểm tra giao diện.
 
+## File phải chép khi cài kit sang app
+
+Chép đúng tag đang dùng:
+
+- `src/components/ui`
+- `src/components/flow`
+- `src/components/layout`
+- `src/components/patterns`
+- `src/components/media`
+- `src/styles`
+- `src/lib/utils.ts`
+- `src/lib/utils.test.ts`
+- `src/hooks/use-mobile.ts`
+- `src/index.css`
+- `scripts/check-ui-rules.mjs`
+- `docs/STANDARD.md`
+- `components.json`
+
+`src/components/media` gồm Stepper, SplitPane, MediaPreview, AudioPlayer, Dropzone, JobStatus. Luật UI nằm ở mục 7 của `AGENTS.md`.
+
 ## Tài liệu
 
 Quy ước kích thước, khung app và control: [docs/STANDARD.md](docs/STANDARD.md).
