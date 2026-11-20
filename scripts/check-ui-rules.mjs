@@ -34,7 +34,8 @@ function skipped(file) {
   return (
     rel.startsWith("src/components/layout/") ||
     rel.startsWith("src/styles/") ||
-    rel.startsWith("src/showcase/tweakcn/")
+    rel.startsWith("src/showcase/tweakcn/") ||
+    rel.startsWith("src/showcase/shadcn-docs/")
   )
 }
 

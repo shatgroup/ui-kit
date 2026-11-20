@@ -134,3 +134,31 @@ Demo trong card Flow components lấy đúng node, dây và dữ liệu trên re
 `flow-canvas.tsx`, `mind-map-node.tsx`, `workflow-node.tsx`, `use-tree-layout.ts` là của kit. Mind map dựng trên `BaseNode` và `BaseHandle` bản gốc. Workflow dựng trên `BaseNode`, `BaseHandle` và `NodeStatusIndicator` bản gốc. Node workflow chỉ đưa `initialWidth` và `initialHeight` cho dagre. Không gán `width`/`height`, vì React Flow ép khung node theo hai số đó và viền trạng thái tràn khỏi thẻ.
 
 Không ghi đè `button`, `slider`, `select`, `table`, `dialog`, `command`, `toggle`, `toggle-group` của kit.
+
+## Trang /components — ví dụ không chép
+
+Chỉ bỏ các nhóm dưới. Ví dụ còn lại chỉ đổi đường import, `next/link` thành `<a>`, và bỏ `shadow-*` trừ `shadow-none`.
+
+### RTL (52)
+
+`accordion-rtl`, `alert-rtl`, `alert-dialog-rtl`, `aspect-ratio-rtl`, `avatar-rtl`, `badge-rtl`, `breadcrumb-rtl`, `button-rtl`, `button-group-rtl`, `calendar-rtl`, `card-rtl`, `carousel-rtl`, `chart-rtl`, `checkbox-rtl`, `code-block-rtl`, `collapsible-rtl`, `command-rtl`, `context-menu-rtl`, `dialog-rtl`, `drawer-rtl`, `dropdown-menu-rtl`, `empty-rtl`, `field-rtl`, `hover-card-rtl`, `input-rtl`, `input-group-rtl`, `input-otp-rtl`, `item-rtl`, `kbd-rtl`, `label-rtl`, `menubar-rtl`, `native-select-rtl`, `navigation-menu-rtl`, `pagination-rtl`, `popover-rtl`, `progress-rtl`, `radio-group-rtl`, `resizable-rtl`, `scroll-area-rtl`, `select-rtl`, `separator-rtl`, `sheet-rtl`, `skeleton-rtl`, `slider-rtl`, `spinner-rtl`, `switch-rtl`, `table-rtl`, `tabs-rtl`, `textarea-rtl`, `toggle-rtl`, `toggle-group-rtl`, `tooltip-rtl`
+
+### locale (1)
+
+`calendar-booked-dates`
+
+### Next-only (`next/image`, `next/font`, không tính `next/link`) (7)
+
+`aspect-ratio-demo`, `aspect-ratio-square`, `aspect-ratio-portrait`, `calendar-hijri`, `item-image`, `item-header`, `scroll-area-horizontal-demo`
+
+### Tabler (7)
+
+`button-with-icon`, `button-group-split`, `empty-demo`, `empty-outline`, `empty-background`, `input-group-button`, `input-group-textarea`
+
+Không có trong registry Radix của CLI (`new-york-v4` / `radix-nova`): `data-table`, `date-picker`, `typography`, `toast` (Radix dùng Sonner).
+
+`form` đã cài, repo docs không có trang MDX.
+
+`combobox` không giữ: file CLI phụ thuộc `InputGroupAddon` của shadcn, trong khi kit giữ `input-group.tsx` riêng và không ghi đè.
+
+Component mới bỏ `shadow-*` theo luật kit: accordion không có bóng; alert-dialog, button-group, context-menu, input-otp, menubar, native-select, navigation-menu có bóng thì đã bỏ.

@@ -9,6 +9,7 @@ function currentPath() {
 function SiteBar() {
   const path = currentPath()
   const design = path === "/design-system" || path === "/" || path === "/tokens" || path === "/kit"
+  const components = path === "/components" || path.startsWith("/components/")
   const showcase = path === "/showcase" || path === "/preview" || path === "/preview-motion"
 
   useEffect(() => {
@@ -30,6 +31,9 @@ function SiteBar() {
         <Text size="sm" weight="semibold">UI Kit</Text>
         <a href="/design-system" className={design ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
           Design System
+        </a>
+        <a href="/components" className={components ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
+          Components
         </a>
         <a href="/showcase" className={showcase ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
           Showcase

@@ -1,0 +1,587 @@
+[
+  {
+    "page": "alert",
+    "example": "alert-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "aspect-ratio",
+    "example": "aspect-ratio-demo",
+    "reason": "next/image chỉ có trên Next.js"
+  },
+  {
+    "page": "aspect-ratio",
+    "example": "aspect-ratio-square",
+    "reason": "next/image chỉ có trên Next.js"
+  },
+  {
+    "page": "aspect-ratio",
+    "example": "aspect-ratio-portrait",
+    "reason": "next/image chỉ có trên Next.js"
+  },
+  {
+    "page": "aspect-ratio",
+    "example": "aspect-ratio-rtl",
+    "reason": "next/image chỉ có trên Next.js; language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "avatar",
+    "example": "avatar-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "badge",
+    "example": "badge-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "breadcrumb",
+    "example": "breadcrumb-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "button",
+    "example": "button-with-icon",
+    "reason": "thiếu module @tabler/icons-react"
+  },
+  {
+    "page": "button",
+    "example": "button-group-demo",
+    "reason": "thiếu component button-group"
+  },
+  {
+    "page": "button",
+    "example": "button-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "calendar",
+    "example": "calendar-hijri",
+    "reason": "next/font/google chỉ có trên Next.js; thiếu module react-day-picker/persian"
+  },
+  {
+    "page": "calendar",
+    "example": "calendar-time",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "calendar",
+    "example": "calendar-booked-dates",
+    "reason": "thiếu module react-day-picker/locale"
+  },
+  {
+    "page": "calendar",
+    "example": "calendar-rtl",
+    "reason": "thiếu module react-day-picker/locale; language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "card",
+    "example": "card-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "carousel",
+    "example": "carousel-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "chart",
+    "example": "chart-demo",
+    "reason": "thiếu module @/registry/new-york-v4/ui/card; thiếu module @/registry/new-york-v4/ui/chart"
+  },
+  {
+    "page": "chart",
+    "example": "chart-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "checkbox",
+    "example": "checkbox-demo",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "checkbox",
+    "example": "checkbox-invalid",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "checkbox",
+    "example": "checkbox-basic",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "checkbox",
+    "example": "checkbox-description",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "checkbox",
+    "example": "checkbox-disabled",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "checkbox",
+    "example": "checkbox-group",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "checkbox",
+    "example": "checkbox-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "collapsible",
+    "example": "collapsible-basic",
+    "reason": "thiếu module @/registry/icons/__lucide__"
+  },
+  {
+    "page": "collapsible",
+    "example": "collapsible-settings",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "collapsible",
+    "example": "collapsible-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "command",
+    "example": "command-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "dialog",
+    "example": "dialog-demo",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "dialog",
+    "example": "dialog-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "drawer",
+    "example": "drawer-dialog",
+    "reason": "thiếu module @/hooks/use-media-query"
+  },
+  {
+    "page": "drawer",
+    "example": "drawer-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "dropdown-menu",
+    "example": "dropdown-menu-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "hover-card",
+    "example": "hover-card-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "input",
+    "example": "input-demo",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-field",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-fieldgroup",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-disabled",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-invalid",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-file",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-inline",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-grid",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-required",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-badge",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-input-group",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-button-group",
+    "reason": "thiếu component button-group; thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-form",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input",
+    "example": "input-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-inline-start",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-inline-end",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-block-start",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-block-end",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-button",
+    "reason": "thiếu module @tabler/icons-react; thiếu module @/hooks/use-copy-to-clipboard"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-kbd",
+    "reason": "thiếu component kbd"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-textarea",
+    "reason": "thiếu module @tabler/icons-react"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-custom",
+    "reason": "thiếu module react-textarea-autosize"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "label",
+    "example": "field-demo",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "label",
+    "example": "label-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "popover",
+    "example": "popover-form",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "popover",
+    "example": "popover-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "progress",
+    "example": "progress-label",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "progress",
+    "example": "progress-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "radio-group",
+    "example": "radio-group-description",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "radio-group",
+    "example": "radio-group-choice-card",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "radio-group",
+    "example": "radio-group-fieldset",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "radio-group",
+    "example": "radio-group-disabled",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "radio-group",
+    "example": "radio-group-invalid",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "radio-group",
+    "example": "radio-group-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "resizable",
+    "example": "resizable-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "scroll-area",
+    "example": "scroll-area-horizontal-demo",
+    "reason": "next/image chỉ có trên Next.js"
+  },
+  {
+    "page": "scroll-area",
+    "example": "scroll-area-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "select",
+    "example": "select-align-item",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "select",
+    "example": "select-invalid",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "select",
+    "example": "select-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "separator",
+    "example": "separator-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "sheet",
+    "example": "sheet-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "skeleton",
+    "example": "skeleton-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "slider",
+    "example": "slider-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "spinner",
+    "example": "spinner-demo",
+    "reason": "thiếu component item"
+  },
+  {
+    "page": "spinner",
+    "example": "spinner-empty",
+    "reason": "thiếu component empty"
+  },
+  {
+    "page": "spinner",
+    "example": "spinner-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "switch",
+    "example": "switch-description",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "switch",
+    "example": "switch-choice-card",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "switch",
+    "example": "switch-disabled",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "switch",
+    "example": "switch-invalid",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "switch",
+    "example": "switch-sizes",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "switch",
+    "example": "switch-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "table",
+    "example": "table-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "tabs",
+    "example": "tabs-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "textarea",
+    "example": "textarea-field",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "textarea",
+    "example": "textarea-disabled",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "textarea",
+    "example": "textarea-invalid",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "textarea",
+    "example": "textarea-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "toggle",
+    "example": "toggle-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "toggle-group",
+    "example": "toggle-group-font-weight-selector",
+    "reason": "thiếu component field"
+  },
+  {
+    "page": "toggle-group",
+    "example": "toggle-group-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "tooltip",
+    "example": "tooltip-keyboard",
+    "reason": "thiếu component kbd"
+  },
+  {
+    "page": "tooltip",
+    "example": "tooltip-rtl",
+    "reason": "language-selector không có trong kit; bản RTL riêng, phụ thuộc language-selector"
+  },
+  {
+    "page": "alert",
+    "example": "alert-demo",
+    "reason": "Alert của kit bắt buộc title, không nhận children kiểu shadcn"
+  },
+  {
+    "page": "alert",
+    "example": "alert-basic",
+    "reason": "Alert của kit không có AlertTitle/AlertDescription"
+  },
+  {
+    "page": "alert",
+    "example": "alert-destructive",
+    "reason": "Alert của kit không có variant destructive và AlertTitle"
+  },
+  {
+    "page": "alert",
+    "example": "alert-action",
+    "reason": "Alert của kit không có AlertAction/AlertTitle/AlertDescription"
+  },
+  {
+    "page": "alert",
+    "example": "alert-colors",
+    "reason": "Alert của kit không có AlertTitle/AlertDescription"
+  },
+  {
+    "page": "resizable",
+    "example": "resizable-demo",
+    "reason": "ResizableHandle của kit không có prop withHandle"
+  },
+  {
+    "page": "resizable",
+    "example": "resizable-handle",
+    "reason": "ResizableHandle của kit không có prop withHandle"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-demo",
+    "reason": "InputGroup của kit không có InputGroupAddon/InputGroupInput"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-icon",
+    "reason": "InputGroup của kit không có InputGroupAddon/InputGroupInput"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-text",
+    "reason": "InputGroup của kit không có InputGroupAddon/InputGroupText/InputGroupTextarea"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-dropdown",
+    "reason": "InputGroup của kit không có InputGroupAddon/InputGroupButton/InputGroupInput"
+  },
+  {
+    "page": "input-group",
+    "example": "input-group-spinner",
+    "reason": "InputGroup của kit không có InputGroupAddon/InputGroupInput/InputGroupText"
+  },
+  {
+    "page": "card",
+    "example": "card-small",
+    "reason": "Card của kit không có prop size"
+  },
+  {
+    "page": "collapsible",
+    "example": "collapsible-file-tree",
+    "reason": "component kit không có prop size"
+  },
+  {
+    "page": "spinner",
+    "example": "spinner-input-group",
+    "reason": "InputGroup của kit không có InputGroupAddon/InputGroupButton/InputGroupInput"
+  },
+  {
+    "page": "calendar",
+    "example": "calendar-presets",
+    "reason": "Card của kit không có prop size"
+  }
+]
