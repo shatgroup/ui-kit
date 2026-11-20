@@ -31,7 +31,7 @@ export function ItemSizeDemo() {
           <ItemDescription>A compact size for dense layouts.</ItemDescription>
         </ItemContent>
       </Item>
-      <Item variant="outline" size="sm">
+      <Item variant="outline" size="xs">
         <ItemMedia variant="icon">
           <InboxIcon />
         </ItemMedia>

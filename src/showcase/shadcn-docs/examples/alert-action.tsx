@@ -1,5 +1,6 @@
 import {
   Alert,
+  AlertAction,
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert.tsx"
@@ -12,11 +13,11 @@ export default function AlertActionExample() {
       <AlertDescription>
         Enable it under your profile settings to get started.
       </AlertDescription>
-      <div className="absolute top-2 right-2">
+      <AlertAction>
         <Button size="xs" variant="default">
           Enable
         </Button>
-      </div>
+      </AlertAction>
     </Alert>
   )
 }

@@ -6,6 +6,7 @@ import { SidebarProvider } from "@/components/ui/sidebar.tsx"
 import catalog from "./catalog.json"
 import { CommandMenu, type NavItem } from "./command-menu.tsx"
 import { ComponentPreview } from "./component-preview.tsx"
+import { HighlightedCode } from "./highlighted-code.tsx"
 import { DocsSidebar } from "./docs-sidebar.tsx"
 import { DocsTableOfContents } from "./docs-toc.tsx"
 import "./typeset.css"
@@ -62,11 +63,7 @@ function Blocks({ blocks }: { blocks: Block[] }) {
     }
     if (block.type === "paragraph") return <p key={index}><Inline text={block.text} /></p>
     if (block.type === "code") {
-      return (
-        <pre key={index}>
-          <code>{block.code}</code>
-        </pre>
-      )
+      return <HighlightedCode key={index} code={block.code} language={block.lang || "tsx"} />
     }
     if (block.type === "list") {
       const List = block.ordered ? "ol" : "ul"

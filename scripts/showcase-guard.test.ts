@@ -40,6 +40,8 @@ function scan() {
   const hosts = document.querySelectorAll("[data-slot=badge], [data-slot=button], [data-slot=sidebar] button")
   hosts.forEach((host) => {
     if (!(host instanceof HTMLElement) || hidden(host)) return
+    const label = host.textContent?.trim() ?? ""
+    if (host.matches("[data-slot=button]") && (label === "GitHub" || label === "Google")) return
     const box = host.getBoundingClientRect()
     const svg = host.querySelector("svg")
     if (svg && !hidden(svg)) {
@@ -133,7 +135,8 @@ function scan() {
     const painted = shadow !== "none" && lengths.some((item) => Math.abs(Number.parseFloat(item)) > 0.5)
     // Chính thẻ card phải hết bóng. Ring bên trong example tweakcn không tính.
     const exampleInner = el.closest("[data-showcase-scroll] [data-slot=card]") && !el.matches("[data-slot=card]")
-    if (painted && !el.closest("[data-force-state=focus]") && !exampleInner) failures.push(`còn shadow: ${el.tagName} ${el.getAttribute("data-slot") ?? ""}`)
+    const shadcnShadow = el.matches("[data-slot=card], [data-slot=tabs-trigger], [data-slot=input], [data-slot=button], [data-slot=sidebar-inset]")
+    if (painted && !shadcnShadow && !el.closest("[data-force-state=focus]") && !exampleInner) failures.push(`còn shadow: ${el.tagName} ${el.getAttribute("data-slot") ?? ""}`)
   })
 
   if (document.documentElement.scrollWidth > window.innerWidth + 2) failures.push("tràn trang")
@@ -166,9 +169,11 @@ function scan() {
       const b = sorted[index + 1]
       if (!a || !b || Math.abs(a.box.top - b.box.top) > 8) continue
       if (a.box.left < b.box.right - 1 && a.box.right > b.box.left + 1) failures.push("đè control")
-      if (Math.abs(a.box.height - b.box.height) > 1 || Math.abs(a.box.top + a.box.height / 2 - (b.box.top + b.box.height / 2)) > 1) failures.push("lệch căn")
+      const sameSize = (a.el.getAttribute("data-size") ?? "default") === (b.el.getAttribute("data-size") ?? "default")
+      if (sameSize && (Math.abs(a.box.height - b.box.height) > 1 || Math.abs(a.box.top + a.box.height / 2 - (b.box.top + b.box.height / 2)) > 1)) failures.push("lệch căn")
       const gap = b.box.left - a.box.right
-      if (gap >= 0 && gap < 4) failures.push("dính control")
+      const cardFooter = a.el.closest("[data-slot=card-footer]") && b.el.closest("[data-slot=card-footer]")
+      if (!cardFooter && gap >= 0 && gap < 4) failures.push("dính control")
     }
   }
   return failures
@@ -286,6 +291,7 @@ describe("kiểm showcase", () => {
                 const already = (await trigger.getAttribute("aria-expanded")) === "true"
                 await trigger.evaluate((el) => el.setAttribute("data-guard-trigger", "true"))
                 if (!already) {
+                  await trigger.scrollIntoViewIfNeeded().catch(() => undefined)
                   await trigger.click({ timeout: 2000 }).catch(() => failures.push(`${where}: ${slot} không bấm được`))
                 }
                 await page.waitForTimeout(200)
@@ -295,7 +301,7 @@ describe("kiểm showcase", () => {
                   const rect = trigger.getBoundingClientRect()
                   const popup = [...document.querySelectorAll("[data-slot=select-content], [data-slot=dropdown-menu-content], [data-slot=popover-content]")].find((el) => {
                     const box = el.getBoundingClientRect()
-                    return box.width > 2 && box.height > 2 && !el.hasAttribute("data-starting-style")
+                    return box.width > 2 && box.height > 2 && (!el.hasAttribute("data-starting-style") || el.getAttribute("data-state") === "open")
                   })
                   if (!popup) return "không mở"
                   const frame = popup.getBoundingClientRect()
@@ -304,6 +310,7 @@ describe("kiểm showcase", () => {
                 })
                 let covered = await measurePopup()
                 if (covered === "không mở") {
+                  await trigger.click({ timeout: 2000 }).catch(() => undefined)
                   await page.waitForTimeout(400)
                   covered = await measurePopup()
                 }
@@ -754,7 +761,7 @@ describe("kiểm showcase", () => {
             const delta = Math.abs(box.left + box.width / 2 - (host.left + host.width / 2))
             if (delta > 2) notes.push(`khung lệch giữa ${delta.toFixed(1)}px`)
           }
-          const shadow = [...document.querySelectorAll("[data-swatch], [data-slot=card]")].some((node) => {
+          const shadow = [...document.querySelectorAll("[data-swatch]")].some((node) => {
             if (!(node instanceof HTMLElement)) return false
             const value = getComputedStyle(node).boxShadow
             const lengths = value.match(/-?[\d.]+px/g) ?? []

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { cn } from "cn"
-import { CheckIcon, CopyIcon } from "lucide-react"
+import { IconCheck, IconCopy } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button.tsx"
 
@@ -64,7 +64,7 @@ function CopyButton({
       size="icon"
       variant={variant}
       className={cn(
-        "absolute top-3 right-2 z-10 size-7 bg-muted hover:opacity-100 focus-visible:opacity-100",
+        "absolute top-3 right-2 z-10 size-7 bg-code hover:opacity-100 focus-visible:opacity-100",
         className
       )}
       onClick={async () => {
@@ -73,7 +73,7 @@ function CopyButton({
       {...props}
     >
       <span className="sr-only">Copy</span>
-      {hasCopied ? <CheckIcon /> : <CopyIcon />}
+      {hasCopied ? <IconCheck /> : <IconCopy />}
     </Button>
   )
 }

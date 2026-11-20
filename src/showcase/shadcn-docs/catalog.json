@@ -3282,11 +3282,6 @@
           "code": "- import { DayPicker } from \"react-day-picker\"\n+ import { DayPicker } from \"react-day-picker/persian\""
         },
         {
-          "type": "preview",
-          "name": "calendar-hijri",
-          "previewClassName": "h-[400px]"
-        },
-        {
           "type": "heading",
           "level": 2,
           "id": "selected-date-with-timezone",

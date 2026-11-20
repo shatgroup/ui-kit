@@ -137,30 +137,11 @@ Không ghi đè `button`, `slider`, `select`, `table`, `dialog`, `command`, `tog
 
 ## Trang /components — ví dụ không chép
 
-Chỉ bỏ RTL và locale. Ví dụ còn lại đổi đường import, `next/link` thành `<a>`, bỏ `shadow-*` trừ `shadow-none`, và hai loại dưới.
+Style component là `radix-nova`. Màu là token Future Teal trong `theme.css`. Font là Be Vietnam Pro. `shadow-*` của shadcn được giữ trong `src/components/ui`.
 
-### Được phép
+Ví dụ docs chỉ khác bản gốc ở đường import, `next/link` thành `<a>`, và `next/image` thành `<img>`. `fill` thành class `absolute inset-0 size-full`. `width` và `height` giữ nguyên. Icon Tabler giữ nguyên.
 
-`next/image` thành `<img>`. Giữ `src`, `alt`, `className`. Bỏ `fill`, `width`, `height`.
-
-`calendar-hijri` không có `next/image`. Bỏ `next/font`. `react-day-picker` 10 không có `react-day-picker/persian`, nên `DayPicker` lấy từ `react-day-picker`.
-
-Icon `@tabler/icons-react` thành icon Lucide cùng nghĩa. Phần còn lại của ví dụ giữ nguyên.
-
-| Tabler | Lucide |
-| --- | --- |
-| `IconBell` | `BellIcon` |
-| `IconBrandJavascript` | `FileCodeIcon` |
-| `IconCheck` | `CheckIcon` |
-| `IconCloud` | `CloudIcon` |
-| `IconCopy` | `CopyIcon` |
-| `IconCornerDownLeft` | `CornerDownLeftIcon` |
-| `IconFolderCode` | `FolderCodeIcon` |
-| `IconGitBranch` | `GitBranchIcon` |
-| `IconInfoCircle` | `InfoIcon` |
-| `IconPlus` | `PlusIcon` |
-| `IconRefresh` | `RefreshCwIcon` |
-| `IconStar` | `StarIcon` |
+Bỏ RTL, locale (`calendar-booked-dates`) và `next/font` (`calendar-hijri`, vì `react-day-picker` 10 không có `persian`).
 
 ### RTL (52)
 
@@ -172,8 +153,6 @@ Icon `@tabler/icons-react` thành icon Lucide cùng nghĩa. Phần còn lại c�
 
 Không có trong registry Radix của CLI (`new-york-v4` / `radix-nova`): `data-table`, `date-picker`, `typography`, `toast` (Radix dùng Sonner).
 
-`form` đã cài, repo docs không có trang MDX.
+`form` giữ vì registry `radix-nova/form.json` không có file. Chỉ đổi import `new-york-v4` sang `@/components/ui`.
 
-`combobox` không giữ: file CLI phụ thuộc `InputGroupAddon` của shadcn, trong khi kit giữ `input-group.tsx` riêng và không ghi đè.
-
-Component mới bỏ `shadow-*` theo luật kit: accordion không có bóng; alert-dialog, button-group, context-menu, input-otp, menubar, native-select, navigation-menu có bóng thì đã bỏ.
+`combobox` cài cùng style `radix-nova`. `shadow-*` của component shadcn được giữ.

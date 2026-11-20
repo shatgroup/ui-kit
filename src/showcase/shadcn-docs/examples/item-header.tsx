@@ -42,6 +42,8 @@ export function ItemHeaderDemo() {
               <img
                 src={model.image}
                 alt={model.name}
+                width={128}
+                height={128}
                 className="aspect-square w-full rounded-sm object-cover"
               />
             </ItemHeader>

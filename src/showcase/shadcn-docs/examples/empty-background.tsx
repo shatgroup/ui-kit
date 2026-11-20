@@ -1,4 +1,5 @@
-import { RefreshCcwIcon, BellIcon } from "lucide-react"
+import { IconBell } from "@tabler/icons-react"
+import { RefreshCcwIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button.tsx"
 import {
@@ -15,7 +16,7 @@ export function EmptyMuted() {
     <Empty className="h-full bg-muted/30">
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <BellIcon />
+          <IconBell />
         </EmptyMedia>
         <EmptyTitle>No Notifications</EmptyTitle>
         <EmptyDescription className="max-w-xs text-pretty">

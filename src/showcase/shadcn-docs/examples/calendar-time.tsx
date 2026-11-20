@@ -18,7 +18,7 @@ export function CalendarWithTime() {
   )
 
   return (
-    <Card className="mx-auto w-fit">
+    <Card size="sm" className="mx-auto w-fit">
       <CardContent>
         <Calendar
           mode="single"

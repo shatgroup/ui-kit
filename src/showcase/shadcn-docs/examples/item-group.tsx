@@ -6,15 +6,7 @@ import {
   AvatarImage,
 } from "@/components/ui/avatar.tsx"
 import { Button } from "@/components/ui/button.tsx"
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemTitle,
-} from "@/components/ui/item.tsx"
+import { Item, ItemActions, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@/components/ui/item.tsx"
 
 const people = [
   {

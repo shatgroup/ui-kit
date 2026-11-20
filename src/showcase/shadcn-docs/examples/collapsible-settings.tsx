@@ -23,7 +23,7 @@ export function CollapsibleSettings() {
   const [isOpen, setIsOpen] = React.useState(false)
 
   return (
-    <Card className="mx-auto w-full max-w-xs">
+    <Card className="mx-auto w-full max-w-xs" size="sm">
       <CardHeader>
         <CardTitle>Radius</CardTitle>
         <CardDescription>Set the corner radius of the element.</CardDescription>

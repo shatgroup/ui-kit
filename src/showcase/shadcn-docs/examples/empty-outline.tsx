@@ -1,4 +1,4 @@
-import { CloudIcon } from "lucide-react"
+import { IconCloud } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button.tsx"
 import {
@@ -15,7 +15,7 @@ export default function EmptyOutline() {
     <Empty className="border border-dashed">
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <CloudIcon />
+          <IconCloud />
         </EmptyMedia>
         <EmptyTitle>Cloud Storage Empty</EmptyTitle>
         <EmptyDescription>

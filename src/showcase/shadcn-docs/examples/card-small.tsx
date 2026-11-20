@@ -10,7 +10,7 @@ import {
 
 export function CardSmall() {
   return (
-    <Card className="mx-auto w-full max-w-sm">
+    <Card size="sm" className="mx-auto w-full max-w-sm">
       <CardHeader>
         <CardTitle>Small Card</CardTitle>
         <CardDescription>

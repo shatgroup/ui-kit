@@ -32,6 +32,8 @@ export function ScrollAreaHorizontalDemo() {
                 src={artwork.art}
                 alt={`Photo by ${artwork.artist}`}
                 className="aspect-[3/4] h-fit w-fit object-cover"
+                width={300}
+                height={400}
               />
             </div>
             <figcaption className="pt-2 text-xs text-muted-foreground">

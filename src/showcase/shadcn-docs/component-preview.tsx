@@ -2,8 +2,8 @@ import * as React from "react"
 import { cn } from "cn"
 
 import { Button } from "@/components/ui/button.tsx"
-import { CopyButton } from "./copy-button.tsx"
 import { examples } from "./examples/index.ts"
+import { HighlightedCode } from "./highlighted-code.tsx"
 
 const sources = import.meta.glob("./examples/*.tsx", {
   query: "?raw",
@@ -65,23 +65,16 @@ function ComponentPreview({
           className="relative overflow-hidden **:data-[slot=copy-button]:right-4 **:data-[slot=copy-button]:hidden data-[mobile-code-visible=true]:**:data-[slot=copy-button]:flex [&_[data-rehype-pretty-code-figure]]:m-0! [&_[data-rehype-pretty-code-figure]]:rounded-t-none [&_[data-rehype-pretty-code-figure]]:border-t [&_pre]:max-h-72"
         >
           {codeVisible ? (
-            <figure data-rehype-pretty-code-figure="" className="relative [&>pre]:max-h-96">
-              <CopyButton value={source} />
-              <pre className="overflow-auto bg-muted p-6 font-mono text-sm text-foreground">
-                <code>{source}</code>
-              </pre>
-            </figure>
+            <HighlightedCode code={source} />
           ) : (
             <div className="relative">
-              <pre className="max-h-72 overflow-hidden bg-muted p-6 font-mono text-sm text-muted-foreground">
-                <code>{previewSource}</code>
-              </pre>
+              <HighlightedCode code={previewSource} preview />
               <div className="absolute inset-0 flex items-center justify-center pb-4">
                 <div
                   className="absolute inset-0"
                   style={{
                     background:
-                      "linear-gradient(to top, var(--color-muted), color-mix(in oklab, var(--color-muted) 60%, transparent), transparent)",
+                      "linear-gradient(to top, var(--color-code), color-mix(in oklab, var(--color-code) 60%, transparent), transparent)",
                   }}
                 />
                 <Button

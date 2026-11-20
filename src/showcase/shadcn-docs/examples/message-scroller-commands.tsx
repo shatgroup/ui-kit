@@ -1,5 +1,6 @@
 "use client"
 
+
 import { createChat, getMessageText } from "@/lib/ai"
 import { Bubble, BubbleContent } from "@/components/ui/bubble.tsx"
 import { Button } from "@/components/ui/button.tsx"

@@ -1,4 +1,9 @@
-import { FileCodeIcon, CopyIcon, CornerDownLeftIcon, RefreshCwIcon } from "lucide-react"
+import {
+  IconBrandJavascript,
+  IconCopy,
+  IconCornerDownLeft,
+  IconRefresh,
+} from "@tabler/icons-react"
 
 import {
   InputGroup,
@@ -20,19 +25,19 @@ export default function InputGroupTextareaExample() {
         <InputGroupAddon align="block-end" className="border-t">
           <InputGroupText>Line 1, Column 1</InputGroupText>
           <InputGroupButton size="sm" className="ml-auto" variant="default">
-            Run <CornerDownLeftIcon />
+            Run <IconCornerDownLeft />
           </InputGroupButton>
         </InputGroupAddon>
         <InputGroupAddon align="block-start" className="border-b">
           <InputGroupText className="font-mono font-medium">
-            <FileCodeIcon />
+            <IconBrandJavascript />
             script.js
           </InputGroupText>
           <InputGroupButton className="ml-auto" size="icon-xs">
-            <RefreshCwIcon />
+            <IconRefresh />
           </InputGroupButton>
           <InputGroupButton variant="ghost" size="icon-xs">
-            <CopyIcon />
+            <IconCopy />
           </InputGroupButton>
         </InputGroupAddon>
       </InputGroup>

@@ -1,4 +1,5 @@
-import { ArrowUpRightIcon, FolderCodeIcon } from "lucide-react"
+import { IconFolderCode } from "@tabler/icons-react"
+import { ArrowUpRightIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button.tsx"
 import {
@@ -15,7 +16,7 @@ export default function EmptyDemo() {
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <FolderCodeIcon />
+          <IconFolderCode />
         </EmptyMedia>
         <EmptyTitle>No Projects Yet</EmptyTitle>
         <EmptyDescription>

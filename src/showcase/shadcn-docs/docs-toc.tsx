@@ -1,6 +1,6 @@
 import * as React from "react"
 import { cn } from "cn"
-import { MenuIcon } from "lucide-react"
+import { IconMenu3 } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button.tsx"
 import {
@@ -52,7 +52,7 @@ function DocsTableOfContents({
       <DropdownMenu open={open} onOpenChange={setOpen}>
         <DropdownMenuTrigger asChild>
           <Button variant="outline" size="sm" className={cn("h-8 md:h-7", className)}>
-            <MenuIcon /> On This Page
+            <IconMenu3 /> On This Page
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="no-scrollbar max-h-[70svh]">

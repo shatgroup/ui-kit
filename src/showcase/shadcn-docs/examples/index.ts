@@ -83,7 +83,6 @@ import Ex_calendar_basic from "./calendar-basic.tsx"
 import { CalendarCaption as Ex_calendar_caption } from "./calendar-caption.tsx"
 import { CalendarCustomDays as Ex_calendar_custom_days } from "./calendar-custom-days.tsx"
 import Ex_calendar_demo from "./calendar-demo.tsx"
-import Ex_calendar_hijri from "./calendar-hijri.tsx"
 import { CalendarWithPresets as Ex_calendar_presets } from "./calendar-presets.tsx"
 import { CalendarRange as Ex_calendar_range } from "./calendar-range.tsx"
 import { CalendarWithTime as Ex_calendar_time } from "./calendar-time.tsx"
@@ -492,7 +491,6 @@ const examples: Record<string, ComponentType> = {
   "calendar-caption": Ex_calendar_caption,
   "calendar-custom-days": Ex_calendar_custom_days,
   "calendar-demo": Ex_calendar_demo,
-  "calendar-hijri": Ex_calendar_hijri,
   "calendar-presets": Ex_calendar_presets,
   "calendar-range": Ex_calendar_range,
   "calendar-time": Ex_calendar_time,

@@ -8,7 +8,7 @@ export function AspectRatioSquare() {
         <img
           src="https://avatar.vercel.sh/shadcn1"
           alt="Photo"
-          className="rounded-lg object-cover grayscale dark:brightness-20"
+          className="rounded-lg object-cover grayscale dark:brightness-20 absolute inset-0 size-full"
         />
       </AspectRatio>
     </div>

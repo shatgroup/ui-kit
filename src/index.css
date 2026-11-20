@@ -8,3 +8,7 @@
 @import "./styles/theme.css";
 @import "./styles/tokens.css";
 @import "./styles/flow.css";
+
+@utility cn-font-heading {
+  font-family: var(--font-heading);
+}
