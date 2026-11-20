@@ -7,10 +7,11 @@ import { BoldIcon, CircleAlertIcon, CircleCheckIcon, InfoIcon, ItalicIcon, Layou
 import { Grid, Inline, ReadingText, Stack, Text } from "@/components/layout/index.ts"
 import { AppShell } from "@/components/patterns/app-shell.tsx"
 import { Stepper } from "@/components/media/stepper.tsx"
-import { Alert } from "@/components/ui/alert.tsx"
+import { AlertBanner } from "@/components/ui/alert-banner.tsx"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar.tsx"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
+import { ButtonState } from "@/components/ui/button-state.tsx"
 import { Calendar } from "@/components/ui/calendar.tsx"
 import { Card, CardContent, CardHeader } from "@/components/ui/card.tsx"
 import { ChartContainer } from "@/components/ui/chart.tsx"
@@ -27,7 +28,8 @@ import { ProgressSegments } from "@/components/ui/progress-segments.tsx"
 import { StepsBar } from "@/components/ui/steps-bar.tsx"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card.tsx"
 import { Input } from "@/components/ui/input.tsx"
-import { InputGroup } from "@/components/ui/input-group.tsx"
+import { InputState } from "@/components/ui/input-state.tsx"
+import { InputAffix } from "@/components/ui/input-affix.tsx"
 import { NumberInput } from "@/components/ui/number-input.tsx"
 import { PasswordInput } from "@/components/ui/password-input.tsx"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover.tsx"
@@ -38,6 +40,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet.tsx"
 import { Skeleton } from "@/components/ui/skeleton.tsx"
 import { Slider } from "@/components/ui/slider.tsx"
+import { SliderTip } from "@/components/ui/slider-tip.tsx"
 import { Spinner } from "@/components/ui/spinner.tsx"
 import { StatusBadge } from "@/components/ui/status-badge.tsx"
 import { SwitchField } from "@/components/ui/switch-field.tsx"
@@ -50,7 +53,6 @@ import { Textarea } from "@/components/ui/textarea.tsx"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group.tsx"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
 import { FlowSection } from "./flow.tsx"
-import { Icons } from "./icons.tsx"
 
 const VARIANTS = ["default", "secondary", "outline", "ghost", "destructive", "link"] as const
 const STATES = [
@@ -198,10 +200,10 @@ function Quiet({ name }: { name: string }) {
 }
 
 function SampleButton({ variant, state }: { variant: (typeof VARIANTS)[number]; state: (typeof STATES)[number]["key"] }) {
-  if (state === "hover") return <Button variant={variant} forceState="hover" className="w-fit">Button</Button>
-  if (state === "focus") return <Button variant={variant} forceState="focus" className="w-fit">Button</Button>
-  if (state === "disabled") return <Button variant={variant} disabled className="w-fit">Button</Button>
-  return <Button variant={variant} className="w-fit">Button</Button>
+  if (state === "hover") return <ButtonState variant={variant} state="hover" className="w-fit">Button</ButtonState>
+  if (state === "focus") return <ButtonState variant={variant} state="focus" className="w-fit">Button</ButtonState>
+  if (state === "disabled") return <ButtonState variant={variant} state="disabled" className="w-fit">Button</ButtonState>
+  return <ButtonState variant={variant} className="w-fit">Button</ButtonState>
 }
 
 function KitCard({ title, children }: { title: string; children: ReactNode }) {
@@ -415,9 +417,9 @@ function Kit() {
               <FieldSample n={5} className="order-5 md:order-none" label="Error" error="This field is invalid"><Input defaultValue="???" /></FieldSample>
               <FieldSample n={2} className="order-2 md:order-none" label="Filled"><Input defaultValue="Alex Kim" /></FieldSample>
               <FieldSample n={6} className="order-6 md:order-none" label="Disabled"><Input defaultValue="Not editable" disabled /></FieldSample>
-              <FieldSample n={3} className="order-3 md:order-none" label="With icon"><InputGroup prefix={<UserIcon className="size-4" />} aria-label="Username" placeholder="Username" /></FieldSample>
+              <FieldSample n={3} className="order-3 md:order-none" label="With icon"><InputAffix prefix={<UserIcon className="size-4" />} aria-label="Username" placeholder="Username" /></FieldSample>
               <FieldSample n={7} className="order-7 md:order-none" label="Email" inline><Input placeholder="name@studio.com" /></FieldSample>
-              <FieldSample n={4} className="order-4 md:order-none" label="Focus"><Input forceState="focus" defaultValue="Focused" /></FieldSample>
+              <FieldSample n={4} className="order-4 md:order-none" label="Focus"><InputState state="focus" defaultValue="Focused" /></FieldSample>
               <FieldSample n={8} className="order-8 md:order-none" label="With helper text" hint="Shown under the field"><Input placeholder="Add a note" /></FieldSample>
             </Grid>
           </KitCard>
@@ -429,7 +431,7 @@ function Kit() {
                 <Input placeholder="Text" />
               </TypeCell>
               <TypeCell name="Search field" label="Search">
-                <InputGroup prefix={<SearchIcon className="size-4" />} aria-label="Search field" placeholder="Search" />
+                <InputAffix prefix={<SearchIcon className="size-4" />} aria-label="Search field" placeholder="Search" />
               </TypeCell>
               <TypeCell name="Textarea" label="Note" className="xl:row-span-2" note={<Text size="xs" tone="muted" className="text-right">0 / 320</Text>}>
                 <Textarea className="min-h-16 flex-1" placeholder="Write a note" />
@@ -440,7 +442,7 @@ function Kit() {
               <TypeCell name="Select" label="Tool">
                 <Select defaultValue="figma">
                   <SelectTrigger aria-label="Tool"><SelectValue /></SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="popper">
                     <SelectItem value="framer">Framer</SelectItem>
                     <SelectItem value="sketch">Sketch</SelectItem>
                     <SelectItem value="invision">InVision Studio</SelectItem>
@@ -450,7 +452,7 @@ function Kit() {
                 </Select>
               </TypeCell>
               <TypeCell name="Prefix input" label="Website">
-                <InputGroup prefix="https://" aria-label="Website" placeholder="example.com" />
+                <InputAffix prefix="https://" aria-label="Website" placeholder="example.com" />
               </TypeCell>
               <TypeCell name="Multi-select" label="Tags">
                 <TagsInput value={tags} onValueChange={setTags} placeholder="Add a tag" removeLabel="Remove" />
@@ -462,7 +464,7 @@ function Kit() {
                 <PasswordInput aria-label="Password" defaultValue="secret" />
               </TypeCell>
               <TypeCell name="Number only" label="Width">
-                <InputGroup suffix="px" aria-label="Width" inputMode="numeric" defaultValue="16" />
+                <InputAffix suffix="px" aria-label="Width" inputMode="numeric" defaultValue="16" />
               </TypeCell>
               <TypeCell name="Dropdown list" label="Apps">
                 <Command className="rounded-lg border border-border">
@@ -544,10 +546,10 @@ function Kit() {
       <Section id="phan-hoi" title="Feedback">
         <Span span="half">
           <KitCard title="Alerts">
-            {alerts.info ? <Alert variant="line" tone="info" title="Something you should know" icon={<InfoIcon className="size-4 text-info" />} onClose={() => setAlerts((current) => ({ ...current, info: false }))} /> : null}
-            {alerts.success ? <Alert variant="line" tone="success" title="Saved" icon={<CircleCheckIcon className="size-4 text-success" />} onClose={() => setAlerts((current) => ({ ...current, success: false }))} /> : null}
-            {alerts.warning ? <Alert variant="line" tone="warning" title="Fill in the required fields" icon={<TriangleAlertIcon className="size-4 text-warning" />} onClose={() => setAlerts((current) => ({ ...current, warning: false }))} /> : null}
-            {alerts.error ? <Alert variant="line" tone="error" title="Could not save" icon={<CircleAlertIcon className="size-4 text-destructive" />} onClose={() => setAlerts((current) => ({ ...current, error: false }))} /> : null}
+            {alerts.info ? <AlertBanner variant="line" tone="info" title="Something you should know" icon={<InfoIcon className="size-4 text-info" />} onClose={() => setAlerts((current) => ({ ...current, info: false }))} /> : null}
+            {alerts.success ? <AlertBanner variant="line" tone="success" title="Saved" icon={<CircleCheckIcon className="size-4 text-success" />} onClose={() => setAlerts((current) => ({ ...current, success: false }))} /> : null}
+            {alerts.warning ? <AlertBanner variant="line" tone="warning" title="Fill in the required fields" icon={<TriangleAlertIcon className="size-4 text-warning" />} onClose={() => setAlerts((current) => ({ ...current, warning: false }))} /> : null}
+            {alerts.error ? <AlertBanner variant="line" tone="error" title="Could not save" icon={<CircleAlertIcon className="size-4 text-destructive" />} onClose={() => setAlerts((current) => ({ ...current, error: false }))} /> : null}
           </KitCard>
         </Span>
         <Span span="half">
@@ -580,7 +582,7 @@ function Kit() {
                 <Progress value={40} aria-label="40 percent" />
               </ProgressSample>
               <ProgressSample n={3}>
-                <Slider defaultValue={[40]} tip="40%" aria-label="Percent" data-slider-tip="40%" />
+                <SliderTip defaultValue={[40]} tip="40%" aria-label="Percent" data-slider-tip="40%" />
               </ProgressSample>
               <ProgressSample n={4}>
                 <ProgressSegments value={2} max={6} />
@@ -744,7 +746,6 @@ function Kit() {
       </Section>
 
       <FlowSection />
-      <Icons />
     </Stack>
   )
 }

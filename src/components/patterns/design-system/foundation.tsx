@@ -156,7 +156,7 @@ function Header() {
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <Stack gap={2} className="max-w-md">
           <Text as="h1" size="3xl" weight="bold">Design System</Text>
-          <Text size="sm" tone="muted">Tokens, type, and components shared across every screen.</Text>
+          <Text size="sm" tone="muted">Tokens and type shared across every screen.</Text>
         </Stack>
         <span className="specimen-word block min-w-0 font-medium break-words text-muted-foreground xl:shrink-0 xl:text-right">Be Vietnam Pro</span>
       </div>

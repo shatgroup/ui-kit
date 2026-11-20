@@ -107,8 +107,12 @@ function changedLines(before: string, after: string) {
   return { removed, added }
 }
 
+function selectPopper(before: string, after: string) {
+  return after === before.replace("<SelectContent>", '<SelectContent position="popper">')
+}
+
 function explains(before: string, after: string) {
-  return normalize(before) === normalize(after) || importChange(before, after) || withoutUnusedReact(before) === after || radiusFix(before, after) || spinName(before, after)
+  return normalize(before) === normalize(after) || importChange(before, after) || withoutUnusedReact(before) === after || radiusFix(before, after) || spinName(before, after) || selectPopper(before, after)
 }
 
 function spinName(before: string, after: string) {

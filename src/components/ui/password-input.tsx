@@ -1,7 +1,7 @@
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useState } from "react"
 import { Button } from "./button.tsx"
-import { InputGroup } from "./input-group.tsx"
+import { InputAffix } from "./input-affix.tsx"
 import type { ControlSize } from "./control.ts"
 
 function PasswordInput({
@@ -16,7 +16,7 @@ function PasswordInput({
 }) {
   const [shown, setShown] = useState(false)
   return (
-    <InputGroup
+    <InputAffix
       {...props}
       size={size}
       type={shown ? "text" : "password"}

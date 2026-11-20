@@ -1,58 +1,65 @@
-import { XIcon } from "lucide-react"
-import type { ReactNode } from "react"
-import { cn } from "@/lib/utils.ts"
-import { Button } from "./button.tsx"
+import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
+import { cn } from "cn"
 
-const TONE = {
-  info: "border-info bg-badge-info text-badge-info-foreground",
-  success: "border-success bg-badge-success text-badge-success-foreground",
-  warning: "border-warning bg-badge-warning text-badge-warning-foreground",
-  error: "border-destructive bg-badge-destructive text-badge-destructive-foreground",
-} as const
-
-type AlertTone = keyof typeof TONE
-
-const BAR = {
-  info: "bg-info",
-  success: "bg-success",
-  warning: "bg-warning",
-  error: "bg-destructive",
-} as const
+const alertVariants = cva(
+  "relative grid w-full grid-cols-[0_1fr] items-start gap-y-0.5 rounded-lg border px-4 py-3 text-sm has-[>svg]:grid-cols-[calc(var(--spacing)*4)_1fr] has-[>svg]:gap-x-3 [&>svg]:size-4 [&>svg]:translate-y-0.5 [&>svg]:text-current",
+  {
+    variants: {
+      variant: {
+        default: "bg-card text-card-foreground",
+        destructive:
+          "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 [&>svg]:text-current",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
 
 function Alert({
-  tone = "info",
-  title,
-  children,
-  onClose,
-  icon,
-  variant = "soft",
-  closeLabel = "Đóng",
-}: {
-  tone?: AlertTone
-  title: string
-  children?: ReactNode
-  onClose?: () => void
-  icon?: ReactNode
-  variant?: "soft" | "line"
-  closeLabel?: string
-}) {
-  const line = variant === "line"
+  className,
+  variant,
+  ...props
+}: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
   return (
-    <div data-slot="alert" role="status" className={cn("relative flex items-center gap-3 overflow-hidden rounded-lg border p-3 text-sm", line ? "border-border bg-card" : TONE[tone])}>
-      {line ? <span className={cn("absolute inset-y-0 left-0 w-1", BAR[tone])} /> : null}
-      {icon}
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <span className="font-medium">{title}</span>
-        {children ? <span>{children}</span> : null}
-      </div>
-      {onClose ? (
-        <Button variant="ghost" size="sm" className="size-8 p-0" aria-label={closeLabel} onClick={onClose}>
-          <XIcon />
-        </Button>
-      ) : null}
-    </div>
+    <div
+      data-slot="alert"
+      role="alert"
+      className={cn(alertVariants({ variant }), className)}
+      {...props}
+    />
   )
 }
 
-export { Alert }
-export type { AlertTone }
+function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="alert-title"
+      className={cn(
+        "col-start-2 line-clamp-1 min-h-4 font-medium tracking-tight",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function AlertDescription({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      data-slot="alert-description"
+      className={cn(
+        "col-start-2 grid justify-items-start gap-1 text-sm text-muted-foreground [&_p]:leading-relaxed",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export { Alert, AlertTitle, AlertDescription }

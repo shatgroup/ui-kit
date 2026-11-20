@@ -6,6 +6,7 @@ const widths = [375, 768, 1440]
 const themes = ["light", "dark"] as const
 const pages = [
   { path: "/design-system", tabs: [""] },
+  { path: "/components/kit-gallery", tabs: [""] },
   { path: "/showcase?tab=cards", tabs: [""] },
   { path: "/showcase?tab=dashboard", tabs: [""] },
   { path: "/showcase?tab=application", tabs: [""] },
@@ -209,7 +210,7 @@ describe("kiểm showcase", () => {
             await settle(page)
             const found = await page.evaluate(scan)
             for (const message of found) failures.push(`${item.path} ${tab || "-"} ${width} ${theme}: ${message}`)
-            if (item.path === "/design-system" && width === 1440) {
+            if (item.path === "/components/kit-gallery" && width === 1440) {
               const readPaint = async (locator: ReturnType<typeof page.getByRole>) => locator.evaluate((el) => {
                 const style = getComputedStyle(el)
                 return `${style.backgroundColor}|${style.transform}`
@@ -239,7 +240,7 @@ describe("kiểm showcase", () => {
     }
     await page.close()
     expect(failures, failures.join("\n")).toEqual([])
-  }, 240_000)
+  }, 420_000)
 
   it("popup, trạng thái, xô lệch và DataTable", async () => {
     const page = await browser.newPage()
@@ -333,7 +334,7 @@ describe("kiểm showcase", () => {
                 await menu.click({ timeout: 2000 }).catch(() => undefined)
                 await page.keyboard.press("Escape")
               }
-              const select = page.locator("[data-slot=select-trigger]").nth(item.path === "/design-system" ? 1 : 0)
+              const select = page.locator("[data-slot=select-trigger]").nth(item.path === "/components/kit-gallery" ? 1 : 0)
               if (await select.count() && await select.isVisible()) {
                 await select.click({ timeout: 2000 }).catch(() => undefined)
                 await page.keyboard.press("Escape")
@@ -541,7 +542,7 @@ describe("kiểm showcase", () => {
 
     await page.close()
     expect(failures, failures.join("\n")).toEqual([])
-  }, 240_000)
+  }, 420_000)
 
   it("switch bật nền primary chấm phải, tắt nền input chấm trái", async () => {
     const page = await browser.newPage()
@@ -574,7 +575,7 @@ describe("kiểm showcase", () => {
       }
     })
     for (const theme of themes) {
-      await page.goto(`${base}/design-system`, { waitUntil: "networkidle" })
+      await page.goto(`${base}/components/kit-gallery`, { waitUntil: "networkidle" })
       await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
       await page.waitForTimeout(400)
       const colors = await page.evaluate((dark) => {
@@ -648,8 +649,9 @@ describe("kiểm showcase", () => {
           return hex.startsWith("#") && /\d+\/\d+/.test(meta)
         })
         await settle(page)
-        const found = await page.evaluate(() => {
+        const scanKit = () => {
           const notes: string[] = []
+          const gallery = document.getElementById("hanh-dong") instanceof HTMLElement
           const doc = document.documentElement
           if (doc.scrollWidth > doc.clientWidth + 2) {
             notes.push(`tràn ngang ${doc.scrollWidth}/${doc.clientWidth}`)
@@ -702,7 +704,7 @@ describe("kiểm showcase", () => {
             { id: "type-text-2xl", weight: "600", rem: 1.5, line: 2 / 1.5, color: "foreground" },
             { id: "type-text-3xl", weight: "700", rem: 1.875, line: 1.3, color: "foreground" },
           ]
-          for (const row of typeScale) {
+          if (!gallery) for (const row of typeScale) {
             const sample = document.getElementById(row.id)
             if (!(sample instanceof HTMLElement)) {
               notes.push(`không đo được chữ mẫu ${row.id}`)
@@ -813,12 +815,12 @@ describe("kiểm showcase", () => {
             ["switch", "Switch disabled on", "checked"],
             ["switch", "Switch disabled off", "unchecked"],
           ]
-          for (const [role, name, state] of states) {
+          if (gallery) for (const [role, name, state] of states) {
             const el = named(role, name)
             if (!(el instanceof HTMLElement)) notes.push(`thiếu ${name}`)
             else if (el.getAttribute("data-state") !== state) notes.push(`${name} đang ${el.getAttribute("data-state")}`)
           }
-          for (const name of ["background", "card", "popover"]) {
+          if (!gallery) for (const name of ["background", "card", "popover"]) {
             const node = document.querySelector(`[data-swatch="${name}"]`)
             if (!(node instanceof HTMLElement) || getComputedStyle(node).borderTopWidth !== "1px") notes.push(`${name} thiếu viền`)
           }
@@ -906,6 +908,7 @@ describe("kiểm showcase", () => {
             const centers = [mid(icon), mid(title), mid(close)]
             if (Math.max(...centers) - Math.min(...centers) > 1) notes.push(`alert lệch ${ (Math.max(...centers) - Math.min(...centers)).toFixed(1) }px`)
           })
+          if (!gallery) {
           const levels = [...document.querySelectorAll("[data-space-level]")].map((el) => {
             const row = el.parentElement?.parentElement
             const box = row instanceof HTMLElement ? row.getBoundingClientRect() : { left: 0, top: 0 }
@@ -929,6 +932,8 @@ describe("kiểm showcase", () => {
             const placeholder = field.getAttribute("placeholder") ?? ""
             if (vi.test(placeholder)) notes.push(`placeholder ${placeholder}`)
           })
+          }
+          if (gallery) {
           const matrixBox = document.querySelector("[data-button-matrix]")?.getBoundingClientRect()
           const sizeRow = document.querySelector("[data-button-sizes]")
           if (matrixBox && sizeRow instanceof HTMLElement) {
@@ -952,7 +957,7 @@ describe("kiểm showcase", () => {
               })
               if (bottoms.length > 1 && Math.max(...bottoms) - Math.min(...bottoms) > 1) notes.push("nút kích thước lệch đáy")
             }
-          } else notes.push("thiếu hàng Sizes")
+          } else if (gallery) notes.push("thiếu hàng Sizes")
           const typeGrid = document.querySelector("[data-input-types]")
           if (typeGrid instanceof HTMLElement) {
             if (typeGrid.scrollWidth > typeGrid.clientWidth + 2) notes.push("input types tràn")
@@ -972,11 +977,11 @@ describe("kiểm showcase", () => {
                 }
               }
             })
-          } else notes.push("thiếu input types")
+          } else if (gallery) notes.push("thiếu input types")
           const progress = [...document.querySelectorAll("[data-progress-sample]")].filter((el) => el instanceof HTMLElement)
           const progressOrder = progress.map((el) => el.getAttribute("data-progress-sample")).join(",")
-          if (progressOrder !== "1,2,3,4,5,6,7,8") notes.push(`progress ${progressOrder}`)
-          if (window.innerWidth >= 768 && progress.length === 8) {
+          if (gallery && progressOrder !== "1,2,3,4,5,6,7,8") notes.push(`progress ${progressOrder}`)
+          if (gallery && window.innerWidth >= 768 && progress.length === 8) {
             const box = (n: number) => progress[n]?.getBoundingClientRect()
             const first = box(0)
             const second = box(1)
@@ -987,7 +992,7 @@ describe("kiểm showcase", () => {
               if (Math.abs(first.top - fifth.top) > 2) notes.push("progress hàng đầu lệch")
             }
           }
-          if (window.innerWidth < 768 && progress.some((el, index) => index > 0 && el.getBoundingClientRect().top <= (progress[index - 1]?.getBoundingClientRect().top ?? 0))) {
+          if (gallery && window.innerWidth < 768 && progress.some((el, index) => index > 0 && el.getBoundingClientRect().top <= (progress[index - 1]?.getBoundingClientRect().top ?? 0))) {
             notes.push("progress 375 chưa 1 cột")
           }
           const mid = (el: HTMLElement) => {
@@ -1035,6 +1040,7 @@ describe("kiểm showcase", () => {
               if (edges.length === 4 && Math.max(...edges) - Math.min(...edges) > 1) notes.push(`mép phải cột ${column[0]} lệch`)
             }
           }
+          }
           const desktop = window.innerWidth >= 1024
           const tablet = window.innerWidth >= 768
           const expectCols = desktop ? 12 : tablet ? 8 : 4
@@ -1054,8 +1060,8 @@ describe("kiểm showcase", () => {
             if (Math.abs(gap - 16) > 1) notes.push(`gutter ${gap.toFixed(1)}px`)
           }
           const sample = document.querySelector("[data-measure-grid]")
-          if (!(sample instanceof HTMLElement)) notes.push("thiếu lưới đo")
-          else {
+          if (!gallery && !(sample instanceof HTMLElement)) notes.push("thiếu lưới đo")
+          else if (sample instanceof HTMLElement) {
             const gridBox = sample.getBoundingClientRect()
             const gap = Number.parseFloat(getComputedStyle(sample).columnGap)
             const col = (gridBox.width - gap * (expectCols - 1)) / expectCols
@@ -1079,6 +1085,7 @@ describe("kiểm showcase", () => {
           const wantPad = tablet ? 24 : 16
           const pagePad = padOf(document.querySelector("[data-slot=container]"))
           if (Math.abs(pagePad - wantPad) > 1) notes.push(`lề trang ${pagePad}px cần ${wantPad}`)
+          if (gallery) {
           const appPad = padOf(document.querySelector("[data-slot=app-content]"))
           if (Math.abs(appPad - wantPad) > 1) notes.push(`lề app ${appPad}px cần ${wantPad}`)
           const appHeader = document.querySelector("[data-app-header]")
@@ -1198,9 +1205,17 @@ describe("kiểm showcase", () => {
             const frame = preview.getBoundingClientRect()
             if (nextSide.top < frame.top - 1 || nextSide.left < frame.left - 1) notes.push("sidebar preview ra ngoài khung")
           }
+          }
           return notes
-        })
+        }
+        const found = await page.evaluate(scanKit)
         for (const note of found) failures.push(`${where}: ${note}`)
+        await page.goto(`${base}/components/kit-gallery`, { waitUntil: "networkidle" })
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+        await page.waitForSelector("#hanh-dong")
+        await settle(page)
+        const galleryNotes = await page.evaluate(scanKit)
+        for (const note of galleryNotes) failures.push(`${where}: ${note}`)
         await unsettle(page)
         const shell = page.locator("[data-app-shell]")
         await shell.evaluate((el) => el.scrollIntoView({ block: "center" }))
@@ -1280,13 +1295,6 @@ describe("kiểm showcase", () => {
         if (menuCovered) failures.push(`${where}: ${menuCovered}`)
         await page.keyboard.press("Escape")
 
-        const before = await page.locator("[data-swatch=background]").first().getAttribute("data-hex")
-        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", !dark), theme === "dark")
-        await page.waitForTimeout(200)
-        const after = await page.locator("[data-swatch=background]").first().getAttribute("data-hex")
-        if (!before || !after || before === after) failures.push(`${where}: hex nền không đổi (${before} → ${after})`)
-        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
-
         const switchEl = page.getByRole("switch", { name: "Switch off", exact: true })
         const beforeSwitch = await switchEl.getAttribute("data-state")
         await switchEl.click()
@@ -1314,6 +1322,34 @@ describe("kiểm showcase", () => {
         })
         if (covered) failures.push(`${where}: select ${covered}`)
         await page.keyboard.press("Escape")
+
+        const sliderThumb = page.locator("[data-slider-tip] [data-slot=slider-thumb]")
+        await sliderThumb.evaluate((el) => el.scrollIntoView({ block: "center" }))
+        await sliderThumb.focus()
+        const sliderTip = (await page.locator("[role=tooltip]").filter({ hasText: "40%" }).textContent({ timeout: 2000 }).catch(() => "")) ?? ""
+        if (!sliderTip.includes("40%")) failures.push(`${where}: slider tooltip ${sliderTip || "trống"}`)
+        const controls = page.locator("[data-controls]")
+        if ((await controls.getByText("Theme", { exact: true }).count()) !== 1) failures.push(`${where}: thiếu mẫu Theme`)
+        const themeBefore = await page.evaluate(() => document.documentElement.classList.contains("dark"))
+        const nextTheme = themeBefore ? "Light" : "Dark"
+        await controls.getByRole("radio", { name: nextTheme, exact: true }).click()
+        const themeSynced = await page.waitForFunction((name) => {
+          const dark = document.documentElement.classList.contains("dark")
+          if (dark !== (name === "Dark")) return false
+          const on = (root: ParentNode | null) => root?.querySelector(`[aria-label="${name}"]`)?.getAttribute("data-state") === "on"
+          return on(document.querySelector("header")) && on(document.querySelector("[data-controls]"))
+        }, nextTheme, { timeout: 2000 }).then(() => true).catch(() => false)
+        if (!themeSynced) failures.push(`${where}: theme không đồng bộ`)
+
+        await page.goto(`${base}/design-system`, { waitUntil: "networkidle" })
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
+        await settle(page)
+        const before = await page.locator("[data-swatch=background]").first().getAttribute("data-hex")
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", !dark), theme === "dark")
+        await page.waitForTimeout(200)
+        const after = await page.locator("[data-swatch=background]").first().getAttribute("data-hex")
+        if (!before || !after || before === after) failures.push(`${where}: hex nền không đổi (${before} → ${after})`)
+        await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
 
         const stuck = await page.evaluate(() => {
           const nav = document.querySelector("[data-slot=section-nav]")
@@ -1350,33 +1386,16 @@ describe("kiểm showcase", () => {
         await page.locator("[data-icon-name=Sun]").click()
         const copied = await page.getByText("Copied Sun", { exact: true }).last().waitFor({ state: "visible", timeout: 2000 }).then(() => true).catch(() => false)
         if (!copied) failures.push(`${where}: không thấy toast copy`)
-        const sliderThumb = page.locator("[data-slider-tip] [data-slot=slider-thumb]")
-        await sliderThumb.evaluate((el) => el.scrollIntoView({ block: "center" }))
-        await sliderThumb.focus()
-        const sliderTip = (await page.locator("[role=tooltip]").filter({ hasText: "40%" }).textContent({ timeout: 2000 }).catch(() => "")) ?? ""
-        if (!sliderTip.includes("40%")) failures.push(`${where}: slider tooltip ${sliderTip || "trống"}`)
-        const controls = page.locator("[data-controls]")
-        if ((await controls.getByText("Theme", { exact: true }).count()) !== 1) failures.push(`${where}: thiếu mẫu Theme`)
-        const themeBefore = await page.evaluate(() => document.documentElement.classList.contains("dark"))
-        const nextTheme = themeBefore ? "Light" : "Dark"
-        await controls.getByRole("radio", { name: nextTheme, exact: true }).click()
-        const themeSynced = await page.waitForFunction((name) => {
-          const dark = document.documentElement.classList.contains("dark")
-          if (dark !== (name === "Dark")) return false
-          const on = (root: ParentNode | null) => root?.querySelector(`[aria-label="${name}"]`)?.getAttribute("data-state") === "on"
-          return on(document.querySelector("header")) && on(document.querySelector("[data-controls]"))
-        }, nextTheme, { timeout: 2000 }).then(() => true).catch(() => false)
-        if (!themeSynced) failures.push(`${where}: theme không đồng bộ`)
       }
     }
     await page.close()
     expect(failures, failures.join("\n")).toEqual([])
-  }, 240_000)
+  }, 420_000)
 
   it("viền Card, Input, Table bằng --border", async () => {
     const page = await browser.newPage()
     const failures: string[] = []
-    const paths = ["/design-system", "/showcase?tab=cards", "/showcase?tab=dashboard", "/showcase?tab=application"]
+    const paths = ["/components/kit-gallery", "/showcase?tab=cards", "/showcase?tab=dashboard", "/showcase?tab=application"]
     await page.setViewportSize({ width: 1440, height: 900 })
     for (const path of paths) {
       for (const theme of themes) {

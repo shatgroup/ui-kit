@@ -1,6 +1,6 @@
 import { MinusIcon, PlusIcon } from "lucide-react"
 import { Button } from "./button.tsx"
-import { InputGroup } from "./input-group.tsx"
+import { InputAffix } from "./input-affix.tsx"
 import type { ControlSize } from "./control.ts"
 
 function NumberInput({
@@ -32,7 +32,7 @@ function NumberInput({
     onValueChange(Math.min(high, Math.max(low, next)))
   }
   return (
-    <InputGroup
+    <InputAffix
       size={size}
       id={id}
       inputMode="numeric"

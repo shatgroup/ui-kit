@@ -25,7 +25,7 @@ import { Box, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { cn } from "@/lib/utils.ts"
 import { Button } from "@/components/ui/button.tsx"
 import { Card, CardContent } from "@/components/ui/card.tsx"
-import { Checkbox } from "@/components/ui/checkbox.tsx"
+import { CheckboxMark } from "@/components/ui/checkbox-mark.tsx"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -271,7 +271,7 @@ export function DataTable<T extends object>({
                   {reorderable ? <TableHead {...cellLayout({ minWidth: 48, wrap: true })}> </TableHead> : null}
                   {selectable && selectColumn ? (
                     <TableHead {...cellLayout({ minWidth: 48, wrap: true })}>
-                      <Checkbox
+                      <CheckboxMark
                         checked={someSelected && !allSelected ? "indeterminate" : allSelected}
                         aria-label={labels?.selectAll ?? "Select all"}
                         onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked === true)}
@@ -291,7 +291,7 @@ export function DataTable<T extends object>({
                       >
                         {index === 0 && selectable && !selectColumn ? (
                           <Inline gap={2} align="center" wrap={false}>
-                            <Checkbox
+                            <CheckboxMark
                               checked={someSelected && !allSelected ? "indeterminate" : allSelected}
                               aria-label={labels?.selectAll ?? "Select all"}
                               onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked === true)}
@@ -318,7 +318,7 @@ export function DataTable<T extends object>({
                   ) : null}
                   {selectable && selectColumn ? (
                     <TableCell {...cellLayout({ minWidth: 48, wrap: true })}>
-                      <Checkbox
+                      <CheckboxMark
                         checked={row.getIsSelected()}
                         aria-label={(labels?.selectRow ?? ((id) => `Select ${id}`))(row.id)}
                         onCheckedChange={(checked) => row.toggleSelected(checked === true)}
@@ -339,7 +339,7 @@ export function DataTable<T extends object>({
                       >
                         <Inline gap={2} align="center" wrap={false}>
                           {selectable && !selectColumn && index === 0 ? (
-                            <Checkbox
+                            <CheckboxMark
                               checked={row.getIsSelected()}
                               aria-label={(labels?.selectRow ?? ((id) => `Select ${id}`))(row.id)}
                               onCheckedChange={(checked) => row.toggleSelected(checked === true)}
@@ -373,7 +373,7 @@ export function DataTable<T extends object>({
               <CardContent>
                 <Stack gap={2}>
                   {selectable ? (
-                    <Checkbox
+                    <CheckboxMark
                       checked={row.getIsSelected()}
                       aria-label={(labels?.selectRow ?? ((id) => `Select ${id}`))(row.id)}
                       onCheckedChange={(checked) => row.toggleSelected(checked === true)}
@@ -444,7 +444,7 @@ function CellEditor<T>({
         <SelectTrigger size="sm" className="w-40" aria-label={label}>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent position="popper">
           {(column.options ?? []).map((option) => (
             <SelectItem key={option} value={option}>
               {option}
@@ -573,7 +573,7 @@ export function TablePagination({
           <SelectTrigger size="sm" className="w-20" aria-label={labels?.rowsPerPage ?? "Rows per page"}>
             <span>{pageSize}</span>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent position="popper">
             {pageSizes.map((item) => (
               <SelectItem key={item} value={item}>
                 {item}

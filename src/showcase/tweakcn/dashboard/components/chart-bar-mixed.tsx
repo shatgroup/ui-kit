@@ -57,7 +57,7 @@ export function ChartBarMixed() {
         <CardDescription>January - June 2024</CardDescription>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig}>
+        <ChartContainer config={chartConfig} className="chart-label-visible">
           <BarChart
             accessibilityLayer
             data={chartData}

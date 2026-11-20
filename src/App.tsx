@@ -4,6 +4,7 @@ import { Container, Text } from "@/components/layout/index.ts"
 import { SiteBar } from "@/components/patterns/site-bar.tsx"
 import { ComponentsPage } from "@/pages/components-page.tsx"
 import { DesignSystemPage } from "@/pages/design-system-page.tsx"
+import { KitGalleryPage } from "@/pages/kit-gallery-page.tsx"
 import { ShowcasePage } from "@/pages/showcase-page.tsx"
 import type { ReactNode } from "react"
 
@@ -28,6 +29,7 @@ export default function App() {
     return <Frame><ShowcasePage /></Frame>
   }
   if (path === "/showcase") return <Frame><ShowcasePage /></Frame>
+  if (path === "/components/kit-gallery") return <Frame><KitGalleryPage /></Frame>
   if (path === "/components" || path.startsWith("/components/")) return <Frame><ComponentsPage /></Frame>
   return (
     <Frame>

@@ -15160,6 +15160,7 @@
     }
   ],
   "kit": [
+    "kit-gallery",
     "checkbox-field",
     "date-input",
     "empty-state",

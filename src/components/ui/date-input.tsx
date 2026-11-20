@@ -3,7 +3,7 @@ import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
 import { Button } from "./button.tsx"
 import { Calendar } from "./calendar.tsx"
-import { InputGroup } from "./input-group.tsx"
+import { InputAffix } from "./input-affix.tsx"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover.tsx"
 import type { ControlSize } from "./control.ts"
 
@@ -27,7 +27,7 @@ function DateInput({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <span>
-          <InputGroup
+          <InputAffix
             id={id}
             size={size}
             readOnly

@@ -37,53 +37,24 @@ const buttonVariants = cva(
   }
 )
 
-const forceHover: Record<string, string> = {
-  default: "bg-primary/90",
-  destructive: "bg-destructive/90",
-  outline: "bg-accent text-accent-foreground",
-  secondary: "bg-secondary/80",
-  ghost: "bg-accent text-accent-foreground",
-  link: "underline",
-}
-
-const forcePressed: Record<string, string> = {
-  default: "bg-primary/80",
-  destructive: "bg-destructive/80",
-  outline: "bg-accent text-accent-foreground",
-  secondary: "bg-secondary/70",
-  ghost: "bg-accent text-accent-foreground",
-  link: "underline",
-}
-
 function Button({
   className,
   variant = "default",
   size = "default",
   asChild = false,
-  forceState,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean
-    forceState?: "hover" | "pressed" | "focus"
   }) {
   const Comp = asChild ? Slot.Root : "button"
-  const name = variant ?? "default"
 
   return (
     <Comp
       data-slot="button"
       data-variant={variant}
       data-size={size}
-      data-force-state={forceState}
-      className={cn(
-        buttonVariants({ variant, size, className }),
-        forceState === "hover" && forceHover[name],
-        forceState === "pressed" && forcePressed[name],
-        forceState === "focus" && (name === "destructive"
-          ? "border-ring ring-[3px] ring-destructive/20 dark:ring-destructive/40"
-          : "border-ring ring-[3px] ring-ring/50"),
-      )}
+      className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
   )

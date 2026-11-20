@@ -87,7 +87,7 @@ function Icons() {
               <Input aria-label="Search icons" placeholder={`Search ${total} icons…`} value={query} onChange={(event) => setQuery(event.target.value)} />
               <Select value={group} onValueChange={setGroup}>
                 <SelectTrigger aria-label="Icon group"><SelectValue /></SelectTrigger>
-                <SelectContent>
+                <SelectContent position="popper">
                   <SelectItem value="all">All</SelectItem>
                   {GROUPS.map((item) => <SelectItem key={item.title} value={item.title}>{item.title}</SelectItem>)}
                 </SelectContent>

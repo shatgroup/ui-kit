@@ -231,3 +231,7 @@ html {
     columns: 3;
   }
 }
+
+.chart-label-visible .recharts-surface {
+  overflow: visible;
+}

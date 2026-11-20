@@ -3,16 +3,11 @@ import { Stack } from "@/components/layout/index.ts"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs.tsx"
 import { isReduced } from "@/components/ui/theme-toggle.tsx"
 import { Header, Tokens, TypeAndColor } from "./foundation.tsx"
-import { Kit } from "./kit.tsx"
+import { Icons } from "./icons.tsx"
 
 const SECTIONS = [
   { id: "nen-tang", label: "Foundations" },
   { id: "token", label: "Tokens" },
-  { id: "hanh-dong", label: "Actions" },
-  { id: "nhap-lieu", label: "Inputs" },
-  { id: "phan-hoi", label: "Feedback" },
-  { id: "du-lieu", label: "Data" },
-  { id: "flow", label: "Flow" },
   { id: "icons", label: "Icons" },
 ] as const
 
@@ -64,7 +59,7 @@ function DesignSystem() {
       <SectionNav />
       <TypeAndColor />
       <Tokens />
-      <Kit />
+      <Icons />
     </Stack>
   )
 }

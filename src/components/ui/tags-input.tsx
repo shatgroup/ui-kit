@@ -1,7 +1,7 @@
 import { XIcon } from "lucide-react"
 import { useState, type KeyboardEvent } from "react"
 import { Badge } from "./badge.tsx"
-import { InputGroup } from "./input-group.tsx"
+import { InputAffix } from "./input-affix.tsx"
 import type { ControlSize } from "./control.ts"
 
 function TagsInput({
@@ -45,7 +45,7 @@ function TagsInput({
           </Badge>
         ))}
       </div>
-      <InputGroup
+      <InputAffix
         size={size}
         value={draft}
         placeholder={placeholder}

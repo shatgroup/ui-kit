@@ -71,7 +71,7 @@ export function CardsShare() {
                   <SelectTrigger className="ml-auto pr-2" aria-label="Edit">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
-                  <SelectContent align="end">
+                  <SelectContent position="popper" align="end">
                     <SelectItem value="edit">Can edit</SelectItem>
                     <SelectItem value="view">Can view</SelectItem>
                   </SelectContent>

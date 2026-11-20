@@ -1,0 +1,26 @@
+Nguồn: https://ui.shadcn.com/r/styles/new-york-v4/<tên>.json
+Style: new-york, base Radix (radix-ui).
+Tải ngày 2026-11-20.
+Giấy phép: MIT, https://github.com/shadcn-ui/ui
+
+Không có trên style new-york:
+checkbox-field 404
+code-block 404
+date-input 404
+empty-state 404
+form-field 404
+number-input 404
+password-input 404
+progress-circle 404
+progress-kit.test 404
+progress-segments 404
+questionnaire 404
+radio-field 404
+responsive-dialog 404
+status-badge 404
+steps-bar 404
+switch-field 404
+tags-input 404
+theme-toggle 404
+trace 404
+truncated 404
