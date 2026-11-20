@@ -567,6 +567,10 @@
       "description": "Displays content within a desired ratio.",
       "blocks": [
         {
+          "type": "preview",
+          "name": "aspect-ratio-demo"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "installation",
@@ -609,6 +613,10 @@
           "text": "A square aspect ratio component using the `ratio={1 / 1}` prop. This is useful for displaying images in a square format."
         },
         {
+          "type": "preview",
+          "name": "aspect-ratio-square"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "portrait",
@@ -617,6 +625,11 @@
         {
           "type": "paragraph",
           "text": "A portrait aspect ratio component using the `ratio={9 / 16}` prop. This is useful for displaying images in a portrait format."
+        },
+        {
+          "type": "preview",
+          "name": "aspect-ratio-portrait",
+          "previewClassName": "h-96"
         },
         {
           "type": "heading",
@@ -2702,6 +2715,10 @@
           "text": "Remember to add the `data-icon=\"inline-start\"` or `data-icon=\"inline-end\"` attribute to the icon for the correct spacing."
         },
         {
+          "type": "preview",
+          "name": "button-with-icon"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "rounded",
@@ -2976,6 +2993,10 @@
         {
           "type": "paragraph",
           "text": "Create a split button group by adding two buttons separated by a `ButtonGroupSeparator`."
+        },
+        {
+          "type": "preview",
+          "name": "button-group-split"
         },
         {
           "type": "heading",
@@ -3259,6 +3280,11 @@
           "type": "code",
           "lang": "diff",
           "code": "- import { DayPicker } from \"react-day-picker\"\n+ import { DayPicker } from \"react-day-picker/persian\""
+        },
+        {
+          "type": "preview",
+          "name": "calendar-hijri",
+          "previewClassName": "h-[400px]"
         },
         {
           "type": "heading",
@@ -6713,6 +6739,11 @@
       "description": "Use the Empty component to display an empty state.",
       "blocks": [
         {
+          "type": "preview",
+          "name": "empty-demo",
+          "previewClassName": "h-96 p-0"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "installation",
@@ -6765,6 +6796,11 @@
           "text": "Use the `border` utility class to create an outline empty state."
         },
         {
+          "type": "preview",
+          "name": "empty-outline",
+          "previewClassName": "h-96 p-6 md:p-10"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "background",
@@ -6773,6 +6809,11 @@
         {
           "type": "paragraph",
           "text": "Use the `bg-*` and `bg-gradient-*` utilities to add a background to the empty state."
+        },
+        {
+          "type": "preview",
+          "name": "empty-background",
+          "previewClassName": "h-96 p-0"
         },
         {
           "type": "heading",
@@ -8204,6 +8245,11 @@
           "text": "Button"
         },
         {
+          "type": "preview",
+          "name": "input-group-button",
+          "previewClassName": "h-72"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "kbd",
@@ -8241,6 +8287,11 @@
           "level": 2,
           "id": "textarea",
           "text": "Textarea"
+        },
+        {
+          "type": "preview",
+          "name": "input-group-textarea",
+          "previewClassName": "h-96"
         },
         {
           "type": "heading",
@@ -8831,6 +8882,10 @@
           "text": "Use `ItemMedia` with `variant=\"image\"` to display an image."
         },
         {
+          "type": "preview",
+          "name": "item-image"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "group",
@@ -8854,6 +8909,11 @@
         {
           "type": "paragraph",
           "text": "Use `ItemHeader` to add a header above the item content."
+        },
+        {
+          "type": "preview",
+          "name": "item-header",
+          "previewClassName": "h-96"
         },
         {
           "type": "heading",
@@ -12280,6 +12340,10 @@
         {
           "type": "paragraph",
           "text": "Use `ScrollBar` with `orientation=\"horizontal\"` for horizontal scrolling."
+        },
+        {
+          "type": "preview",
+          "name": "scroll-area-horizontal-demo"
         },
         {
           "type": "heading",

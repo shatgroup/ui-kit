@@ -137,7 +137,30 @@ Không ghi đè `button`, `slider`, `select`, `table`, `dialog`, `command`, `tog
 
 ## Trang /components — ví dụ không chép
 
-Chỉ bỏ các nhóm dưới. Ví dụ còn lại chỉ đổi đường import, `next/link` thành `<a>`, và bỏ `shadow-*` trừ `shadow-none`.
+Chỉ bỏ RTL và locale. Ví dụ còn lại đổi đường import, `next/link` thành `<a>`, bỏ `shadow-*` trừ `shadow-none`, và hai loại dưới.
+
+### Được phép
+
+`next/image` thành `<img>`. Giữ `src`, `alt`, `className`. Bỏ `fill`, `width`, `height`.
+
+`calendar-hijri` không có `next/image`. Bỏ `next/font`. `react-day-picker` 10 không có `react-day-picker/persian`, nên `DayPicker` lấy từ `react-day-picker`.
+
+Icon `@tabler/icons-react` thành icon Lucide cùng nghĩa. Phần còn lại của ví dụ giữ nguyên.
+
+| Tabler | Lucide |
+| --- | --- |
+| `IconBell` | `BellIcon` |
+| `IconBrandJavascript` | `FileCodeIcon` |
+| `IconCheck` | `CheckIcon` |
+| `IconCloud` | `CloudIcon` |
+| `IconCopy` | `CopyIcon` |
+| `IconCornerDownLeft` | `CornerDownLeftIcon` |
+| `IconFolderCode` | `FolderCodeIcon` |
+| `IconGitBranch` | `GitBranchIcon` |
+| `IconInfoCircle` | `InfoIcon` |
+| `IconPlus` | `PlusIcon` |
+| `IconRefresh` | `RefreshCwIcon` |
+| `IconStar` | `StarIcon` |
 
 ### RTL (52)
 
@@ -146,14 +169,6 @@ Chỉ bỏ các nhóm dưới. Ví dụ còn lại chỉ đổi đường import
 ### locale (1)
 
 `calendar-booked-dates`
-
-### Next-only (`next/image`, `next/font`, không tính `next/link`) (7)
-
-`aspect-ratio-demo`, `aspect-ratio-square`, `aspect-ratio-portrait`, `calendar-hijri`, `item-image`, `item-header`, `scroll-area-horizontal-demo`
-
-### Tabler (7)
-
-`button-with-icon`, `button-group-split`, `empty-demo`, `empty-outline`, `empty-background`, `input-group-button`, `input-group-textarea`
 
 Không có trong registry Radix của CLI (`new-york-v4` / `radix-nova`): `data-table`, `date-picker`, `typography`, `toast` (Radix dùng Sonner).
 

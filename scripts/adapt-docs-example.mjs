@@ -45,6 +45,66 @@ function stripUnusedImports(text) {
   return next.join("\n").replace(/\n{3,}/g, "\n\n")
 }
 
+const tablerToLucide = {
+  IconBell: "BellIcon",
+  IconBrandJavascript: "FileCodeIcon",
+  IconCheck: "CheckIcon",
+  IconCloud: "CloudIcon",
+  IconCopy: "CopyIcon",
+  IconCornerDownLeft: "CornerDownLeftIcon",
+  IconFolderCode: "FolderCodeIcon",
+  IconGitBranch: "GitBranchIcon",
+  IconInfoCircle: "InfoIcon",
+  IconPlus: "PlusIcon",
+  IconRefresh: "RefreshCwIcon",
+  IconStar: "StarIcon",
+}
+
+function replaceNextImage(text) {
+  if (!text.includes("next/image")) return text
+  let next = text.replace(/^import Image from ["']next\/image["'];?\r?\n/, "")
+  next = next.replace(/\r?\nimport Image from ["']next\/image["'];?/, "")
+  next = next.replace(/<Image\b([^>]*?)(\/?)>/g, (_match, attrs, slash) => {
+    const kept = attrs
+      .replace(/\s+fill\b/g, "")
+      .replace(/\s+width=\{[^}]*\}/g, "")
+      .replace(/\s+height=\{[^}]*\}/g, "")
+    return `<img${kept}${slash}>`
+  })
+  return next.replaceAll("</Image>", "</img>")
+}
+
+function replaceTabler(text) {
+  const match = text.match(/import\s*\{([\s\S]*?)\}\s*from\s*["']@tabler\/icons-react["'];?\r?\n/)
+  if (!match) return text
+  const names = match[1].split(",").map((item) => item.trim()).filter(Boolean)
+  const missing = names.filter((name) => !tablerToLucide[name])
+  if (missing.length) throw new Error(`Tabler chưa có Lucide: ${missing.join(", ")}`)
+  const lucideNames = names.map((name) => tablerToLucide[name])
+  let next = text.replace(match[0], "")
+  for (const name of names) next = next.replaceAll(name, tablerToLucide[name])
+  const lucideImport = next.match(/import\s*\{([^}]*)\}\s*from\s*["']lucide-react["'];?/)
+  if (lucideImport) {
+    const existing = lucideImport[1].split(",").map((item) => item.trim()).filter(Boolean)
+    const merged = [...existing]
+    for (const name of lucideNames) if (!merged.includes(name)) merged.push(name)
+    next = next.replace(lucideImport[0], `import { ${merged.join(", ")} } from "lucide-react"`)
+  } else {
+    const line = `import { ${lucideNames.join(", ")} } from "lucide-react"\n`
+    const client = next.match(/^(["']use client["'];?\r?\n(?:\r?\n)?)/)
+    next = client ? next.replace(client[0], `${client[0]}${line}`) : `${line}${next}`
+  }
+  return next
+}
+
+function replaceHijriFont(text) {
+  if (!text.includes("next/font/google")) return text
+  let next = text.replace(/^import \{ Vazirmatn \} from ["']next\/font\/google["'];?\r?\n/m, "")
+  next = next.replace(/\r?\nconst vazirmatn = Vazirmatn\(\{ subsets: \["arabic"\] \}\)\r?\n/, "\n")
+  next = next.replace("<div className={vazirmatn.className}>", "<div>")
+  return next.replace(/from (["'])react-day-picker\/persian\1/g, "from $1react-day-picker$1")
+}
+
 function adapt(text) {
   let next = text.replace(importUi, (_match, quote, name) => `from ${quote}@/components/ui/${name}.tsx${quote}`)
   next = next.replace(hookImport, (_match, quote, name) => `from ${quote}@/hooks/${name}.ts${quote}`)
@@ -60,6 +120,9 @@ function adapt(text) {
   next = next.replace(/^[ \t]*AlertAction,\r?\n/m, "")
   if (!next.includes("<ItemSeparator")) next = next.replace(/^[ \t]*ItemSeparator,\r?\n/m, "")
   if (next.includes("export function ItemGroupExample")) next = next.replace("(person, index)", "(person)")
+  next = replaceNextImage(next)
+  next = replaceTabler(next)
+  next = replaceHijriFont(next)
   next = rewriteHeaderImports(next)
   next = stripUnusedImports(next)
   next = next.replace(shadow, "")

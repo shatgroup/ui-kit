@@ -48,10 +48,7 @@ function previewTags(mdx: string) {
 
 function skipped(tag: { name: string; direction?: string }, source: string) {
   if (tag.direction === "rtl" || tag.name.endsWith("-rtl")) return true
-  if (/next\/image|next\/font/.test(source)) return true
-  if (/@tabler\/icons-react/.test(source)) return true
-  if (/react-day-picker\/locale/.test(source)) return true
-  return false
+  return /react-day-picker\/locale/.test(source)
 }
 
 describe("trang /components đủ ví dụ docs", () => {
