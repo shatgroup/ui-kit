@@ -5,6 +5,11 @@ import Ex_accordion_card from "./accordion-card.tsx"
 import Ex_accordion_demo from "./accordion-demo.tsx"
 import Ex_accordion_disabled from "./accordion-disabled.tsx"
 import { AccordionMultiple as Ex_accordion_multiple } from "./accordion-multiple.tsx"
+import Ex_alert_action from "./alert-action.tsx"
+import Ex_alert_basic from "./alert-basic.tsx"
+import Ex_alert_colors from "./alert-colors.tsx"
+import Ex_alert_demo from "./alert-demo.tsx"
+import Ex_alert_destructive from "./alert-destructive.tsx"
 import { AlertDialogBasic as Ex_alert_dialog_basic } from "./alert-dialog-basic.tsx"
 import Ex_alert_dialog_demo from "./alert-dialog-demo.tsx"
 import { AlertDialogDestructive as Ex_alert_dialog_destructive } from "./alert-dialog-destructive.tsx"
@@ -46,6 +51,7 @@ import { BubbleLinkButtonDemo as Ex_bubble_link_button } from "./bubble-link-but
 import { BubblePopoverDemo as Ex_bubble_popover } from "./bubble-popover.tsx"
 import { BubbleReactionsDemo as Ex_bubble_reactions } from "./bubble-reactions.tsx"
 import { BubbleTooltipDemo as Ex_bubble_tooltip } from "./bubble-tooltip.tsx"
+import { BubbleVariantsDemo as Ex_bubble_variants } from "./bubble-variants.tsx"
 import Ex_button_aschild from "./button-aschild.tsx"
 import Ex_button_default from "./button-default.tsx"
 import Ex_button_demo from "./button-demo.tsx"
@@ -54,6 +60,8 @@ import Ex_button_ghost from "./button-ghost.tsx"
 import Ex_button_group_demo from "./button-group-demo.tsx"
 import Ex_button_group_dropdown from "./button-group-dropdown.tsx"
 import Ex_button_group_input from "./button-group-input.tsx"
+import Ex_button_group_input_group from "./button-group-input-group.tsx"
+import { ButtonGroupNested as Ex_button_group_nested } from "./button-group-nested.tsx"
 import Ex_button_group_orientation from "./button-group-orientation.tsx"
 import Ex_button_group_popover from "./button-group-popover.tsx"
 import Ex_button_group_select from "./button-group-select.tsx"
@@ -70,14 +78,21 @@ import Ex_calendar_basic from "./calendar-basic.tsx"
 import { CalendarCaption as Ex_calendar_caption } from "./calendar-caption.tsx"
 import { CalendarCustomDays as Ex_calendar_custom_days } from "./calendar-custom-days.tsx"
 import Ex_calendar_demo from "./calendar-demo.tsx"
+import { CalendarWithPresets as Ex_calendar_presets } from "./calendar-presets.tsx"
 import { CalendarRange as Ex_calendar_range } from "./calendar-range.tsx"
+import { CalendarWithTime as Ex_calendar_time } from "./calendar-time.tsx"
 import { CalendarWeekNumbers as Ex_calendar_week_numbers } from "./calendar-week-numbers.tsx"
 import Ex_card_demo from "./card-demo.tsx"
 import { CardEdgeToEdge as Ex_card_edge_to_edge } from "./card-edge-to-edge.tsx"
 import { CardImage as Ex_card_image } from "./card-image.tsx"
+import { CardSmall as Ex_card_small } from "./card-small.tsx"
 import { CardSpacing as Ex_card_spacing } from "./card-spacing.tsx"
 import Ex_carousel_api from "./carousel-api.tsx"
+import Ex_carousel_demo from "./carousel-demo.tsx"
+import Ex_carousel_orientation from "./carousel-orientation.tsx"
 import Ex_carousel_plugin from "./carousel-plugin.tsx"
+import Ex_carousel_size from "./carousel-size.tsx"
+import Ex_carousel_spacing from "./carousel-spacing.tsx"
 import { ChartDemo as Ex_chart_demo } from "./chart-demo.tsx"
 import { ChartExample as Ex_chart_example } from "./chart-example.tsx"
 import { ChartBarDemoAxis as Ex_chart_example_axis } from "./chart-example-axis.tsx"
@@ -106,6 +121,7 @@ import { CodeBlockHighlightedLines as Ex_code_block_highlighted_lines } from "./
 import { CodeBlockHighlighting as Ex_code_block_highlighting } from "./code-block-highlighting.tsx"
 import { CodeBlockLanguages as Ex_code_block_languages } from "./code-block-languages.tsx"
 import { CodeBlockLineNumbers as Ex_code_block_line_numbers } from "./code-block-line-numbers.tsx"
+import { CodeBlockMarkdown as Ex_code_block_markdown } from "./code-block-markdown.tsx"
 import { CodeBlockShowMore as Ex_code_block_show_more } from "./code-block-show-more.tsx"
 import { CodeBlockShowMoreScroll as Ex_code_block_show_more_scroll } from "./code-block-show-more-scroll.tsx"
 import { CodeBlockSize as Ex_code_block_size } from "./code-block-size.tsx"
@@ -115,7 +131,10 @@ import { CodeBlockTabs as Ex_code_block_tabs } from "./code-block-tabs.tsx"
 import { CodeBlockTrace as Ex_code_block_trace } from "./code-block-trace.tsx"
 import { CodeBlockTypeset as Ex_code_block_typeset } from "./code-block-typeset.tsx"
 import { CodeBlockWrap as Ex_code_block_wrap } from "./code-block-wrap.tsx"
+import { CollapsibleBasic as Ex_collapsible_basic } from "./collapsible-basic.tsx"
 import Ex_collapsible_demo from "./collapsible-demo.tsx"
+import { CollapsibleFileTree as Ex_collapsible_file_tree } from "./collapsible-file-tree.tsx"
+import { CollapsibleSettings as Ex_collapsible_settings } from "./collapsible-settings.tsx"
 import { CommandBasic as Ex_command_basic } from "./command-basic.tsx"
 import { CommandDemo as Ex_command_demo } from "./command-demo.tsx"
 import { CommandWithGroups as Ex_command_groups } from "./command-groups.tsx"
@@ -136,6 +155,7 @@ import { DialogNoCloseButton as Ex_dialog_no_close_button } from "./dialog-no-cl
 import { DialogScrollableContent as Ex_dialog_scrollable_content } from "./dialog-scrollable-content.tsx"
 import { DialogStickyFooter as Ex_dialog_sticky_footer } from "./dialog-sticky-footer.tsx"
 import { DrawerDemo as Ex_drawer_demo } from "./drawer-demo.tsx"
+import { DrawerDialogDemo as Ex_drawer_dialog } from "./drawer-dialog.tsx"
 import { DrawerScrollableContent as Ex_drawer_scrollable_content } from "./drawer-scrollable-content.tsx"
 import { DrawerWithSides as Ex_drawer_sides } from "./drawer-sides.tsx"
 import { DropdownMenuAvatar as Ex_dropdown_menu_avatar } from "./dropdown-menu-avatar.tsx"
@@ -152,6 +172,7 @@ import { DropdownMenuShortcuts as Ex_dropdown_menu_shortcuts } from "./dropdown-
 import { DropdownMenuSubmenu as Ex_dropdown_menu_submenu } from "./dropdown-menu-submenu.tsx"
 import Ex_empty_avatar from "./empty-avatar.tsx"
 import Ex_empty_avatar_group from "./empty-avatar-group.tsx"
+import Ex_empty_input_group from "./empty-input-group.tsx"
 import { FieldCheckbox as Ex_field_checkbox } from "./field-checkbox.tsx"
 import Ex_field_choice_card from "./field-choice-card.tsx"
 import Ex_field_demo from "./field-demo.tsx"
@@ -176,7 +197,19 @@ import { InputFieldgroup as Ex_input_fieldgroup } from "./input-fieldgroup.tsx"
 import { InputFile as Ex_input_file } from "./input-file.tsx"
 import { InputForm as Ex_input_form } from "./input-form.tsx"
 import { InputGrid as Ex_input_grid } from "./input-grid.tsx"
+import { InputGroupBlockEnd as Ex_input_group_block_end } from "./input-group-block-end.tsx"
+import { InputGroupBlockStart as Ex_input_group_block_start } from "./input-group-block-start.tsx"
+import Ex_input_group_custom from "./input-group-custom.tsx"
+import { InputGroupDemo as Ex_input_group_demo } from "./input-group-demo.tsx"
+import Ex_input_group_dropdown from "./input-group-dropdown.tsx"
+import Ex_input_group_icon from "./input-group-icon.tsx"
+import { InputGroupInlineEnd as Ex_input_group_inline_end } from "./input-group-inline-end.tsx"
+import { InputGroupInlineStart as Ex_input_group_inline_start } from "./input-group-inline-start.tsx"
+import { InputGroupKbd as Ex_input_group_kbd } from "./input-group-kbd.tsx"
+import Ex_input_group_spinner from "./input-group-spinner.tsx"
+import Ex_input_group_text from "./input-group-text.tsx"
 import { InputInline as Ex_input_inline } from "./input-inline.tsx"
+import { InputInputGroup as Ex_input_input_group } from "./input-input-group.tsx"
 import { InputInvalid as Ex_input_invalid } from "./input-invalid.tsx"
 import { InputOTPAlphanumeric as Ex_input_otp_alphanumeric } from "./input-otp-alphanumeric.tsx"
 import Ex_input_otp_controlled from "./input-otp-controlled.tsx"
@@ -190,12 +223,16 @@ import Ex_input_otp_separator from "./input-otp-separator.tsx"
 import { InputRequired as Ex_input_required } from "./input-required.tsx"
 import { ItemAvatar as Ex_item_avatar } from "./item-avatar.tsx"
 import { ItemDemo as Ex_item_demo } from "./item-demo.tsx"
+import { ItemDropdown as Ex_item_dropdown } from "./item-dropdown.tsx"
+import { ItemGroupExample as Ex_item_group } from "./item-group.tsx"
 import { ItemIcon as Ex_item_icon } from "./item-icon.tsx"
 import { ItemLink as Ex_item_link } from "./item-link.tsx"
+import { ItemSizeDemo as Ex_item_size } from "./item-size.tsx"
 import { ItemVariant as Ex_item_variant } from "./item-variant.tsx"
 import Ex_kbd_button from "./kbd-button.tsx"
 import Ex_kbd_demo from "./kbd-demo.tsx"
 import Ex_kbd_group from "./kbd-group.tsx"
+import Ex_kbd_input_group from "./kbd-input-group.tsx"
 import Ex_kbd_tooltip from "./kbd-tooltip.tsx"
 import Ex_label_demo from "./label-demo.tsx"
 import { MarkerBorderDemo as Ex_marker_border } from "./marker-border.tsx"
@@ -217,7 +254,17 @@ import { MessageAvatarDemo as Ex_message_avatar } from "./message-avatar.tsx"
 import { MessageDemo as Ex_message_demo } from "./message-demo.tsx"
 import { MessageGroupDemo as Ex_message_group } from "./message-group.tsx"
 import { MessageHeaderFooterDemo as Ex_message_header_footer } from "./message-header-footer.tsx"
+import { MessageScrollerAnchoring as Ex_message_scroller_anchoring } from "./message-scroller-anchoring.tsx"
+import { MessageScrollerAnimation as Ex_message_scroller_animation } from "./message-scroller-animation.tsx"
+import { MessageScrollerCommands as Ex_message_scroller_commands } from "./message-scroller-commands.tsx"
+import { MessageScrollerDemo as Ex_message_scroller_demo } from "./message-scroller-demo.tsx"
 import { MessageScrollerGroupChat as Ex_message_scroller_group_chat } from "./message-scroller-group-chat.tsx"
+import { MessageScrollerLoadHistory as Ex_message_scroller_load_history } from "./message-scroller-load-history.tsx"
+import { MessageScrollerOpeningPosition as Ex_message_scroller_opening_position } from "./message-scroller-opening-position.tsx"
+import { MessageScrollerPreviousContext as Ex_message_scroller_previous_context } from "./message-scroller-previous-context.tsx"
+import { MessageScrollerScrollable as Ex_message_scroller_scrollable } from "./message-scroller-scrollable.tsx"
+import { MessageScrollerStreaming as Ex_message_scroller_streaming } from "./message-scroller-streaming.tsx"
+import { MessageScrollerVisibility as Ex_message_scroller_visibility } from "./message-scroller-visibility.tsx"
 import Ex_native_select_demo from "./native-select-demo.tsx"
 import { NativeSelectDisabled as Ex_native_select_disabled } from "./native-select-disabled.tsx"
 import Ex_native_select_groups from "./native-select-groups.tsx"
@@ -253,6 +300,8 @@ import { RadioGroupDescription as Ex_radio_group_description } from "./radio-gro
 import { RadioGroupDisabled as Ex_radio_group_disabled } from "./radio-group-disabled.tsx"
 import { RadioGroupFieldset as Ex_radio_group_fieldset } from "./radio-group-fieldset.tsx"
 import { RadioGroupInvalid as Ex_radio_group_invalid } from "./radio-group-invalid.tsx"
+import Ex_resizable_demo from "./resizable-demo.tsx"
+import Ex_resizable_handle from "./resizable-handle.tsx"
 import { ResizableVertical as Ex_resizable_vertical } from "./resizable-vertical.tsx"
 import { ScrollAreaDemo as Ex_scroll_area_demo } from "./scroll-area-demo.tsx"
 import { SelectAlignItem as Ex_select_align_item } from "./select-align-item.tsx"
@@ -290,6 +339,7 @@ import { SpinnerButton as Ex_spinner_button } from "./spinner-button.tsx"
 import { SpinnerCustom as Ex_spinner_custom } from "./spinner-custom.tsx"
 import { SpinnerDemo as Ex_spinner_demo } from "./spinner-demo.tsx"
 import { SpinnerEmpty as Ex_spinner_empty } from "./spinner-empty.tsx"
+import { SpinnerInputGroup as Ex_spinner_input_group } from "./spinner-input-group.tsx"
 import { SpinnerSize as Ex_spinner_size } from "./spinner-size.tsx"
 import { SwitchChoiceCard as Ex_switch_choice_card } from "./switch-choice-card.tsx"
 import { SwitchDemo as Ex_switch_demo } from "./switch-demo.tsx"
@@ -328,6 +378,7 @@ import { TooltipKeyboard as Ex_tooltip_keyboard } from "./tooltip-keyboard.tsx"
 import { TooltipSides as Ex_tooltip_sides } from "./tooltip-sides.tsx"
 import { TraceCollapsibleDemo as Ex_trace_collapsible } from "./trace-collapsible.tsx"
 import { TraceCommit as Ex_trace_commit } from "./trace-commit.tsx"
+import { TraceDemo as Ex_trace_demo } from "./trace-demo.tsx"
 import { TraceDescriptionDemo as Ex_trace_description } from "./trace-description.tsx"
 import { TraceDialog as Ex_trace_dialog } from "./trace-dialog.tsx"
 import { TraceGroupDemo as Ex_trace_group } from "./trace-group.tsx"
@@ -338,6 +389,8 @@ import { TraceSources as Ex_trace_sources } from "./trace-sources.tsx"
 import { TraceStatic as Ex_trace_static } from "./trace-static.tsx"
 import { TraceStatus as Ex_trace_status } from "./trace-status.tsx"
 import { TraceSteps as Ex_trace_steps } from "./trace-steps.tsx"
+import { TraceThinking as Ex_trace_thinking } from "./trace-thinking.tsx"
+import { TraceToolCalls as Ex_trace_tool_calls } from "./trace-tool-calls.tsx"
 import { TraceTurn as Ex_trace_turn } from "./trace-turn.tsx"
 
 const examples: Record<string, ComponentType> = {
@@ -347,6 +400,11 @@ const examples: Record<string, ComponentType> = {
   "accordion-demo": Ex_accordion_demo,
   "accordion-disabled": Ex_accordion_disabled,
   "accordion-multiple": Ex_accordion_multiple,
+  "alert-action": Ex_alert_action,
+  "alert-basic": Ex_alert_basic,
+  "alert-colors": Ex_alert_colors,
+  "alert-demo": Ex_alert_demo,
+  "alert-destructive": Ex_alert_destructive,
   "alert-dialog-basic": Ex_alert_dialog_basic,
   "alert-dialog-demo": Ex_alert_dialog_demo,
   "alert-dialog-destructive": Ex_alert_dialog_destructive,
@@ -388,6 +446,7 @@ const examples: Record<string, ComponentType> = {
   "bubble-popover": Ex_bubble_popover,
   "bubble-reactions": Ex_bubble_reactions,
   "bubble-tooltip": Ex_bubble_tooltip,
+  "bubble-variants": Ex_bubble_variants,
   "button-aschild": Ex_button_aschild,
   "button-default": Ex_button_default,
   "button-demo": Ex_button_demo,
@@ -396,6 +455,8 @@ const examples: Record<string, ComponentType> = {
   "button-group-demo": Ex_button_group_demo,
   "button-group-dropdown": Ex_button_group_dropdown,
   "button-group-input": Ex_button_group_input,
+  "button-group-input-group": Ex_button_group_input_group,
+  "button-group-nested": Ex_button_group_nested,
   "button-group-orientation": Ex_button_group_orientation,
   "button-group-popover": Ex_button_group_popover,
   "button-group-select": Ex_button_group_select,
@@ -412,14 +473,21 @@ const examples: Record<string, ComponentType> = {
   "calendar-caption": Ex_calendar_caption,
   "calendar-custom-days": Ex_calendar_custom_days,
   "calendar-demo": Ex_calendar_demo,
+  "calendar-presets": Ex_calendar_presets,
   "calendar-range": Ex_calendar_range,
+  "calendar-time": Ex_calendar_time,
   "calendar-week-numbers": Ex_calendar_week_numbers,
   "card-demo": Ex_card_demo,
   "card-edge-to-edge": Ex_card_edge_to_edge,
   "card-image": Ex_card_image,
+  "card-small": Ex_card_small,
   "card-spacing": Ex_card_spacing,
   "carousel-api": Ex_carousel_api,
+  "carousel-demo": Ex_carousel_demo,
+  "carousel-orientation": Ex_carousel_orientation,
   "carousel-plugin": Ex_carousel_plugin,
+  "carousel-size": Ex_carousel_size,
+  "carousel-spacing": Ex_carousel_spacing,
   "chart-demo": Ex_chart_demo,
   "chart-example": Ex_chart_example,
   "chart-example-axis": Ex_chart_example_axis,
@@ -448,6 +516,7 @@ const examples: Record<string, ComponentType> = {
   "code-block-highlighting": Ex_code_block_highlighting,
   "code-block-languages": Ex_code_block_languages,
   "code-block-line-numbers": Ex_code_block_line_numbers,
+  "code-block-markdown": Ex_code_block_markdown,
   "code-block-show-more": Ex_code_block_show_more,
   "code-block-show-more-scroll": Ex_code_block_show_more_scroll,
   "code-block-size": Ex_code_block_size,
@@ -457,7 +526,10 @@ const examples: Record<string, ComponentType> = {
   "code-block-trace": Ex_code_block_trace,
   "code-block-typeset": Ex_code_block_typeset,
   "code-block-wrap": Ex_code_block_wrap,
+  "collapsible-basic": Ex_collapsible_basic,
   "collapsible-demo": Ex_collapsible_demo,
+  "collapsible-file-tree": Ex_collapsible_file_tree,
+  "collapsible-settings": Ex_collapsible_settings,
   "command-basic": Ex_command_basic,
   "command-demo": Ex_command_demo,
   "command-groups": Ex_command_groups,
@@ -478,6 +550,7 @@ const examples: Record<string, ComponentType> = {
   "dialog-scrollable-content": Ex_dialog_scrollable_content,
   "dialog-sticky-footer": Ex_dialog_sticky_footer,
   "drawer-demo": Ex_drawer_demo,
+  "drawer-dialog": Ex_drawer_dialog,
   "drawer-scrollable-content": Ex_drawer_scrollable_content,
   "drawer-sides": Ex_drawer_sides,
   "dropdown-menu-avatar": Ex_dropdown_menu_avatar,
@@ -494,6 +567,7 @@ const examples: Record<string, ComponentType> = {
   "dropdown-menu-submenu": Ex_dropdown_menu_submenu,
   "empty-avatar": Ex_empty_avatar,
   "empty-avatar-group": Ex_empty_avatar_group,
+  "empty-input-group": Ex_empty_input_group,
   "field-checkbox": Ex_field_checkbox,
   "field-choice-card": Ex_field_choice_card,
   "field-demo": Ex_field_demo,
@@ -518,7 +592,19 @@ const examples: Record<string, ComponentType> = {
   "input-file": Ex_input_file,
   "input-form": Ex_input_form,
   "input-grid": Ex_input_grid,
+  "input-group-block-end": Ex_input_group_block_end,
+  "input-group-block-start": Ex_input_group_block_start,
+  "input-group-custom": Ex_input_group_custom,
+  "input-group-demo": Ex_input_group_demo,
+  "input-group-dropdown": Ex_input_group_dropdown,
+  "input-group-icon": Ex_input_group_icon,
+  "input-group-inline-end": Ex_input_group_inline_end,
+  "input-group-inline-start": Ex_input_group_inline_start,
+  "input-group-kbd": Ex_input_group_kbd,
+  "input-group-spinner": Ex_input_group_spinner,
+  "input-group-text": Ex_input_group_text,
   "input-inline": Ex_input_inline,
+  "input-input-group": Ex_input_input_group,
   "input-invalid": Ex_input_invalid,
   "input-otp-alphanumeric": Ex_input_otp_alphanumeric,
   "input-otp-controlled": Ex_input_otp_controlled,
@@ -532,12 +618,16 @@ const examples: Record<string, ComponentType> = {
   "input-required": Ex_input_required,
   "item-avatar": Ex_item_avatar,
   "item-demo": Ex_item_demo,
+  "item-dropdown": Ex_item_dropdown,
+  "item-group": Ex_item_group,
   "item-icon": Ex_item_icon,
   "item-link": Ex_item_link,
+  "item-size": Ex_item_size,
   "item-variant": Ex_item_variant,
   "kbd-button": Ex_kbd_button,
   "kbd-demo": Ex_kbd_demo,
   "kbd-group": Ex_kbd_group,
+  "kbd-input-group": Ex_kbd_input_group,
   "kbd-tooltip": Ex_kbd_tooltip,
   "label-demo": Ex_label_demo,
   "marker-border": Ex_marker_border,
@@ -559,7 +649,17 @@ const examples: Record<string, ComponentType> = {
   "message-demo": Ex_message_demo,
   "message-group": Ex_message_group,
   "message-header-footer": Ex_message_header_footer,
+  "message-scroller-anchoring": Ex_message_scroller_anchoring,
+  "message-scroller-animation": Ex_message_scroller_animation,
+  "message-scroller-commands": Ex_message_scroller_commands,
+  "message-scroller-demo": Ex_message_scroller_demo,
   "message-scroller-group-chat": Ex_message_scroller_group_chat,
+  "message-scroller-load-history": Ex_message_scroller_load_history,
+  "message-scroller-opening-position": Ex_message_scroller_opening_position,
+  "message-scroller-previous-context": Ex_message_scroller_previous_context,
+  "message-scroller-scrollable": Ex_message_scroller_scrollable,
+  "message-scroller-streaming": Ex_message_scroller_streaming,
+  "message-scroller-visibility": Ex_message_scroller_visibility,
   "native-select-demo": Ex_native_select_demo,
   "native-select-disabled": Ex_native_select_disabled,
   "native-select-groups": Ex_native_select_groups,
@@ -595,6 +695,8 @@ const examples: Record<string, ComponentType> = {
   "radio-group-disabled": Ex_radio_group_disabled,
   "radio-group-fieldset": Ex_radio_group_fieldset,
   "radio-group-invalid": Ex_radio_group_invalid,
+  "resizable-demo": Ex_resizable_demo,
+  "resizable-handle": Ex_resizable_handle,
   "resizable-vertical": Ex_resizable_vertical,
   "scroll-area-demo": Ex_scroll_area_demo,
   "select-align-item": Ex_select_align_item,
@@ -632,6 +734,7 @@ const examples: Record<string, ComponentType> = {
   "spinner-custom": Ex_spinner_custom,
   "spinner-demo": Ex_spinner_demo,
   "spinner-empty": Ex_spinner_empty,
+  "spinner-input-group": Ex_spinner_input_group,
   "spinner-size": Ex_spinner_size,
   "switch-choice-card": Ex_switch_choice_card,
   "switch-demo": Ex_switch_demo,
@@ -670,6 +773,7 @@ const examples: Record<string, ComponentType> = {
   "tooltip-sides": Ex_tooltip_sides,
   "trace-collapsible": Ex_trace_collapsible,
   "trace-commit": Ex_trace_commit,
+  "trace-demo": Ex_trace_demo,
   "trace-description": Ex_trace_description,
   "trace-dialog": Ex_trace_dialog,
   "trace-group": Ex_trace_group,
@@ -680,6 +784,8 @@ const examples: Record<string, ComponentType> = {
   "trace-static": Ex_trace_static,
   "trace-status": Ex_trace_status,
   "trace-steps": Ex_trace_steps,
+  "trace-thinking": Ex_trace_thinking,
+  "trace-tool-calls": Ex_trace_tool_calls,
   "trace-turn": Ex_trace_turn,
 }
 

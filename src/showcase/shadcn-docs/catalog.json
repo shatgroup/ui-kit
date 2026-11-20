@@ -161,6 +161,11 @@
       "description": "Displays a callout for user attention.",
       "blocks": [
         {
+          "type": "preview",
+          "name": "alert-demo",
+          "previewClassName": "h-auto sm:h-72 p-6"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "installation",
@@ -213,6 +218,11 @@
           "text": "A basic alert with an icon, title and description."
         },
         {
+          "type": "preview",
+          "name": "alert-basic",
+          "previewClassName": "h-auto sm:h-72 p-6"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "destructive",
@@ -221,6 +231,11 @@
         {
           "type": "paragraph",
           "text": "Use `variant=\"destructive\"` to create a destructive alert."
+        },
+        {
+          "type": "preview",
+          "name": "alert-destructive",
+          "previewClassName": "h-auto sm:h-72 p-6"
         },
         {
           "type": "heading",
@@ -233,6 +248,11 @@
           "text": "Use `AlertAction` to add a button or other action element to the alert."
         },
         {
+          "type": "preview",
+          "name": "alert-action",
+          "previewClassName": "h-auto sm:h-72 p-6"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "custom-colors",
@@ -241,6 +261,11 @@
         {
           "type": "paragraph",
           "text": "You can customize the alert colors by adding custom classes such as `bg-amber-50 dark:bg-amber-950` to the `Alert` component."
+        },
+        {
+          "type": "preview",
+          "name": "alert-colors",
+          "previewClassName": "h-auto sm:h-72 p-6"
         },
         {
           "type": "heading",
@@ -2123,6 +2148,11 @@
           "text": "Use `variant` to change the visual treatment of the bubble."
         },
         {
+          "type": "preview",
+          "name": "bubble-variants",
+          "previewClassName": "h-auto theme-blue"
+        },
+        {
           "type": "table",
           "header": [
             "Variant",
@@ -2916,6 +2946,10 @@
           "text": "Nest `<ButtonGroup>` components to create button groups with spacing."
         },
         {
+          "type": "preview",
+          "name": "button-group-nested"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "separator",
@@ -2966,6 +3000,10 @@
         {
           "type": "paragraph",
           "text": "Wrap an `InputGroup` component to create complex input layouts."
+        },
+        {
+          "type": "preview",
+          "name": "button-group-input-group"
         },
         {
           "type": "heading",
@@ -3297,10 +3335,20 @@
           "text": "Presets"
         },
         {
+          "type": "preview",
+          "name": "calendar-presets",
+          "previewClassName": "h-[650px]"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "date-and-time-picker",
           "text": "Date and Time Picker"
+        },
+        {
+          "type": "preview",
+          "name": "calendar-time",
+          "previewClassName": "h-[600px]"
         },
         {
           "type": "heading",
@@ -3535,6 +3583,11 @@
         {
           "type": "paragraph",
           "text": "Use the `size=\"sm\"` prop to set the size of the card to small. The small size variant uses smaller spacing."
+        },
+        {
+          "type": "preview",
+          "name": "card-small",
+          "previewClassName": "h-96"
         },
         {
           "type": "heading",
@@ -3837,6 +3890,11 @@
       "description": "A carousel with motion and swipe built using Embla.",
       "blocks": [
         {
+          "type": "preview",
+          "name": "carousel-demo",
+          "previewClassName": "h-80 sm:h-[32rem]"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "about",
@@ -3904,6 +3962,10 @@
           "text": "To set the size of the items, you can use the `basis` utility class on the `<CarouselItem />`."
         },
         {
+          "type": "preview",
+          "name": "carousel-size"
+        },
+        {
           "type": "code",
           "lang": "tsx",
           "code": "// 33% of the carousel width.\n<Carousel>\n  <CarouselContent>\n    <CarouselItem className=\"basis-1/3\">...</CarouselItem>\n    <CarouselItem className=\"basis-1/3\">...</CarouselItem>\n    <CarouselItem className=\"basis-1/3\">...</CarouselItem>\n  </CarouselContent>\n</Carousel>"
@@ -3924,6 +3986,10 @@
           "text": "To set the spacing between the items, we use a `pl-[VALUE]` utility on the `<CarouselItem />` and a negative `-ml-[VALUE]` on the `<CarouselContent />`."
         },
         {
+          "type": "preview",
+          "name": "carousel-spacing"
+        },
+        {
           "type": "code",
           "lang": "tsx",
           "code": "<Carousel>\n  <CarouselContent className=\"-ml-4\">\n    <CarouselItem className=\"pl-4\">...</CarouselItem>\n    <CarouselItem className=\"pl-4\">...</CarouselItem>\n    <CarouselItem className=\"pl-4\">...</CarouselItem>\n  </CarouselContent>\n</Carousel>"
@@ -3942,6 +4008,11 @@
         {
           "type": "paragraph",
           "text": "Use the `orientation` prop to set the orientation of the carousel."
+        },
+        {
+          "type": "preview",
+          "name": "carousel-orientation",
+          "previewClassName": "h-[32rem]"
         },
         {
           "type": "code",
@@ -4067,8 +4138,8 @@
           "text": "**Updated:** The `chart` component now uses Recharts v3. If you're upgrading existing chart code, see [Updating to Recharts v3](#updating-to-recharts-v3)."
         },
         {
-          "type": "paragraph",
-          "text": "hideCode />"
+          "type": "preview",
+          "name": "chart-demo"
         },
         {
           "type": "paragraph",
@@ -4081,10 +4152,6 @@
         {
           "type": "paragraph",
           "text": "[Browse the Charts Library](/charts)."
-        },
-        {
-          "type": "preview",
-          "name": "chart-demo"
         },
         {
           "type": "heading",
@@ -5275,6 +5342,11 @@
           "text": "Render the message with [Streamdown](https://streamdown.ai) and route fenced code to a `CodeBlock` with `components.code`. Streamdown sets `data-block` on fenced code only, so inline code stays inline."
         },
         {
+          "type": "preview",
+          "name": "code-block-markdown",
+          "previewClassName": "h-auto"
+        },
+        {
           "type": "paragraph",
           "text": "`useIsCodeFenceIncomplete` returns `true` until the closing fence arrives. Use it to disable the copy button while the code is incomplete. It only works when Streamdown gets `isAnimating`, so pass `isAnimating` while the message streams."
         },
@@ -5700,6 +5772,11 @@
           "text": "Basic"
         },
         {
+          "type": "preview",
+          "name": "collapsible-basic",
+          "align": "start"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "settings-panel",
@@ -5710,6 +5787,10 @@
           "text": "Use a trigger button to reveal additional settings."
         },
         {
+          "type": "preview",
+          "name": "collapsible-settings"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "file-tree",
@@ -5718,6 +5799,11 @@
         {
           "type": "paragraph",
           "text": "Use nested collapsibles to build a file tree. In a conversation, this is the [File Tree](/docs/ai-elements/radix/file-tree) pattern."
+        },
+        {
+          "type": "preview",
+          "name": "collapsible-file-tree",
+          "previewClassName": "h-[36rem]"
         },
         {
           "type": "heading",
@@ -6364,6 +6450,10 @@
           "text": "You can combine the `Dialog` and `Drawer` components to create a responsive dialog. This renders a `Dialog` component on desktop and a `Drawer` on mobile."
         },
         {
+          "type": "preview",
+          "name": "drawer-dialog"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "rtl",
@@ -6723,6 +6813,11 @@
         {
           "type": "paragraph",
           "text": "You can add an `InputGroup` component to the `EmptyContent` component."
+        },
+        {
+          "type": "preview",
+          "name": "empty-input-group",
+          "previewClassName": "h-96 p-0"
         },
         {
           "type": "heading",
@@ -7904,6 +7999,11 @@
           "text": "To add icons, text, or buttons inside an input, use the `InputGroup` component. See the [Input Group](/docs/components/input-group) component for more examples."
         },
         {
+          "type": "preview",
+          "name": "input-input-group",
+          "previewClassName": "*:max-w-xs"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "button-group",
@@ -7950,6 +8050,11 @@
       "title": "Input Group",
       "description": "Add addons, buttons, and helper content to inputs.",
       "blocks": [
+        {
+          "type": "preview",
+          "name": "input-group-demo",
+          "previewClassName": "h-[26rem]"
+        },
         {
           "type": "paragraph",
           "text": "import { IconInfoCircle } from \"@tabler/icons-react\""
@@ -8021,6 +8126,11 @@
           "text": "Use `align=\"inline-start\"` to position the addon at the start of the input. This is the default."
         },
         {
+          "type": "preview",
+          "name": "input-group-inline-start",
+          "previewClassName": "h-48"
+        },
+        {
           "type": "heading",
           "level": 3,
           "id": "inline-end",
@@ -8029,6 +8139,11 @@
         {
           "type": "paragraph",
           "text": "Use `align=\"inline-end\"` to position the addon at the end of the input."
+        },
+        {
+          "type": "preview",
+          "name": "input-group-inline-end",
+          "previewClassName": "h-48"
         },
         {
           "type": "heading",
@@ -8041,6 +8156,11 @@
           "text": "Use `align=\"block-start\"` to position the addon above the input."
         },
         {
+          "type": "preview",
+          "name": "input-group-block-start",
+          "previewClassName": "h-96"
+        },
+        {
           "type": "heading",
           "level": 3,
           "id": "block-end",
@@ -8051,16 +8171,31 @@
           "text": "Use `align=\"block-end\"` to position the addon below the input."
         },
         {
+          "type": "preview",
+          "name": "input-group-block-end",
+          "previewClassName": "h-[26rem]"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "icon",
           "text": "Icon"
         },
         {
+          "type": "preview",
+          "name": "input-group-icon",
+          "previewClassName": "h-80"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "text",
           "text": "Text"
+        },
+        {
+          "type": "preview",
+          "name": "input-group-text",
+          "previewClassName": "h-80"
         },
         {
           "type": "heading",
@@ -8075,16 +8210,31 @@
           "text": "Kbd"
         },
         {
+          "type": "preview",
+          "name": "input-group-kbd",
+          "previewClassName": "h-40"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "dropdown",
           "text": "Dropdown"
         },
         {
+          "type": "preview",
+          "name": "input-group-dropdown",
+          "previewClassName": "h-56"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "spinner",
           "text": "Spinner"
+        },
+        {
+          "type": "preview",
+          "name": "input-group-spinner",
+          "previewClassName": "h-80"
         },
         {
           "type": "heading",
@@ -8105,6 +8255,11 @@
         {
           "type": "paragraph",
           "text": "Here's an example of a custom resizable textarea from a third-party library."
+        },
+        {
+          "type": "preview",
+          "name": "input-group-custom",
+          "previewClassName": "h-56"
         },
         {
           "type": "heading",
@@ -8633,6 +8788,11 @@
           "text": "Use the `size` prop to change the size of the item. Available sizes are `default`, `sm`, and `xs`."
         },
         {
+          "type": "preview",
+          "name": "item-size",
+          "previewClassName": "h-96"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "icon",
@@ -8681,6 +8841,11 @@
           "text": "Use `ItemGroup` to group related items together."
         },
         {
+          "type": "preview",
+          "name": "item-group",
+          "previewClassName": "h-96"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "header",
@@ -8714,6 +8879,10 @@
           "level": 2,
           "id": "dropdown",
           "text": "Dropdown"
+        },
+        {
+          "type": "preview",
+          "name": "item-dropdown"
         },
         {
           "type": "heading",
@@ -9031,6 +9200,10 @@
         {
           "type": "paragraph",
           "text": "You can use the `Kbd` component inside a `InputGroupAddon` component to display a keyboard key inside an input group."
+        },
+        {
+          "type": "preview",
+          "name": "kbd-input-group"
         },
         {
           "type": "heading",
@@ -10120,6 +10293,11 @@
       "description": "A chat scroll container that anchors turns, opens saved transcripts, follows streamed responses, loads history without jumping, and jumps to any message.",
       "blocks": [
         {
+          "type": "preview",
+          "name": "message-scroller-demo",
+          "previewClassName": "h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "what-makes-a-great-streaming-chat-experience",
@@ -10327,6 +10505,11 @@
           "text": "In the following example, the user's message is anchored. When you send a new message, the viewport anchors it near the top and appends the assistant reply below it. Toggle the anchor to the assistant's message to see the difference."
         },
         {
+          "type": "preview",
+          "name": "message-scroller-anchoring",
+          "previewClassName": "h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16"
+        },
+        {
           "type": "heading",
           "level": 3,
           "id": "group-chat",
@@ -10370,6 +10553,11 @@
           "text": "Adjust the peek amount in the example below to see how it affects the conversation."
         },
         {
+          "type": "preview",
+          "name": "message-scroller-previous-context",
+          "previewClassName": "h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16"
+        },
+        {
           "type": "heading",
           "level": 3,
           "id": "following-the-live-edge",
@@ -10387,6 +10575,11 @@
           "type": "code",
           "lang": "tsx",
           "code": "<MessageScrollerProvider autoScroll>\n  <MessageScroller>{/* streamed turns */}</MessageScroller>\n</MessageScrollerProvider>"
+        },
+        {
+          "type": "preview",
+          "name": "message-scroller-streaming",
+          "previewClassName": "h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16"
         },
         {
           "type": "paragraph",
@@ -10410,6 +10603,12 @@
           "type": "code",
           "lang": "tsx",
           "code": "<MessageScrollerProvider defaultScrollPosition=\"last-anchor\">\n  <MessageScroller>{/* transcript */}</MessageScroller>\n</MessageScrollerProvider>"
+        },
+        {
+          "type": "preview",
+          "name": "message-scroller-opening-position",
+          "previewClassName": "h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16",
+          "hideCode": true
         },
         {
           "type": "paragraph",
@@ -10465,6 +10664,11 @@
           "text": "This is enabled by default through `preserveScrollOnPrepend`."
         },
         {
+          "type": "preview",
+          "name": "message-scroller-load-history",
+          "previewClassName": "h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16"
+        },
+        {
           "type": "paragraph",
           "text": "Use stable `messageId` values for message rows. That gives the scroller a specific row to preserve instead of guessing from whichever pixel happens to sit at the viewport edge."
         },
@@ -10486,6 +10690,11 @@
           "type": "code",
           "lang": "tsx",
           "code": "const MotionMessageScrollerItem = motion.create(MessageScrollerItem)"
+        },
+        {
+          "type": "preview",
+          "name": "message-scroller-animation",
+          "previewClassName": "h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16"
         },
         {
           "type": "paragraph",
@@ -10510,6 +10719,12 @@
           "type": "code",
           "lang": "tsx",
           "code": "const { scrollToMessage, scrollToEnd, scrollToStart } = useMessageScroller()"
+        },
+        {
+          "type": "preview",
+          "name": "message-scroller-commands",
+          "previewClassName": "h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16",
+          "hideCode": true
         },
         {
           "type": "paragraph",
@@ -10540,6 +10755,12 @@
           "code": "const { currentAnchorId, visibleMessageIds } = useMessageScrollerVisibility()"
         },
         {
+          "type": "preview",
+          "name": "message-scroller-visibility",
+          "previewClassName": "h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16",
+          "hideCode": true
+        },
+        {
           "type": "paragraph",
           "text": "`currentAnchorId` answers \"where am I\" by reporting the current anchored turn, and it stays set after that anchor scrolls above the viewport. `visibleMessageIds` answers \"what is on screen\", in document order."
         },
@@ -10566,6 +10787,11 @@
           "type": "code",
           "lang": "tsx",
           "code": "const { start, end } = useMessageScrollerScrollable()"
+        },
+        {
+          "type": "preview",
+          "name": "message-scroller-scrollable",
+          "previewClassName": "h-auto theme-blue bg-surface dark:bg-background p-4 min-[480px]:p-8 min-[560px]:p-10 sm:px-10 sm:py-16"
         },
         {
           "type": "heading",
@@ -11812,6 +12038,11 @@
       "description": "Accessible resizable panel groups and layouts with keyboard support.",
       "blocks": [
         {
+          "type": "preview",
+          "name": "resizable-demo",
+          "previewClassName": "h-80"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "about",
@@ -11891,6 +12122,10 @@
         {
           "type": "paragraph",
           "text": "Use the `withHandle` prop on `ResizableHandle` to show a visible handle."
+        },
+        {
+          "type": "preview",
+          "name": "resizable-handle"
         },
         {
           "type": "heading",
@@ -13529,6 +13764,10 @@
           "text": "Input Group"
         },
         {
+          "type": "preview",
+          "name": "spinner-input-group"
+        },
+        {
           "type": "heading",
           "level": 2,
           "id": "empty",
@@ -14443,6 +14682,11 @@
       "description": "The building block for reasoning, tool calls, sources and more.",
       "blocks": [
         {
+          "type": "preview",
+          "name": "trace-demo",
+          "previewClassName": "h-auto"
+        },
+        {
           "type": "paragraph",
           "text": "`Trace` is a list of lines. Each line has an icon, a title, and an optional description and status. A line can expand to show more detail, link to a page, or open a dialog or sheet."
         },
@@ -14867,6 +15111,11 @@
           "text": "Render a `reasoning` part from the AI SDK. The row is a `TraceLine` until the first text arrives. See [Open State](#open-state)."
         },
         {
+          "type": "preview",
+          "name": "trace-thinking",
+          "previewClassName": "h-auto"
+        },
+        {
           "type": "paragraph",
           "text": "See [Reasoning](/docs/ai-elements/radix/reasoning) for more examples."
         },
@@ -14879,6 +15128,11 @@
         {
           "type": "paragraph",
           "text": "Render tool parts from the AI SDK. Map the tool part as in [Tool](/docs/ai-elements/radix/tool#states)."
+        },
+        {
+          "type": "preview",
+          "name": "trace-tool-calls",
+          "previewClassName": "h-auto"
         },
         {
           "type": "paragraph",

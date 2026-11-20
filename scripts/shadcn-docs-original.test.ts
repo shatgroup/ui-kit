@@ -2,23 +2,11 @@ import { readdirSync, readFileSync } from "node:fs"
 import path from "node:path"
 import { describe, expect, it } from "vitest"
 
+import { adapt } from "./adapt-docs-example.mjs"
+
 const root = process.cwd()
 const originalDir = path.join(root, "docs/reference/shadcn-docs-original/examples")
 const adaptedDir = path.join(root, "src/showcase/shadcn-docs/examples")
-
-const shadow = /(?:[\w-]+:)*shadow-(?!none\b)[\w./[\]-]+/g
-const importUi = /from (["'])@\/(?:styles\/radix-(?:nova|rhea)|registry\/(?:new-york-v4|radix-nova))\/ui\/([^"']+)\1/g
-const hookImport = /from (["'])@\/registry\/bases\/radix\/hooks\/([^"']+)\1/g
-const linkImport = /^import Link from ["']next\/link["'];?\n/m
-
-function adapt(text: string) {
-  let next = text.replace(importUi, (_match, quote: string, name: string) => `from ${quote}@/components/ui/${name}.tsx${quote}`)
-  next = next.replace(hookImport, (_match, quote: string, name: string) => `from ${quote}@/hooks/${name}.ts${quote}`)
-  next = next.replace(linkImport, "")
-  next = next.replaceAll("<Link", "<a").replaceAll("</Link>", "</a>")
-  next = next.replace(shadow, "")
-  return next
-}
 
 function changedCount(before: string, after: string) {
   const left = before.replace(/\n$/, "").split("\n")

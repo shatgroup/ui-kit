@@ -3,5 +3,6 @@ Commit: f50887ae68d0fdcbfbe86b57be08af94a4c88a68
 Giấy phép: LICENSE (MIT, Copyright (c) 2023 shadcn)
 Khung trang: apps/v4/components (docs-sidebar, command-menu, component-preview, component-preview-tabs, copy-button, docs-toc, components-list, page-header) và apps/v4/app/(app)/docs
 Chữ trang: apps/v4/app/(app)/(typeset)/typeset.css
+Chữ docs: apps/v4/content/docs/components/radix/*.mdx
 Ví dụ: apps/v4/examples/radix — đúng tên ComponentPreview trên ui.shadcn.com/docs/components (style radix-nova, base Radix).
 apps/v4/registry/new-york-v4/examples là bộ ví dụ cũ, không còn khớp danh sách trên trang docs hiện tại.

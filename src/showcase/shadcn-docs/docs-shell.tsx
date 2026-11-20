@@ -92,7 +92,7 @@ function Blocks({ blocks }: { blocks: Block[] }) {
     }
     return (
       <ComponentPreview
-        key={block.name}
+        key={`${block.name}-${index}`}
         name={block.name}
         align={block.align}
         previewClassName={block.previewClassName}
