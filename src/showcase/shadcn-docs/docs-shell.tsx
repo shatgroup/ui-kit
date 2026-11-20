@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react"
-import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react"
+import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button.tsx"
 import { SidebarProvider } from "@/components/ui/sidebar.tsx"
@@ -7,6 +7,7 @@ import catalog from "./catalog.json"
 import { CommandMenu, type NavItem } from "./command-menu.tsx"
 import { ComponentPreview } from "./component-preview.tsx"
 import { HighlightedCode } from "./highlighted-code.tsx"
+import { localGroups, localPages, type LocalPage } from "./local-docs.tsx"
 import { DocsSidebar } from "./docs-sidebar.tsx"
 import { DocsTableOfContents } from "./docs-toc.tsx"
 import "./typeset.css"
@@ -17,16 +18,13 @@ type Block =
   | { type: "code"; lang: string; code: string }
   | { type: "list"; ordered: boolean; items: string[] }
   | { type: "table"; header: string[]; rows: string[][] }
-  | { type: "preview"; name: string; direction?: string; align?: "center" | "start" | "end"; previewClassName?: string; hideCode?: boolean }
+  | { type: "preview"; name: string; direction?: string; align?: "center" | "start" | "end"; previewClassName?: string; hideCode?: boolean; block?: boolean; caption?: string }
 
 type Page = { name: string; title: string; description: string; blocks: Block[] }
 
 const pages = catalog.pages as Page[]
-const kitNames = [...catalog.kit, ...catalog.flow]
 
-function labelOf(name: string) {
-  return name.split("-").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ")
-}
+type Entry = { kind: "doc"; page: Page } | { kind: "local"; page: LocalPage }
 
 function hrefOf(url: string) {
   const component = url.match(/^\/docs\/components\/(?:radix|base|aria)\/([^/#?]+)/)
@@ -75,16 +73,18 @@ function Blocks({ blocks }: { blocks: Block[] }) {
     }
     if (block.type === "table") {
       return (
-        <table key={index}>
-          <thead>
-            <tr>{block.header.map((cell) => <th key={cell}><Inline text={cell} /></th>)}</tr>
-          </thead>
-          <tbody>
-            {block.rows.map((row, rowIndex) => (
-              <tr key={rowIndex}>{row.map((cell, cellIndex) => <td key={cellIndex}><Inline text={cell} /></td>)}</tr>
-            ))}
-          </tbody>
-        </table>
+        <div key={index} className="max-w-full overflow-x-auto">
+          <table>
+            <thead>
+              <tr>{block.header.map((cell) => <th key={cell}><Inline text={cell} /></th>)}</tr>
+            </thead>
+            <tbody>
+              {block.rows.map((row, rowIndex) => (
+                <tr key={rowIndex}>{row.map((cell, cellIndex) => <td key={cellIndex}><Inline text={cell} /></td>)}</tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )
     }
     return (
@@ -94,25 +94,27 @@ function Blocks({ blocks }: { blocks: Block[] }) {
         align={block.align}
         previewClassName={block.previewClassName}
         hideCode={block.hideCode}
+        block={block.block}
+        caption={block.caption}
       />
     )
   })
 }
 
-function entryName(entry: { kind: "doc"; page: Page } | { kind: "kit"; name: string }) {
-  return entry.kind === "doc" ? entry.page.title : labelOf(entry.name)
+function entryName(entry: Entry) {
+  return entry.kind === "doc" ? entry.page.title : entry.page.title
 }
 
-function entryHref(entry: { kind: "doc"; page: Page } | { kind: "kit"; name: string }) {
-  return `/components/${entry.kind === "doc" ? entry.page.name : entry.name}`
+function entryHref(entry: Entry) {
+  return `/components/${entry.page.name}`
 }
 
 function ComponentsDocs() {
   const pathname = window.location.pathname.replace(/\/$/, "") || "/"
   const slug = pathname.startsWith("/components/") ? pathname.slice("/components/".length) : ""
-  const sequence = [
+  const sequence: Entry[] = [
     ...pages.map((page) => ({ kind: "doc" as const, page })),
-    ...kitNames.map((name) => ({ kind: "kit" as const, name })),
+    ...localPages.map((page) => ({ kind: "local" as const, page })),
   ]
   const index = sequence.findIndex((entry) => entryHref(entry) === pathname)
   const current = index >= 0 ? sequence[index] : undefined
@@ -124,16 +126,11 @@ function ComponentsDocs() {
     group: "Components",
     component: true,
   }))
-  const kitItems: NavItem[] = kitNames.map((name) => ({
-    name: labelOf(name),
-    href: `/components/${name}`,
-    group: "Kit",
-    component: false,
-  }))
-  const items = [...componentItems, ...kitItems]
   const toc = current?.kind === "doc"
     ? current.page.blocks.flatMap((block) => block.type === "heading" && block.level === 2 ? [{ title: block.text.replace(/[`*]/g, ""), url: `#${block.id}`, depth: 2 }] : [])
-    : []
+    : current?.kind === "local"
+      ? [{ title: "Cách dùng", url: "#cach-dung", depth: 2 }]
+      : []
 
   return (
     <div className="[--header-height:calc(var(--spacing)*14)] lg:[--header-height:calc(var(--spacing)*16)]">
@@ -145,19 +142,24 @@ function ComponentsDocs() {
           pathname={pathname === "/components" ? "/components" : pathname}
           groups={[
             { name: "Components", items: [{ name: "Components", href: "/components", group: "Components", component: false }, ...componentItems] },
-            { name: "Kit", items: kitItems },
+            ...localGroups.map((group) => ({
+              name: group.name,
+              items: group.pages.map((page) => ({
+                name: page.title,
+                href: `/components/${page.name}`,
+                group: group.name,
+                component: false,
+              })),
+            })),
           ]}
         />
         <div data-slot="docs" className="flex scroll-mt-24 items-stretch pb-8 text-[1.05rem] sm:text-[15px] xl:w-full">
           <div className="flex min-w-0 flex-1 flex-col">
             <div className="h-(--top-spacing) shrink-0" />
             <div className="mx-auto flex w-full max-w-160 min-w-0 flex-1 flex-col gap-6 px-4 py-6 text-foreground md:px-0 lg:py-8">
-              <div className="flex justify-end">
-                <CommandMenu items={items} />
-              </div>
               {slug === "" ? <Index items={componentItems} /> : null}
               {slug !== "" && !current ? <p>Không có trang này.</p> : null}
-              {current?.kind === "kit" ? <KitPage title={labelOf(current.name)} previous={previous} next={next} /> : null}
+              {current?.kind === "local" ? <LocalArticle page={current.page} previous={previous} next={next} /> : null}
               {current?.kind === "doc" ? (
                 <Article
                   title={current.page.title}
@@ -220,8 +222,8 @@ function Article({
   title: string
   description: string
   blocks: Block[]
-  previous?: { kind: "doc"; page: Page } | { kind: "kit"; name: string }
-  next?: { kind: "doc"; page: Page } | { kind: "kit"; name: string }
+  previous?: Entry
+  next?: Entry
 }) {
   return (
     <>
@@ -232,7 +234,7 @@ function Article({
         </div>
         {description ? <p className="text-[1.05rem] text-muted-foreground sm:text-base sm:text-balance md:max-w-[80%]">{description}</p> : null}
       </div>
-      <div className="typeset w-full flex-1 pb-16 sm:pb-0">
+      <div className="typeset w-full flex-1 pb-16 *:data-[slot=alert]:first:mt-0 sm:pb-0">
         <Blocks blocks={blocks} />
       </div>
       <div className="hidden h-16 w-full items-center gap-2 sm:flex">
@@ -242,23 +244,39 @@ function Article({
   )
 }
 
-function KitPage({
-  title,
+function LocalArticle({
+  page,
   previous,
   next,
 }: {
-  title: string
-  previous?: { kind: "doc"; page: Page } | { kind: "kit"; name: string }
-  next?: { kind: "doc"; page: Page } | { kind: "kit"; name: string }
+  page: LocalPage
+  previous?: Entry
+  next?: Entry
 }) {
+  const Preview = page.Preview
   return (
-    <Article
-      title={title}
-      description="Component của kit. Không có trang ví dụ trên ui.shadcn.com."
-      blocks={[]}
-      previous={previous}
-      next={next}
-    />
+    <>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between md:items-start">
+          <h1 className="scroll-m-24 text-3xl font-semibold tracking-tight">{page.title}</h1>
+          <Neighbours previous={previous} next={next} compact />
+        </div>
+        {page.description ? <p className="text-[1.05rem] text-muted-foreground sm:text-base sm:text-balance md:max-w-[80%]">{page.description}</p> : null}
+      </div>
+      <div className="typeset w-full flex-1 pb-16 *:data-[slot=alert]:first:mt-0 sm:pb-0">
+        <div data-slot="component-preview" data-not-typeset className="group relative mt-4 mb-12 flex flex-col overflow-hidden rounded-2xl border">
+          <div data-align="center" className={page.tall ? "preview relative flex min-h-96 w-full items-start justify-center p-10" : "preview relative flex h-72 w-full items-center justify-center p-10"}>
+            <div className={page.wide ? "w-full" : "w-full max-w-md"}><Preview /></div>
+          </div>
+        </div>
+        <HighlightedCode code={page.code} language="tsx" />
+        <h2 id="cach-dung">Cách dùng</h2>
+        <p>{page.usage}</p>
+      </div>
+      <div className="hidden h-16 w-full items-center gap-2 sm:flex">
+        <Neighbours previous={previous} next={next} />
+      </div>
+    </>
   )
 }
 
@@ -267,8 +285,8 @@ function Neighbours({
   next,
   compact = false,
 }: {
-  previous?: { kind: "doc"; page: Page } | { kind: "kit"; name: string }
-  next?: { kind: "doc"; page: Page } | { kind: "kit"; name: string }
+  previous?: Entry
+  next?: Entry
   compact?: boolean
 }) {
   if (compact) {
@@ -277,7 +295,7 @@ function Neighbours({
         {previous ? (
           <Button variant="secondary" size="icon" className="size-8 shadow-none md:size-7" asChild>
             <a href={entryHref(previous)}>
-              <ArrowLeftIcon />
+              <IconArrowLeft />
               <span className="sr-only">Previous</span>
             </a>
           </Button>
@@ -286,7 +304,7 @@ function Neighbours({
           <Button variant="secondary" size="icon" className="size-8 shadow-none md:size-7" asChild>
             <a href={entryHref(next)}>
               <span className="sr-only">Next</span>
-              <ArrowRightIcon />
+              <IconArrowRight />
             </a>
           </Button>
         ) : null}
@@ -297,16 +315,32 @@ function Neighbours({
     <>
       {previous ? (
         <Button variant="secondary" size="sm" className="shadow-none" asChild>
-          <a href={entryHref(previous)}><ArrowLeftIcon /> {entryName(previous)}</a>
+          <a href={entryHref(previous)}><IconArrowLeft /> {entryName(previous)}</a>
         </Button>
       ) : null}
       {next ? (
         <Button variant="secondary" size="sm" className="ml-auto shadow-none" asChild>
-          <a href={entryHref(next)}>{entryName(next)} <ArrowRightIcon /></a>
+          <a href={entryHref(next)}>{entryName(next)} <IconArrowRight /></a>
         </Button>
       ) : null}
     </>
   )
 }
 
-export { ComponentsDocs }
+function DocsCommandMenu() {
+  const componentItems: NavItem[] = pages.map((page) => ({
+    name: page.title,
+    href: `/components/${page.name}`,
+    group: "Components",
+    component: true,
+  }))
+  const localItems: NavItem[] = localPages.map((page) => ({
+    name: page.title,
+    href: `/components/${page.name}`,
+    group: page.group,
+    component: false,
+  }))
+  return <CommandMenu items={[...componentItems, ...localItems]} />
+}
+
+export { ComponentsDocs, DocsCommandMenu }

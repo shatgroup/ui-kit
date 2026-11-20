@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, type ReactNode } from "react"
 import { Inline, Text } from "@/components/layout/index.ts"
 import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 
@@ -6,7 +6,7 @@ function currentPath() {
   return window.location.pathname.replace(/\/$/, "") || "/"
 }
 
-function SiteBar() {
+function SiteBar({ search }: { search?: ReactNode }) {
   const path = currentPath()
   const design = path === "/design-system" || path === "/" || path === "/tokens" || path === "/kit"
   const components = path === "/components" || path.startsWith("/components/")
@@ -26,8 +26,8 @@ function SiteBar() {
   }, [showcase])
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background px-4">
-      <Inline gap={4} align="center">
+    <header className="sticky top-0 z-20 flex h-14 items-center gap-4 border-b border-border bg-background px-4">
+      <Inline gap={4} align="center" className="min-w-0 flex-1">
         <Text size="sm" weight="semibold">UI Kit</Text>
         <a href="/design-system" className={design ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
           Design System
@@ -39,7 +39,10 @@ function SiteBar() {
           Showcase
         </a>
       </Inline>
-      <ThemeToggle />
+      {search}
+      <div className="flex flex-1 justify-end">
+        <ThemeToggle />
+      </div>
     </header>
   )
 }

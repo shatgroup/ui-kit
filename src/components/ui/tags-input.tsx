@@ -1,8 +1,9 @@
 import { XIcon } from "lucide-react"
 import { useState, type KeyboardEvent } from "react"
+import { cn } from "cn"
 import { Badge } from "./badge.tsx"
-import { InputAffix } from "./input-affix.tsx"
-import type { ControlSize } from "./control.ts"
+import { InputGroup, InputGroupInput } from "./input-group.tsx"
+import { CONTROL_SIZE, type ControlSize } from "./control.ts"
 
 function TagsInput({
   value,
@@ -45,13 +46,14 @@ function TagsInput({
           </Badge>
         ))}
       </div>
-      <InputAffix
-        size={size}
-        value={draft}
-        placeholder={placeholder}
-        onChange={(event) => setDraft(event.target.value)}
-        onKeyDown={onKeyDown}
-      />
+      <InputGroup className={cn(size === "default" ? undefined : CONTROL_SIZE[size])}>
+        <InputGroupInput
+          value={draft}
+          placeholder={placeholder}
+          onChange={(event) => setDraft(event.target.value)}
+          onKeyDown={onKeyDown}
+        />
+      </InputGroup>
     </div>
   )
 }

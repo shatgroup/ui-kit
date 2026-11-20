@@ -25,7 +25,7 @@ import { Box, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { cn } from "@/lib/utils.ts"
 import { Button } from "@/components/ui/button.tsx"
 import { Card, CardContent } from "@/components/ui/card.tsx"
-import { CheckboxMark } from "@/components/ui/checkbox-mark.tsx"
+import { Checkbox } from "@/components/ui/checkbox.tsx"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -33,7 +33,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx"
-import { EmptyState } from "@/components/ui/empty-state.tsx"
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty.tsx"
 import { Input } from "@/components/ui/input.tsx"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx"
 import { Skeleton } from "@/components/ui/skeleton.tsx"
@@ -247,7 +247,14 @@ export function DataTable<T extends object>({
   }
 
   if (data.length === 0) {
-    return <EmptyState title={emptyTitle} description={emptyDescription} />
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyTitle>{emptyTitle}</EmptyTitle>
+          {emptyDescription ? <EmptyDescription>{emptyDescription}</EmptyDescription> : null}
+        </EmptyHeader>
+      </Empty>
+    )
   }
 
   return (
@@ -271,7 +278,7 @@ export function DataTable<T extends object>({
                   {reorderable ? <TableHead {...cellLayout({ minWidth: 48, wrap: true })}> </TableHead> : null}
                   {selectable && selectColumn ? (
                     <TableHead {...cellLayout({ minWidth: 48, wrap: true })}>
-                      <CheckboxMark
+                      <Checkbox
                         checked={someSelected && !allSelected ? "indeterminate" : allSelected}
                         aria-label={labels?.selectAll ?? "Select all"}
                         onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked === true)}
@@ -291,7 +298,7 @@ export function DataTable<T extends object>({
                       >
                         {index === 0 && selectable && !selectColumn ? (
                           <Inline gap={2} align="center" wrap={false}>
-                            <CheckboxMark
+                            <Checkbox
                               checked={someSelected && !allSelected ? "indeterminate" : allSelected}
                               aria-label={labels?.selectAll ?? "Select all"}
                               onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked === true)}
@@ -318,7 +325,7 @@ export function DataTable<T extends object>({
                   ) : null}
                   {selectable && selectColumn ? (
                     <TableCell {...cellLayout({ minWidth: 48, wrap: true })}>
-                      <CheckboxMark
+                      <Checkbox
                         checked={row.getIsSelected()}
                         aria-label={(labels?.selectRow ?? ((id) => `Select ${id}`))(row.id)}
                         onCheckedChange={(checked) => row.toggleSelected(checked === true)}
@@ -339,7 +346,7 @@ export function DataTable<T extends object>({
                       >
                         <Inline gap={2} align="center" wrap={false}>
                           {selectable && !selectColumn && index === 0 ? (
-                            <CheckboxMark
+                            <Checkbox
                               checked={row.getIsSelected()}
                               aria-label={(labels?.selectRow ?? ((id) => `Select ${id}`))(row.id)}
                               onCheckedChange={(checked) => row.toggleSelected(checked === true)}
@@ -373,7 +380,7 @@ export function DataTable<T extends object>({
               <CardContent>
                 <Stack gap={2}>
                   {selectable ? (
-                    <CheckboxMark
+                    <Checkbox
                       checked={row.getIsSelected()}
                       aria-label={(labels?.selectRow ?? ((id) => `Select ${id}`))(row.id)}
                       onCheckedChange={(checked) => row.toggleSelected(checked === true)}

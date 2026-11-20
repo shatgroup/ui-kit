@@ -3,15 +3,16 @@ import { Toaster } from "@/components/ui/sonner.tsx"
 import { Container, Text } from "@/components/layout/index.ts"
 import { SiteBar } from "@/components/patterns/site-bar.tsx"
 import { ComponentsPage } from "@/pages/components-page.tsx"
+import { ExampleView } from "@/showcase/shadcn-docs/example-view.tsx"
+import { DocsCommandMenu } from "@/showcase/shadcn-docs/docs-shell.tsx"
 import { DesignSystemPage } from "@/pages/design-system-page.tsx"
-import { KitGalleryPage } from "@/pages/kit-gallery-page.tsx"
 import { ShowcasePage } from "@/pages/showcase-page.tsx"
 import type { ReactNode } from "react"
 
-function Frame({ children }: { children: ReactNode }) {
+function Frame({ children, search }: { children: ReactNode; search?: ReactNode }) {
   return (
     <TooltipProvider>
-      <SiteBar />
+      <SiteBar search={search} />
       {children}
       <Toaster />
     </TooltipProvider>
@@ -29,8 +30,10 @@ export default function App() {
     return <Frame><ShowcasePage /></Frame>
   }
   if (path === "/showcase") return <Frame><ShowcasePage /></Frame>
-  if (path === "/components/kit-gallery") return <Frame><KitGalleryPage /></Frame>
-  if (path === "/components" || path.startsWith("/components/")) return <Frame><ComponentsPage /></Frame>
+  if (path.startsWith("/view/")) return <ExampleView name={path.slice("/view/".length)} />
+  if (path === "/components" || path.startsWith("/components/")) {
+    return <Frame search={<DocsCommandMenu />}><ComponentsPage /></Frame>
+  }
   return (
     <Frame>
       <Container>

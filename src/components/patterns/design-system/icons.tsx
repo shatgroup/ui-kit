@@ -21,7 +21,7 @@ import {
 import { Grid, Stack, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
 import { Card, CardContent } from "@/components/ui/card.tsx"
-import { EmptyState } from "@/components/ui/empty-state.tsx"
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty.tsx"
 import { Input } from "@/components/ui/input.tsx"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.tsx"
@@ -96,7 +96,14 @@ function Icons() {
                 <Text size="sm" tone="primary">See all on lucide.dev</Text>
               </a>
             </Grid>
-            {icons.length === 0 ? <EmptyState title="No icons" description="Try another name." /> : (
+            {icons.length === 0 ? (
+              <Empty>
+                <EmptyHeader>
+                  <EmptyTitle>No icons</EmptyTitle>
+                  <EmptyDescription>Try another name.</EmptyDescription>
+                </EmptyHeader>
+              </Empty>
+            ) : (
               <Grid columns={{ base: 4, md: 8, xl: 12 }} gap={2}>
                 {icons.map((Icon) => {
                   const name = iconName(Icon)

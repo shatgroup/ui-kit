@@ -75,7 +75,7 @@ function CommandMenu({ items }: { items: NavItem[] }) {
       <DialogPortal>
         <DialogPrimitive.Content
           data-slot="dialog-content"
-          className="fixed top-[15%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] gap-4 rounded-xl border-none bg-clip-padding p-2 pb-11 ring-4 ring-neutral-200/80 outline-none sm:max-w-lg dark:bg-neutral-900 dark:ring-neutral-800"
+          className="fixed top-[15%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] gap-4 rounded-xl border-none bg-background bg-clip-padding p-2 pb-11 shadow-2xl ring-4 ring-neutral-200/80 outline-none sm:max-w-lg dark:bg-neutral-900 dark:ring-neutral-800"
         >
           <DialogHeader className="sr-only">
             <DialogTitle>Search documentation...</DialogTitle>

@@ -15,7 +15,49 @@ function sourceOf(name: string) {
   return sources[`./examples/${name}.tsx`] ?? ""
 }
 
+function BlockPreview({ name, className, caption }: { name: string; className?: string; caption?: string }) {
+  return (
+    <figure data-not-typeset className="mt-6 flex flex-col gap-4">
+      <div className={cn("relative aspect-[4/2.5] w-full overflow-hidden rounded-2xl border", className)}>
+        <div className="absolute inset-y-0 left-0 w-[1600px] bg-background">
+          <iframe title={name} src={`/view/${name}`} className="size-full border-0 bg-background" />
+        </div>
+      </div>
+      {caption ? <figcaption className="text-center text-sm text-muted-foreground">{caption}</figcaption> : null}
+    </figure>
+  )
+}
+
 function ComponentPreview({
+  name,
+  className,
+  previewClassName,
+  align = "center",
+  hideCode = false,
+  block = false,
+  caption,
+}: {
+  name: string
+  className?: string
+  previewClassName?: string
+  align?: "center" | "start" | "end"
+  hideCode?: boolean
+  block?: boolean
+  caption?: string
+}) {
+  if (block) return <BlockPreview name={name} className={className} caption={caption} />
+  return (
+    <InlinePreview
+      name={name}
+      className={className}
+      previewClassName={previewClassName}
+      align={align}
+      hideCode={hideCode}
+    />
+  )
+}
+
+function InlinePreview({
   name,
   className,
   previewClassName,

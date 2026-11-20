@@ -2,7 +2,7 @@ import { useRef, useState } from "react"
 import { PauseIcon, PlayIcon } from "lucide-react"
 import { Box, Stack, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
-import { EmptyState } from "@/components/ui/empty-state.tsx"
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty.tsx"
 
 export type MediaRatio = "16/9" | "9/16" | "1/1"
 
@@ -54,7 +54,12 @@ export function MediaPreview({
     <div data-ratio={ratio} className="relative w-full overflow-hidden rounded-md bg-muted">
       {status === "empty" || (status !== "error" && !src) ? (
         <Box className="flex h-full items-center justify-center p-4">
-          <EmptyState title={emptyTitle} description={emptyDescription} />
+          <Empty>
+            <EmptyHeader>
+              <EmptyTitle>{emptyTitle}</EmptyTitle>
+              {emptyDescription ? <EmptyDescription>{emptyDescription}</EmptyDescription> : null}
+            </EmptyHeader>
+          </Empty>
         </Box>
       ) : null}
       {status === "error" ? (

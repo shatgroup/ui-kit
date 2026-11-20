@@ -5,21 +5,21 @@ import { Box, Inline, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu.tsx"
 import {
-  KitSidebar,
-  KitSidebarContent,
-  KitSidebarFooter,
-  KitSidebarGroup,
-  KitSidebarGroupContent,
-  KitSidebarGroupLabel,
-  KitSidebarHeader,
-  KitSidebarInset,
-  KitSidebarMenu,
-  KitSidebarMenuButton,
-  KitSidebarMenuItem,
-  KitSidebarProvider,
-  KitSidebarTrigger,
-  useKitSidebar,
-} from "@/components/ui/kit-sidebar.tsx"
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarInset,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+  SidebarTrigger,
+  useSidebar,
+} from "@/components/ui/sidebar.tsx"
 import { cn } from "@/lib/utils.ts"
 
 export type AppNavItem = {
@@ -64,9 +64,9 @@ function ShellTrigger({
   expandLabel: string
   menuLabel: string
 }) {
-  const { isMobile, state } = useKitSidebar()
+  const { isMobile, state } = useSidebar()
   const label = isMobile ? menuLabel : state === "collapsed" ? expandLabel : collapseAriaLabel
-  return <KitSidebarTrigger label={label} aria-label={label} />
+  return <SidebarTrigger aria-label={label} />
 }
 
 function ShellSidebar({
@@ -79,7 +79,7 @@ function ShellSidebar({
   sidebarAction,
   account,
 }: Pick<AppShellProps, "logo" | "mark" | "groups" | "activeId" | "onNavigate" | "footer" | "sidebarAction" | "account">) {
-  const { state, isMobile, setOpenMobile } = useKitSidebar()
+  const { state, isMobile, setOpenMobile } = useSidebar()
   const collapsed = state === "collapsed" && !isMobile
   const action = typeof sidebarAction === "function" ? sidebarAction(collapsed) : sidebarAction
 
@@ -90,26 +90,26 @@ function ShellSidebar({
 
   return (
     <>
-      <KitSidebarHeader>
+      <SidebarHeader>
         <span className={cn("flex h-8 items-center px-2", collapsed && "justify-center px-0")}>
           {collapsed ? (
             <span className="flex size-8 items-center justify-center overflow-hidden">{mark ?? logo}</span>
           ) : logo}
         </span>
         {action}
-      </KitSidebarHeader>
-      <KitSidebarContent>
+      </SidebarHeader>
+      <SidebarContent>
         {groups.map((group) => (
-          <KitSidebarGroup key={group.label}>
-            <KitSidebarGroupLabel>{group.label}</KitSidebarGroupLabel>
-            <KitSidebarGroupContent>
-              <KitSidebarMenu>
+          <SidebarGroup key={group.label}>
+            <SidebarGroupLabel>{group.label}</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
                 {group.items.map((item) => {
                   const Icon = item.icon
                   const active = item.id === activeId
                   return (
-                    <KitSidebarMenuItem key={item.id}>
-                      <KitSidebarMenuButton
+                    <SidebarMenuItem key={item.id}>
+                      <SidebarMenuButton
                         isActive={active}
                         tooltip={item.label}
                         aria-label={item.label}
@@ -118,16 +118,16 @@ function ShellSidebar({
                       >
                         <Icon />
                         <span>{item.label}</span>
-                      </KitSidebarMenuButton>
-                    </KitSidebarMenuItem>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   )
                 })}
-              </KitSidebarMenu>
-            </KitSidebarGroupContent>
-          </KitSidebarGroup>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
         ))}
-      </KitSidebarContent>
-      <KitSidebarFooter>
+      </SidebarContent>
+      <SidebarFooter>
         {footer}
         {account ? (
           <Inline gap={2} align="center" justify={collapsed ? "center" : "between"} wrap={false}>
@@ -150,7 +150,7 @@ function ShellSidebar({
             </DropdownMenu>
           </Inline>
         ) : null}
-      </KitSidebarFooter>
+      </SidebarFooter>
     </>
   )
 }
@@ -177,8 +177,8 @@ export function AppShell({
 }: AppShellProps) {
   return (
     <div data-app-shell className={cn(inset ? "h-full min-h-0" : "min-h-dvh")}>
-      <KitSidebarProvider mobileBreakpoint={1024} contained={inset} className={inset ? "h-full" : undefined}>
-        <KitSidebar collapsible="icon">
+      <SidebarProvider className={inset ? "h-full min-h-0" : undefined}>
+        <Sidebar collapsible="icon">
           <ShellSidebar
             logo={logo}
             mark={mark}
@@ -189,8 +189,8 @@ export function AppShell({
             sidebarAction={sidebarAction}
             account={account}
           />
-        </KitSidebar>
-        <KitSidebarInset className={cn("min-w-0", inset && "min-h-0 overflow-hidden")}>
+        </Sidebar>
+        <SidebarInset className={cn("min-w-0", inset && "min-h-0 overflow-hidden")}>
           <header data-app-header className="flex h-14 shrink-0 items-center border-b border-border px-4">
             <Inline gap={2} align="center" justify="between" wrap={false} className="w-full min-w-0">
               <Inline gap={2} align="center" wrap={false} className="min-w-0">
@@ -211,8 +211,8 @@ export function AppShell({
               {bottomNav}
             </div>
           ) : null}
-        </KitSidebarInset>
-      </KitSidebarProvider>
+        </SidebarInset>
+      </SidebarProvider>
     </div>
   )
 }

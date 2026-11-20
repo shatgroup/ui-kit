@@ -303,8 +303,7 @@
           "rows": [
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"destructive\"`",
+              "`\"default\" | \"destructive\"`",
               "`\"default\"`"
             ]
           ]
@@ -549,8 +548,7 @@
           "rows": [
             [
               "`size`",
-              "`\"default\" \\",
-              "\"sm\"`",
+              "`\"default\" | \"sm\"`",
               "`\"default\"`"
             ]
           ]
@@ -940,26 +938,19 @@
           "rows": [
             [
               "`state`",
-              "`\"idle\" \\",
-              "\"uploading\" \\",
-              "\"processing\" \\",
-              "\"error\" \\",
-              "\"done\"`",
+              "`\"idle\" | \"uploading\" | \"processing\" | \"error\" | \"done\"`",
               "`\"done\"`",
               "The upload state. Drives styling and the shimmer."
             ],
             [
               "`size`",
-              "`\"default\" \\",
-              "\"sm\" \\",
-              "\"xs\"`",
+              "`\"default\" | \"sm\" | \"xs\"`",
               "`\"default\"`",
               "The attachment size."
             ],
             [
               "`orientation`",
-              "`\"horizontal\" \\",
-              "\"vertical\"`",
+              "`\"horizontal\" | \"vertical\"`",
               "`\"horizontal\"`",
               "Lay the media beside or above the content."
             ],
@@ -992,8 +983,7 @@
           "rows": [
             [
               "`variant`",
-              "`\"icon\" \\",
-              "\"image\"`",
+              "`\"icon\" | \"image\"`",
               "`\"icon\"`",
               "Whether the media holds an icon or an `<img>`."
             ],
@@ -1430,9 +1420,7 @@
           "rows": [
             [
               "`size`",
-              "`\"default\" \\",
-              "\"sm\" \\",
-              "\"lg\"`",
+              "`\"default\" | \"sm\" | \"lg\"`",
               "`\"default\"`"
             ],
             [
@@ -1725,12 +1713,7 @@
           "rows": [
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"secondary\" \\",
-              "\"destructive\" \\",
-              "\"outline\" \\",
-              "\"ghost\" \\",
-              "\"link\"`",
+              "`\"default\" | \"secondary\" | \"destructive\" | \"outline\" | \"ghost\" | \"link\"`",
               "`\"default\"`"
             ],
             [
@@ -2428,20 +2411,13 @@
           "rows": [
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"secondary\" \\",
-              "\"muted\" \\",
-              "\"tinted\" \\",
-              "\"outline\" \\",
-              "\"ghost\" \\",
-              "\"destructive\"`",
+              "`\"default\" | \"secondary\" | \"muted\" | \"tinted\" | \"outline\" | \"ghost\" | \"destructive\"`",
               "`\"default\"`",
               "The bubble visual treatment."
             ],
             [
               "`align`",
-              "`\"start\" \\",
-              "\"end\"`",
+              "`\"start\" | \"end\"`",
               "`\"start\"`",
               "The inline alignment of the bubble."
             ],
@@ -2507,15 +2483,13 @@
           "rows": [
             [
               "`side`",
-              "`\"top\" \\",
-              "\"bottom\"`",
+              "`\"top\" | \"bottom\"`",
               "`\"bottom\"`",
               "The side of the bubble to anchor the reactions."
             ],
             [
               "`align`",
-              "`\"start\" \\",
-              "\"end\"`",
+              "`\"start\" | \"end\"`",
               "`\"end\"`",
               "The inline alignment of the reactions."
             ],
@@ -2810,24 +2784,12 @@
           "rows": [
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"outline\" \\",
-              "\"ghost\" \\",
-              "\"destructive\" \\",
-              "\"secondary\" \\",
-              "\"link\"`",
+              "`\"default\" | \"outline\" | \"ghost\" | \"destructive\" | \"secondary\" | \"link\"`",
               "`\"default\"`"
             ],
             [
               "`size`",
-              "`\"default\" \\",
-              "\"xs\" \\",
-              "\"sm\" \\",
-              "\"lg\" \\",
-              "\"icon\" \\",
-              "\"icon-xs\" \\",
-              "\"icon-sm\" \\",
-              "\"icon-lg\"`",
+              "`\"default\" | \"xs\" | \"sm\" | \"lg\" | \"icon\" | \"icon-xs\" | \"icon-sm\" | \"icon-lg\"`",
               "`\"default\"`"
             ],
             [
@@ -3104,8 +3066,7 @@
           "rows": [
             [
               "`orientation`",
-              "`\"horizontal\" \\",
-              "\"vertical\"`",
+              "`\"horizontal\" | \"vertical\"`",
               "`\"horizontal\"`"
             ]
           ]
@@ -3144,8 +3105,7 @@
           "rows": [
             [
               "`orientation`",
-              "`\"horizontal\" \\",
-              "\"vertical\"`",
+              "`\"horizontal\" | \"vertical\"`",
               "`\"vertical\"`"
             ]
           ]
@@ -3685,8 +3645,7 @@
           "rows": [
             [
               "`size`",
-              "`\"default\" \\",
-              "\"sm\"`",
+              "`\"default\" | \"sm\"`",
               "`\"default\"`"
             ],
             [
@@ -5423,15 +5382,13 @@
           "rows": [
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"destructive\"`",
+              "`\"default\" | \"destructive\"`",
               "`\"default\"`",
               "The tone of the block."
             ],
             [
               "`size`",
-              "`\"default\" \\",
-              "\"sm\"`",
+              "`\"default\" | \"sm\"`",
               "`\"default\"`",
               "`\"sm\"` has tighter padding and `text-xs` code, for tool output."
             ],
@@ -5635,10 +5592,7 @@
           "rows": [
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"added\" \\",
-              "\"removed\" \\",
-              "\"highlighted\"`",
+              "`\"default\" | \"added\" | \"removed\" | \"highlighted\"`",
               "`\"default\"`",
               "The state of the line."
             ],
@@ -6951,8 +6905,7 @@
           "rows": [
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"icon\"`",
+              "`\"default\" | \"icon\"`",
               "`default`"
             ],
             [
@@ -7417,8 +7370,7 @@
           "rows": [
             [
               "`variant`",
-              "`\"legend\" \\",
-              "\"label\"`",
+              "`\"legend\" | \"label\"`",
               "`\"legend\"`"
             ],
             [
@@ -7487,9 +7439,7 @@
           "rows": [
             [
               "`orientation`",
-              "`\"vertical\" \\",
-              "\"horizontal\" \\",
-              "\"responsive\"`",
+              "`\"vertical\" | \"horizontal\" | \"responsive\"`",
               "`\"vertical\"`"
             ],
             [
@@ -7684,8 +7634,7 @@
           "rows": [
             [
               "`errors`",
-              "`Array<{ message?: string } \\",
-              "undefined>`",
+              "`Array<{ message?: string } | undefined>`",
               ""
             ],
             [
@@ -8377,10 +8326,7 @@
           "rows": [
             [
               "`align`",
-              "`\"inline-start\" \\",
-              "\"inline-end\" \\",
-              "\"block-start\" \\",
-              "\"block-end\"`",
+              "`\"inline-start\" | \"inline-end\" | \"block-start\" | \"block-end\"`",
               "`\"inline-start\"`"
             ],
             [
@@ -8428,20 +8374,12 @@
           "rows": [
             [
               "`size`",
-              "`\"xs\" \\",
-              "\"icon-xs\" \\",
-              "\"sm\" \\",
-              "\"icon-sm\"`",
+              "`\"xs\" | \"icon-xs\" | \"sm\" | \"icon-sm\"`",
               "`\"xs\"`"
             ],
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"destructive\" \\",
-              "\"outline\" \\",
-              "\"secondary\" \\",
-              "\"ghost\" \\",
-              "\"link\"`",
+              "`\"default\" | \"destructive\" | \"outline\" | \"secondary\" | \"ghost\" | \"link\"`",
               "`\"ghost\"`"
             ],
             [
@@ -8975,16 +8913,12 @@
           "rows": [
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"outline\" \\",
-              "\"muted\"`",
+              "`\"default\" | \"outline\" | \"muted\"`",
               "`\"default\"`"
             ],
             [
               "`size`",
-              "`\"default\" \\",
-              "\"sm\" \\",
-              "\"xs\"`",
+              "`\"default\" | \"sm\" | \"xs\"`",
               "`\"default\"`"
             ],
             [
@@ -9044,9 +8978,7 @@
           "rows": [
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"icon\" \\",
-              "\"image\"`",
+              "`\"default\" | \"icon\" | \"image\"`",
               "`\"default\"`"
             ]
           ]
@@ -9745,9 +9677,7 @@
           "rows": [
             [
               "`variant`",
-              "`\"default\" \\",
-              "\"border\" \\",
-              "\"separator\"`",
+              "`\"default\" | \"border\" | \"separator\"`",
               "`\"default\"`",
               "The marker layout."
             ],
@@ -10192,8 +10122,7 @@
           "rows": [
             [
               "`align`",
-              "`\"start\" \\",
-              "\"end\"`",
+              "`\"start\" | \"end\"`",
               "`\"start\"`",
               "The alignment of the message in the conversation."
             ],
@@ -12728,20 +12657,10 @@
       "description": "A composable, themeable and customizable sidebar component.",
       "blocks": [
         {
-          "type": "paragraph",
-          "text": "import { ExternalLinkIcon } from \"lucide-react\""
-        },
-        {
-          "type": "paragraph",
-          "text": "<figure className=\"flex flex-col gap-4\">"
-        },
-        {
           "type": "preview",
-          "name": "sidebar-demo"
-        },
-        {
-          "type": "paragraph",
-          "text": "<figcaption className=\"text-center text-sm text-gray-500\"> A sidebar that collapses to icons. </figcaption> </figure>"
+          "name": "sidebar-demo",
+          "block": true,
+          "caption": "A sidebar that collapses to icons."
         },
         {
           "type": "paragraph",
@@ -13297,7 +13216,7 @@
         },
         {
           "type": "paragraph",
-          "text": "<a href=\"/view/radix-nova/sidebar-rtl\" target=\"_blank\">View RTL Sidebar <ExternalLinkIcon /></a>"
+          "text": "The RTL example stays on the [original docs](https://ui.shadcn.com/docs/components/radix/sidebar)."
         },
         {
           "type": "heading",
@@ -15275,9 +15194,7 @@
           "rows": [
             [
               "`status`",
-              "`\"running\" \\",
-              "\"error\" \\",
-              "\"pending\"`",
+              "`\"running\" | \"error\" | \"pending\"`",
               "-",
               "The state of the work the line reports."
             ],
@@ -15473,23 +15390,31 @@
     }
   ],
   "kit": [
-    "kit-gallery",
-    "checkbox-field",
-    "date-input",
-    "empty-state",
-    "form-field",
     "number-input",
     "password-input",
+    "tags-input",
+    "date-input",
+    "status-badge",
     "progress-circle",
     "progress-segments",
-    "radio-field",
-    "responsive-dialog",
-    "status-badge",
     "steps-bar",
-    "switch-field",
-    "tags-input",
+    "truncated",
     "theme-toggle",
-    "truncated"
+    "audio-player",
+    "media-preview",
+    "dropzone",
+    "job-status",
+    "meter"
+  ],
+  "patterns": [
+    "app-shell",
+    "data-table",
+    "filter-bar",
+    "form-layout",
+    "page-header",
+    "stat-card",
+    "status-timeline",
+    "ticker"
   ],
   "flow": [
     "flow-canvas",

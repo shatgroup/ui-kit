@@ -1,13 +1,15 @@
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useState } from "react"
+import { cn } from "cn"
 import { Button } from "./button.tsx"
-import { InputAffix } from "./input-affix.tsx"
-import type { ControlSize } from "./control.ts"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group.tsx"
+import { CONTROL_SIZE, type ControlSize } from "./control.ts"
 
 function PasswordInput({
   size = "default",
   showPasswordLabel = "Hiện mật khẩu",
   hidePasswordLabel = "Ẩn mật khẩu",
+  className,
   ...props
 }: Omit<React.ComponentProps<"input">, "size"> & {
   size?: ControlSize
@@ -16,11 +18,9 @@ function PasswordInput({
 }) {
   const [shown, setShown] = useState(false)
   return (
-    <InputAffix
-      {...props}
-      size={size}
-      type={shown ? "text" : "password"}
-      suffix={
+    <InputGroup className={cn(size === "default" ? undefined : CONTROL_SIZE[size], className)}>
+      <InputGroupInput {...props} type={shown ? "text" : "password"} />
+      <InputGroupAddon align="inline-end">
         <Button
           type="button"
           variant="ghost"
@@ -31,8 +31,8 @@ function PasswordInput({
         >
           {shown ? <EyeOffIcon /> : <EyeIcon />}
         </Button>
-      }
-    />
+      </InputGroupAddon>
+    </InputGroup>
   )
 }
 
