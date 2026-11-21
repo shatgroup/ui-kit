@@ -25,11 +25,11 @@ function clock(seconds: number) {
 
 export function AudioPlayer({
   src,
-  label = "Trình phát",
-  playLabel = "Phát",
-  pauseLabel = "Tạm dừng",
-  seekLabel = "Thanh tua",
-  speedLabel = "Tốc độ phát",
+  label = "Audio player",
+  playLabel = "Play",
+  pauseLabel = "Pause",
+  seekLabel = "Seek",
+  speedLabel = "Playback speed",
 }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [playing, setPlaying] = useState(false)

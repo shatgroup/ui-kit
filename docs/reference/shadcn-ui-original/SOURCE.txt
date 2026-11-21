@@ -1,0 +1,6 @@
+Nguồn: https://ui.shadcn.com/r/styles/radix-nova/<tên>.json
+Style: radix-nova, base Radix (radix-ui).
+Tải ngày 2026-11-20.
+Giấy phép: MIT, https://github.com/shadcn-ui/ui
+
+Bản này ghi đè bản new-york đã lưu trước đó.

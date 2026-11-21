@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useEffect, type ReactNode } from "react"
 import { Inline, Text } from "@/components/layout/index.ts"
 import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 
@@ -6,9 +6,10 @@ function currentPath() {
   return window.location.pathname.replace(/\/$/, "") || "/"
 }
 
-function SiteBar() {
+function SiteBar({ search }: { search?: ReactNode }) {
   const path = currentPath()
   const design = path === "/design-system" || path === "/" || path === "/tokens" || path === "/kit"
+  const components = path === "/components" || path.startsWith("/components/")
   const showcase = path === "/showcase" || path === "/preview" || path === "/preview-motion"
 
   useEffect(() => {
@@ -25,17 +26,23 @@ function SiteBar() {
   }, [showcase])
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-border bg-background px-4">
-      <Inline gap={4} align="center">
+    <header className="flex h-full min-h-0 items-center gap-4 overflow-hidden border-b border-border bg-background px-4">
+      <Inline gap={4} align="center" wrap={false} className="min-w-0 flex-1">
         <Text size="sm" weight="semibold">UI Kit</Text>
         <a href="/design-system" className={design ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
           Design System
+        </a>
+        <a href="/components" className={components ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
+          Components
         </a>
         <a href="/showcase" className={showcase ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
           Showcase
         </a>
       </Inline>
-      <ThemeToggle />
+      {search}
+      <div className="flex flex-1 justify-end">
+        <ThemeToggle />
+      </div>
     </header>
   )
 }

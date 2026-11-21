@@ -36,9 +36,9 @@ export function NodeSearchInternal({
   onSelectNode,
   open,
   onOpenChange,
-  placeholder = "Tìm node...",
-  emptyLabel = "Không có kết quả.",
-  groupLabel = "Nút",
+  placeholder = "Find a node...",
+  emptyLabel = "No results.",
+  groupLabel = "Nodes",
 }: NodeSearchProps) {
   const [searchResults, setSearchResults] = useState<Node[]>([]);
   const [searchString, setSearchString] = useState<string>("");

@@ -37,11 +37,11 @@ export function FilterBar({
   filters,
   onClear,
   resultCount,
-  searchPlaceholder = "Tìm kiếm",
-  searchLabel = "Tìm kiếm",
-  clearLabel = "Xoá lọc",
-  resultLabel = (count) => `${count} kết quả`,
-  activeLabel = (count) => `${count} bộ lọc đang bật`,
+  searchPlaceholder = "Search",
+  searchLabel = "Search",
+  clearLabel = "Clear filters",
+  resultLabel = (count) => `${count} results`,
+  activeLabel = (count) => `${count} filters on`,
 }: FilterBarProps) {
   const active = filters.filter((filter) => filter.value !== (filter.allValue ?? "all")).length
 
@@ -67,7 +67,7 @@ export function FilterBar({
                   {filter.label}: {current?.label ?? filter.value}
                 </span>
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper">
                 {filter.options.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}

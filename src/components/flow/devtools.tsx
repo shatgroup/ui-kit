@@ -64,7 +64,7 @@ const ChangeInfo = ({ change }: ChangeInfoProps) => {
   );
 };
 
-function NoChanges({ label = "Chưa có thay đổi" }: { label?: string }) {
+function NoChanges({ label = "No changes yet" }: { label?: string }) {
   return <div>{label}</div>;
 }
 
@@ -168,8 +168,8 @@ const NodeInfo = ({
   width,
   height,
   data,
-  selectedLabel = "Đã chọn",
-  idleLabel = "Chưa chọn",
+  selectedLabel = "Selected",
+  idleLabel = "None selected",
 }: NodeInfoProps) => {
   if (!width || !height) return null;
 
@@ -250,19 +250,19 @@ export const DevTools = ({ position, labels }: DevToolsProps) => {
     {
       active: nodeInspectorActive,
       setActive: setNodeInspectorActive,
-      label: labels?.inspector ?? "Kiểm tra node",
+      label: labels?.inspector ?? "Inspect node",
       value: "node-inspector",
     },
     {
       active: changeLoggerActive,
       setActive: setChangeLoggerActive,
-      label: labels?.changes ?? "Nhật ký thay đổi",
+      label: labels?.changes ?? "Change log",
       value: "change-logger",
     },
     {
       active: viewportLoggerActive,
       setActive: setViewportLoggerActive,
-      label: labels?.viewport ?? "Nhật ký khung nhìn",
+      label: labels?.viewport ?? "Viewport log",
       value: "viewport-logger",
     },
   ];

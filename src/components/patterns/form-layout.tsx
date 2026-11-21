@@ -31,8 +31,8 @@ export function FormLayout({
   saving = false,
   onSubmit,
   onCancel,
-  submitLabel = "Lưu",
-  cancelLabel = "Huỷ",
+  submitLabel = "Save",
+  cancelLabel = "Cancel",
 }: FormLayoutProps) {
   function submit(event: FormEvent) {
     event.preventDefault()

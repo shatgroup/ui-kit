@@ -1,4 +1,4 @@
-import { memo, useCallback, useState, type ReactNode } from "react"
+import { createContext, memo, useCallback, useContext, useState, type ReactNode } from "react"
 import { Background, Handle, Panel, Position, ReactFlow, addEdge, useConnection, useEdgesState, useNodesState, useReactFlow, type Connection, type ConnectionState, type Edge, type EdgeProps, type FitViewOptions, type Node, type NodeProps } from "@xyflow/react"
 import { MousePointerClick, Plus, Rocket } from "lucide-react"
 import { Stack, Text } from "@/components/layout/index.ts"
@@ -202,6 +202,8 @@ function WorkflowSample() {
   )
 }
 
+const FlowOnly = createContext<string | undefined>(undefined)
+
 function OfficialDemo({
   title,
   span = "third",
@@ -213,6 +215,8 @@ function OfficialDemo({
   height?: "h-96" | "h-120"
   children: ReactNode
 }) {
+  const only = useContext(FlowOnly)
+  if (only && only !== title) return null
   return (
     <Grid span={span} className="h-full">
       <Stack gap={2} className="min-w-0">
@@ -544,11 +548,14 @@ function ZoomSliderDemo() {
   )
 }
 
-function FlowSection() {
+function FlowSection({ only }: { only?: string }) {
   return (
+    <FlowOnly.Provider value={only}>
     <Stack gap={4}>
-      <Text as="h2" id="flow" size="xl" weight="semibold" className="scroll-mt-nav">Flow</Text>
+      {only ? null : <Text as="h2" id="flow" size="xl" weight="semibold" className="scroll-mt-nav">Flow</Text>}
       <Grid className="kit-grid items-stretch">
+        {only ? null : (
+        <>
         <Grid span="full" className="h-full">
           <Card className="h-full">
             <CardHeader><Text size="sm" tone="muted">Mind map</Text></CardHeader>
@@ -561,6 +568,8 @@ function FlowSection() {
             <CardContent><WorkflowSample /></CardContent>
           </Card>
         </Grid>
+        </>
+        )}
         <Grid span="full" className="h-full">
           <Card className="h-full">
             <CardHeader><Text size="sm" tone="muted">Flow components</Text></CardHeader>
@@ -748,7 +757,36 @@ function FlowSection() {
         </Grid>
       </Grid>
     </Stack>
+    </FlowOnly.Provider>
   )
 }
 
-export { FlowSection }
+const FLOW_DEMO_TITLE: Record<string, string> = {
+  "base-node": "Base Node",
+  "node-status-indicator": "Node Status",
+  "node-appendix": "Node Appendix",
+  "node-tooltip": "Node Tooltip",
+  "database-schema-node": "Database Schema",
+  "placeholder-node": "Placeholder",
+  "labeled-group-node": "Labeled Group",
+  "base-handle": "Base Handle",
+  "labeled-handle": "Labeled Handle",
+  "button-handle": "Button Handle",
+  "button-edge": "Button Edge",
+  "data-edge": "Data Edge",
+  "animated-svg-edge": "Animated SVG Edge",
+  "node-search": "Node Search",
+  "zoom-slider": "Zoom Slider",
+  "zoom-select": "Zoom Select",
+  devtools: "DevTools",
+}
+
+function FlowDemo({ name }: { name: string }) {
+  if (name === "mind-map-node" || name === "flow-canvas") return <MindMapSample />
+  if (name === "workflow-node") return <WorkflowSample />
+  const title = FLOW_DEMO_TITLE[name]
+  if (!title) return null
+  return <FlowSection only={title} />
+}
+
+export { FlowDemo, FlowSection }

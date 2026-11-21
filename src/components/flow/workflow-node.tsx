@@ -31,9 +31,9 @@ export type WorkflowNodeData = {
 export type WorkflowNodeType = Node<WorkflowNodeData, "workflow">
 
 const DEFAULT_ITEMS = [
-  { id: "edit", label: "Sửa" },
-  { id: "duplicate", label: "Nhân bản" },
-  { id: "delete", label: "Xoá" },
+  { id: "edit", label: "Edit" },
+  { id: "duplicate", label: "Duplicate" },
+  { id: "delete", label: "Delete" },
 ]
 
 export function WorkflowNode({ data }: NodeProps<WorkflowNodeType>) {
@@ -50,7 +50,7 @@ export function WorkflowNode({ data }: NodeProps<WorkflowNodeType>) {
           </Inline>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="nodrag nopan" aria-label={data.menuLabel ?? "Thêm thao tác"}>
+              <Button variant="ghost" size="icon" className="nodrag nopan" aria-label={data.menuLabel ?? "More actions"}>
                 <EllipsisIcon />
               </Button>
             </DropdownMenuTrigger>

@@ -57,7 +57,7 @@ export function Transactions() {
             <SelectTrigger size="sm">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent position="popper">
               <SelectItem value="last-day">Last 24 hours</SelectItem>
               <SelectItem value="last-week">Last 7 days</SelectItem>
               <SelectItem value="last-month">Last month</SelectItem>

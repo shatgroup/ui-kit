@@ -18,7 +18,7 @@ export type PlaceholderNodeProps = Partial<NodeProps> & {
 
 export function PlaceholderNode({
   children,
-  label = "Nút",
+  label = "Node",
 }: PlaceholderNodeProps) {
   const id = useNodeId();
   const { setNodes, setEdges } = useReactFlow();

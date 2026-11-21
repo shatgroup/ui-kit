@@ -1,0 +1,278 @@
+{
+  "RTL": [
+    {
+      "page": "accordion",
+      "example": "accordion-rtl"
+    },
+    {
+      "page": "alert",
+      "example": "alert-rtl"
+    },
+    {
+      "page": "alert-dialog",
+      "example": "alert-dialog-rtl"
+    },
+    {
+      "page": "aspect-ratio",
+      "example": "aspect-ratio-rtl"
+    },
+    {
+      "page": "avatar",
+      "example": "avatar-rtl"
+    },
+    {
+      "page": "badge",
+      "example": "badge-rtl"
+    },
+    {
+      "page": "breadcrumb",
+      "example": "breadcrumb-rtl"
+    },
+    {
+      "page": "button",
+      "example": "button-rtl"
+    },
+    {
+      "page": "button-group",
+      "example": "button-group-rtl"
+    },
+    {
+      "page": "calendar",
+      "example": "calendar-rtl"
+    },
+    {
+      "page": "card",
+      "example": "card-rtl"
+    },
+    {
+      "page": "carousel",
+      "example": "carousel-rtl"
+    },
+    {
+      "page": "chart",
+      "example": "chart-rtl"
+    },
+    {
+      "page": "checkbox",
+      "example": "checkbox-rtl"
+    },
+    {
+      "page": "code-block",
+      "example": "code-block-rtl"
+    },
+    {
+      "page": "collapsible",
+      "example": "collapsible-rtl"
+    },
+    {
+      "page": "command",
+      "example": "command-rtl"
+    },
+    {
+      "page": "context-menu",
+      "example": "context-menu-rtl"
+    },
+    {
+      "page": "dialog",
+      "example": "dialog-rtl"
+    },
+    {
+      "page": "drawer",
+      "example": "drawer-rtl"
+    },
+    {
+      "page": "dropdown-menu",
+      "example": "dropdown-menu-rtl"
+    },
+    {
+      "page": "empty",
+      "example": "empty-rtl"
+    },
+    {
+      "page": "field",
+      "example": "field-rtl"
+    },
+    {
+      "page": "hover-card",
+      "example": "hover-card-rtl"
+    },
+    {
+      "page": "input",
+      "example": "input-rtl"
+    },
+    {
+      "page": "input-group",
+      "example": "input-group-rtl"
+    },
+    {
+      "page": "input-otp",
+      "example": "input-otp-rtl"
+    },
+    {
+      "page": "item",
+      "example": "item-rtl"
+    },
+    {
+      "page": "kbd",
+      "example": "kbd-rtl"
+    },
+    {
+      "page": "label",
+      "example": "label-rtl"
+    },
+    {
+      "page": "menubar",
+      "example": "menubar-rtl"
+    },
+    {
+      "page": "native-select",
+      "example": "native-select-rtl"
+    },
+    {
+      "page": "navigation-menu",
+      "example": "navigation-menu-rtl"
+    },
+    {
+      "page": "pagination",
+      "example": "pagination-rtl"
+    },
+    {
+      "page": "popover",
+      "example": "popover-rtl"
+    },
+    {
+      "page": "progress",
+      "example": "progress-rtl"
+    },
+    {
+      "page": "radio-group",
+      "example": "radio-group-rtl"
+    },
+    {
+      "page": "resizable",
+      "example": "resizable-rtl"
+    },
+    {
+      "page": "scroll-area",
+      "example": "scroll-area-rtl"
+    },
+    {
+      "page": "select",
+      "example": "select-rtl"
+    },
+    {
+      "page": "separator",
+      "example": "separator-rtl"
+    },
+    {
+      "page": "sheet",
+      "example": "sheet-rtl"
+    },
+    {
+      "page": "skeleton",
+      "example": "skeleton-rtl"
+    },
+    {
+      "page": "slider",
+      "example": "slider-rtl"
+    },
+    {
+      "page": "spinner",
+      "example": "spinner-rtl"
+    },
+    {
+      "page": "switch",
+      "example": "switch-rtl"
+    },
+    {
+      "page": "table",
+      "example": "table-rtl"
+    },
+    {
+      "page": "tabs",
+      "example": "tabs-rtl"
+    },
+    {
+      "page": "textarea",
+      "example": "textarea-rtl"
+    },
+    {
+      "page": "toggle",
+      "example": "toggle-rtl"
+    },
+    {
+      "page": "toggle-group",
+      "example": "toggle-group-rtl"
+    },
+    {
+      "page": "tooltip",
+      "example": "tooltip-rtl"
+    }
+  ],
+  "locale": [
+    {
+      "page": "calendar",
+      "example": "calendar-booked-dates"
+    }
+  ],
+  "Next-only": [
+    {
+      "page": "aspect-ratio",
+      "example": "aspect-ratio-demo"
+    },
+    {
+      "page": "aspect-ratio",
+      "example": "aspect-ratio-square"
+    },
+    {
+      "page": "aspect-ratio",
+      "example": "aspect-ratio-portrait"
+    },
+    {
+      "page": "calendar",
+      "example": "calendar-hijri"
+    },
+    {
+      "page": "item",
+      "example": "item-image"
+    },
+    {
+      "page": "item",
+      "example": "item-header"
+    },
+    {
+      "page": "scroll-area",
+      "example": "scroll-area-horizontal-demo"
+    }
+  ],
+  "Tabler": [
+    {
+      "page": "button",
+      "example": "button-with-icon"
+    },
+    {
+      "page": "button-group",
+      "example": "button-group-split"
+    },
+    {
+      "page": "empty",
+      "example": "empty-demo"
+    },
+    {
+      "page": "empty",
+      "example": "empty-outline"
+    },
+    {
+      "page": "empty",
+      "example": "empty-background"
+    },
+    {
+      "page": "input-group",
+      "example": "input-group-button"
+    },
+    {
+      "page": "input-group",
+      "example": "input-group-textarea"
+    }
+  ]
+}

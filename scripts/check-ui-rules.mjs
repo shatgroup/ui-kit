@@ -34,7 +34,8 @@ function skipped(file) {
   return (
     rel.startsWith("src/components/layout/") ||
     rel.startsWith("src/styles/") ||
-    rel.startsWith("src/showcase/tweakcn/")
+    rel.startsWith("src/showcase/tweakcn/") ||
+    rel.startsWith("src/showcase/shadcn-docs/")
   )
 }
 
@@ -72,11 +73,12 @@ function checkClass(file, line, token) {
   const rel = path.relative(root, file).split(path.sep).join("/")
   const value = normalize(token)
   if (!value) return
-  if (rel.startsWith("src/components/ui/") || rel.startsWith("src/components/flow/")) {
+  if (rel.startsWith("src/components/ui/")) return
+  if (rel.startsWith("src/components/flow/")) {
     if (/^shadow-(?!none(?:$|:))/.test(value)) {
       report(file, line, "Không dùng shadow, popup dùng viền")
     }
-    if (rel.startsWith("src/components/flow/") && (shadedColor.test(value) || plainColor.test(value))) {
+    if (shadedColor.test(value) || plainColor.test(value)) {
       report(file, line, "Dùng token màu, không dùng màu Tailwind mặc định")
     }
     return

@@ -82,7 +82,7 @@ export function CardsPaymentMethod() {
               <SelectTrigger id="month" aria-label="Month" className="w-full">
                 <SelectValue placeholder="Month" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper">
                 <SelectItem value="1">January</SelectItem>
                 <SelectItem value="2">February</SelectItem>
                 <SelectItem value="3">March</SelectItem>
@@ -104,7 +104,7 @@ export function CardsPaymentMethod() {
               <SelectTrigger id="year" aria-label="Year" className="w-full">
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper">
                 {Array.from({ length: 10 }, (_, i) => (
                   <SelectItem key={i} value={`${new Date().getFullYear() + i}`}>
                     {new Date().getFullYear() + i}

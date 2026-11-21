@@ -19,8 +19,8 @@ import { cn } from "@/lib/utils";
 
 export function ZoomSelect({
   className,
-  placeholder = "Thu phóng",
-  fitLabel = "Vừa khung",
+  placeholder = "Zoom",
+  fitLabel = "Fit view",
   ...props
 }: Omit<PanelProps, "children"> & {
   placeholder?: string;
@@ -68,7 +68,7 @@ export function ZoomSelect({
         <SelectTrigger className="bg-primary-foreground w-[140px]">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent position="popper">
           <SelectItem value="best-fit">{fitLabel}</SelectItem>
           <div className="mx-2 my-1 border-t" />
           {zoomLevels.map((level) => (

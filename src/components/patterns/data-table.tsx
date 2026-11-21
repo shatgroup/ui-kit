@@ -33,7 +33,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu.tsx"
-import { EmptyState } from "@/components/ui/empty-state.tsx"
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "@/components/ui/empty.tsx"
 import { Input } from "@/components/ui/input.tsx"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select.tsx"
 import { Skeleton } from "@/components/ui/skeleton.tsx"
@@ -137,10 +137,10 @@ export function DataTable<T extends object>({
   loading = false,
   error,
   onRetry,
-  emptyTitle = "Không có dữ liệu",
-  emptyDescription = "Đổi bộ lọc hoặc thêm dòng mới.",
-  retryLabel = "Thử lại",
-  selectedLabel = (count: number) => `Đã chọn ${count}`,
+  emptyTitle = "No data",
+  emptyDescription = "Change the filters or add a row.",
+  retryLabel = "Retry",
+  selectedLabel = (count: number) => `${count} selected`,
   selectable = false,
   selectColumn = false,
   renderActions,
@@ -247,7 +247,14 @@ export function DataTable<T extends object>({
   }
 
   if (data.length === 0) {
-    return <EmptyState title={emptyTitle} description={emptyDescription} />
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyTitle>{emptyTitle}</EmptyTitle>
+          {emptyDescription ? <EmptyDescription>{emptyDescription}</EmptyDescription> : null}
+        </EmptyHeader>
+      </Empty>
+    )
   }
 
   return (
@@ -444,7 +451,7 @@ function CellEditor<T>({
         <SelectTrigger size="sm" className="w-40" aria-label={label}>
           <SelectValue />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent position="popper">
           {(column.options ?? []).map((option) => (
             <SelectItem key={option} value={option}>
               {option}
@@ -573,7 +580,7 @@ export function TablePagination({
           <SelectTrigger size="sm" className="w-20" aria-label={labels?.rowsPerPage ?? "Rows per page"}>
             <span>{pageSize}</span>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent position="popper">
             {pageSizes.map((item) => (
               <SelectItem key={item} value={item}>
                 {item}

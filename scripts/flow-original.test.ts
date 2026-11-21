@@ -12,7 +12,7 @@ const colorToken =
   "border-border|bg-muted|bg-card(?:/50)?|border-info(?:/\\d+)?|bg-info(?:/\\d+)?|text-info|border-success|border-destructive|border-muted-foreground|text-muted-foreground|bg-border|transparent"
 const shadowToken = "(?:[\\w[\\]%.+-]+:)*shadow-(?!none\\b)[\\w./[\\]-]+"
 const copyNames =
-  /placeholder|emptyLabel|groupLabel|fitLabel|selectedLabel|idleLabel|labels|label = "Nút"|label\?: string|Không có kết quả|Tìm node|Thu phóng|Vừa khung|Đã chọn|Chưa chọn|Chưa có thay đổi|Kiểm tra node|Nhật ký|No results found|heading="Nodes"|CommandEmpty|Best Fit|Omit<PanelProps|No Changes Triggered|NoChanges|ChangeLogger|NodeInspector|DevTools = \(|Node Inspector|Change Logger|Viewport Logger|"Selected"|Not Selected|\{label\}|inspector\?:|changes\?:|viewport\?:|selected\?:|idle\?:|empty\?:|limit = 20|PlaceholderNode|children,|node\.data, label|id, label,|setEdges, setNodes|nodeInspectorActive/
+  /placeholder|emptyLabel|groupLabel|fitLabel|selectedLabel|idleLabel|labels|label = "Node"|label\?: string|Không có kết quả|Tìm node|Thu phóng|Vừa khung|Đã chọn|Chưa chọn|Chưa có thay đổi|Kiểm tra node|Nhật ký|No results found|heading="Nodes"|CommandEmpty|Best Fit|Omit<PanelProps|No Changes Triggered|NoChanges|ChangeLogger|NodeInspector|DevTools = \(|Node Inspector|Change Logger|Viewport Logger|"Selected"|Not Selected|\{label\}|inspector\?:|changes\?:|viewport\?:|selected\?:|idle\?:|empty\?:|limit = 20|PlaceholderNode|children,|node\.data, label|id, label,|setEdges, setNodes|nodeInspectorActive/
 
 function normalize(line: string) {
   return line
@@ -107,8 +107,12 @@ function changedLines(before: string, after: string) {
   return { removed, added }
 }
 
+function selectPopper(before: string, after: string) {
+  return after === before.replace("<SelectContent>", '<SelectContent position="popper">')
+}
+
 function explains(before: string, after: string) {
-  return normalize(before) === normalize(after) || importChange(before, after) || withoutUnusedReact(before) === after || radiusFix(before, after) || spinName(before, after)
+  return normalize(before) === normalize(after) || importChange(before, after) || withoutUnusedReact(before) === after || radiusFix(before, after) || spinName(before, after) || selectPopper(before, after)
 }
 
 function spinName(before: string, after: string) {

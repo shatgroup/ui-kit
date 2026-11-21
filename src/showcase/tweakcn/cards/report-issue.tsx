@@ -37,7 +37,7 @@ export function CardsReportIssue() {
               <SelectTrigger id={`area-${id}`} aria-label="Area" className="w-full">
                 <SelectValue placeholder="Select" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper">
                 <SelectItem value="team">Team</SelectItem>
                 <SelectItem value="billing">Billing</SelectItem>
                 <SelectItem value="account">Account</SelectItem>
@@ -56,7 +56,7 @@ export function CardsReportIssue() {
               >
                 <SelectValue placeholder="Select level" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent position="popper">
                 <SelectItem value="1">Severity 1 (Highest)</SelectItem>
                 <SelectItem value="2">Severity 2</SelectItem>
                 <SelectItem value="3">Severity 3</SelectItem>

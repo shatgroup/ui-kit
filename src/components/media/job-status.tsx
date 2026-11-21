@@ -7,11 +7,11 @@ import { Meter } from "./meter.tsx"
 export type JobState = "queued" | "running" | "done" | "failed" | "cancelled"
 
 const BADGE = {
-  queued: { className: "border-transparent bg-badge-neutral text-badge-neutral-foreground", label: "Chờ" },
-  running: { className: "border-transparent bg-badge-info text-badge-info-foreground", label: "Đang chạy" },
-  done: { className: "border-transparent bg-badge-success text-badge-success-foreground", label: "Xong" },
-  failed: { className: "border-transparent bg-badge-destructive text-badge-destructive-foreground", label: "Lỗi" },
-  cancelled: { className: "border-transparent bg-badge-warning text-badge-warning-foreground", label: "Đã huỷ" },
+  queued: { className: "border-transparent bg-badge-neutral text-badge-neutral-foreground", label: "Queued" },
+  running: { className: "border-transparent bg-badge-info text-badge-info-foreground", label: "Running" },
+  done: { className: "border-transparent bg-badge-success text-badge-success-foreground", label: "Done" },
+  failed: { className: "border-transparent bg-badge-destructive text-badge-destructive-foreground", label: "Failed" },
+  cancelled: { className: "border-transparent bg-badge-warning text-badge-warning-foreground", label: "Cancelled" },
 } as const
 
 type JobStatusProps = {
@@ -45,8 +45,8 @@ export function JobStatus({
   onCancel,
   onRetry,
   statusLabels,
-  cancelLabel = "Huỷ",
-  retryLabel = "Thử lại",
+  cancelLabel = "Cancel",
+  retryLabel = "Retry",
 }: JobStatusProps) {
   const [now, setNow] = useState(() => Date.now())
   useEffect(() => {

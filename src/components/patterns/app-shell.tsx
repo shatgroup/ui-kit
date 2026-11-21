@@ -66,7 +66,7 @@ function ShellTrigger({
 }) {
   const { isMobile, state } = useSidebar()
   const label = isMobile ? menuLabel : state === "collapsed" ? expandLabel : collapseAriaLabel
-  return <SidebarTrigger label={label} aria-label={label} />
+  return <SidebarTrigger aria-label={label} />
 }
 
 function ShellSidebar({
@@ -170,14 +170,14 @@ export function AppShell({
   inset = false,
   maxWidth = true,
   children,
-  collapseAriaLabel = "Thu gọn sidebar",
-  expandLabel = "Mở sidebar",
-  menuLabel = "Mở menu",
+  collapseAriaLabel = "Collapse sidebar",
+  expandLabel = "Expand sidebar",
+  menuLabel = "Open menu",
   bottomNav,
 }: AppShellProps) {
   return (
     <div data-app-shell className={cn(inset ? "h-full min-h-0" : "min-h-dvh")}>
-      <SidebarProvider mobileBreakpoint={1024} contained={inset} className={inset ? "h-full" : undefined}>
+      <SidebarProvider className={inset ? "h-full min-h-0" : undefined}>
         <Sidebar collapsible="icon">
           <ShellSidebar
             logo={logo}

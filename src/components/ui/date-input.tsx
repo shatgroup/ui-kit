@@ -1,19 +1,20 @@
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { useState } from "react"
+import { cn } from "cn"
 import { Button } from "./button.tsx"
 import { Calendar } from "./calendar.tsx"
-import { InputGroup } from "./input-group.tsx"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group.tsx"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover.tsx"
-import type { ControlSize } from "./control.ts"
+import { CONTROL_SIZE, type ControlSize } from "./control.ts"
 
 function DateInput({
   value,
   onValueChange,
   size = "default",
-  placeholder = "Chọn ngày",
+  placeholder = "Select a date",
   id,
-  removeLabel = "Xoá",
+  removeLabel = "Clear",
 }: {
   value?: Date
   onValueChange: (value: Date | undefined) => void
@@ -27,15 +28,18 @@ function DateInput({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <span>
-          <InputGroup
-            id={id}
-            size={size}
-            readOnly
-            value={value ? format(value, "dd/MM/yyyy") : ""}
-            placeholder={placeholder}
-            aria-label={placeholder}
-            suffix={<CalendarIcon className="size-4" />}
-          />
+          <InputGroup className={cn(size === "default" ? undefined : CONTROL_SIZE[size])}>
+            <InputGroupInput
+              id={id}
+              readOnly
+              value={value ? format(value, "dd/MM/yyyy") : ""}
+              placeholder={placeholder}
+              aria-label={placeholder}
+            />
+            <InputGroupAddon align="inline-end">
+              <CalendarIcon className="size-4" />
+            </InputGroupAddon>
+          </InputGroup>
         </span>
       </PopoverTrigger>
       <PopoverContent>
