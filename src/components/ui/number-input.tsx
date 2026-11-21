@@ -12,9 +12,9 @@ function NumberInput({
   max,
   step = 1,
   id,
-  label = "Số",
-  decrementLabel = "Giảm",
-  incrementLabel = "Tăng",
+  label = "Number",
+  decrementLabel = "Decrease",
+  incrementLabel = "Increase",
 }: {
   size?: ControlSize
   value: number

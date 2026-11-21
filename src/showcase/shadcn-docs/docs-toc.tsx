@@ -73,7 +73,7 @@ function DocsTableOfContents({
   }
 
   return (
-    <div className={cn("flex flex-col gap-2 p-4 pt-0 text-sm", className)}>
+    <div className={cn("flex flex-col gap-2 p-4 pt-6 text-sm lg:pt-8", className)}>
       <p className="h-6 bg-background text-xs font-medium text-muted-foreground">On This Page</p>
       {toc.map((item) => (
         <a

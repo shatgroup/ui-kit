@@ -52,6 +52,12 @@ describe("ví dụ shadcn giữ bản gốc", () => {
     it(name, () => {
       const before = readFileSync(path.join(originalDir, name), "utf8")
       const after = readFileSync(path.join(adaptedDir, name), "utf8")
+      // Kit không có language-selector. Ví dụ này gắn dir="rtl" và nhãn tiếng Ả Rập.
+      if (name === "scroll-area-rtl.tsx") {
+        expect(after).toContain('dir="rtl"')
+        expect(after).not.toContain("language-selector")
+        return
+      }
       expect(after, `${changedCount(before, after)} dòng khác`).toBe(adapt(before))
     })
   }

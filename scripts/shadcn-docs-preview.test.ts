@@ -47,6 +47,7 @@ function previewTags(mdx: string) {
 }
 
 function skipped(tag: { name: string; direction?: string }, source: string) {
+  if (tag.name === "scroll-area-rtl") return false
   if (tag.direction === "rtl" || tag.name.endsWith("-rtl")) return true
   if (/next\/font/.test(source)) return true
   return /react-day-picker\/locale/.test(source)
@@ -55,9 +56,9 @@ function skipped(tag: { name: string; direction?: string }, source: string) {
 describe("trang /components đủ ví dụ docs", () => {
   const pages = (catalog as { pages: Page[] }).pages
 
-  it("đủ bản gốc mdx cho 62 trang", () => {
+  it("đủ bản gốc mdx cho 64 trang", () => {
     const files = readdirSync(contentDir).filter((name) => name.endsWith(".mdx"))
-    expect(files.length).toBe(62)
+    expect(files.length).toBe(64)
     for (const page of pages) {
       expect(existsSync(path.join(contentDir, `${page.name}.mdx`)), page.name).toBe(true)
     }

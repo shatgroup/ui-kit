@@ -28,12 +28,12 @@ export function MediaPreview({
   alt = "",
   status = "ready",
   onRetry,
-  emptyTitle = "Chưa có tư liệu",
-  emptyDescription = "Thả ảnh hoặc video vào để xem trước.",
-  errorLabel = "Không tải được tư liệu.",
-  retryLabel = "Thử lại",
-  playLabel = "Phát",
-  pauseLabel = "Tạm dừng",
+  emptyTitle = "No media yet",
+  emptyDescription = "Drop an image or a video to preview it.",
+  errorLabel = "Could not load the media.",
+  retryLabel = "Retry",
+  playLabel = "Play",
+  pauseLabel = "Pause",
 }: MediaPreviewProps) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [playing, setPlaying] = useState(false)

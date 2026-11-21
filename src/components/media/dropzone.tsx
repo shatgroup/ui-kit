@@ -38,11 +38,11 @@ export function Dropzone({
   accept,
   maxSize = 2 * 1024 * 1024,
   maxFiles = 4,
-  title = "Thả tư liệu vào đây",
-  removeLabel = "Xoá",
-  invalidTypeLabel = "Sai loại file",
-  tooLargeLabel = "Vượt dung lượng tối đa",
-  tooManyLabel = "Vượt số file tối đa",
+  title = "Drop files here",
+  removeLabel = "Remove",
+  invalidTypeLabel = "Wrong file type",
+  tooLargeLabel = "File is too large",
+  tooManyLabel = "Too many files",
 }: DropzoneProps) {
   const errorText: Record<string, string> = {
     "file-invalid-type": invalidTypeLabel,

@@ -12,9 +12,9 @@ function DateInput({
   value,
   onValueChange,
   size = "default",
-  placeholder = "Chọn ngày",
+  placeholder = "Select a date",
   id,
-  removeLabel = "Xoá",
+  removeLabel = "Clear",
 }: {
   value?: Date
   onValueChange: (value: Date | undefined) => void

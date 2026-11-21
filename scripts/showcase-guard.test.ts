@@ -205,7 +205,7 @@ describe("kiểm showcase", () => {
           await settle(page)
           for (const tab of item.tabs) {
             if (tab) await page.getByRole("tab", { name: tab }).click()
-            const collapse = page.getByRole("button", { name: "Thu gọn sidebar" })
+            const collapse = page.getByRole("button", { name: "Collapse sidebar" })
             if (await collapse.isVisible()) await collapse.click()
             await settle(page)
             const found = await page.evaluate(scan)
@@ -357,11 +357,14 @@ describe("kiểm showcase", () => {
           await page.evaluate((dark) => document.documentElement.classList.toggle("dark", dark), theme === "dark")
           await page.waitForTimeout(400)
           const scrolled = await page.evaluate((name) => {
-            const doc = document.documentElement
-            if (doc.scrollHeight <= window.innerHeight + 2) return `không dài hơn khung ${doc.scrollHeight}/${window.innerHeight}`
-            window.scrollTo(0, doc.scrollHeight)
-            const bottom = window.scrollY + window.innerHeight
-            if (bottom < doc.scrollHeight - 2) return `không tới đáy ${bottom}/${doc.scrollHeight}`
+            const scroller = document.querySelector("[data-app-scroll]")
+            const box = scroller instanceof HTMLElement ? scroller : document.documentElement
+            const view = scroller instanceof HTMLElement ? box.clientHeight : window.innerHeight
+            if (box.scrollHeight <= view + 2) return `không dài hơn khung ${box.scrollHeight}/${view}`
+            if (scroller instanceof HTMLElement) scroller.scrollTop = box.scrollHeight
+            else window.scrollTo(0, box.scrollHeight)
+            const bottom = scroller instanceof HTMLElement ? scroller.scrollTop + scroller.clientHeight : window.scrollY + window.innerHeight
+            if (bottom < box.scrollHeight - 2) return `không tới đáy ${bottom}/${box.scrollHeight}`
             if (name === "dashboard" && window.innerWidth < 1400) {
               const frame = document.querySelector("[data-showcase-scroll]")
               if (!(frame instanceof HTMLElement) || frame.scrollWidth <= frame.clientWidth + 2) return "dashboard không cuộn ngang"
@@ -795,7 +798,7 @@ describe("kiểm showcase", () => {
           }
           if (window.innerWidth >= 1440) {
             const vertical = [...document.querySelectorAll("body *")].filter((el) => {
-              if (!(el instanceof HTMLElement)) return false
+              if (!(el instanceof HTMLElement) || el.matches("[data-app-scroll]")) return false
               const y = getComputedStyle(el).overflowY
               if (y !== "auto" && y !== "scroll") return false
               return el.scrollHeight > el.clientHeight + 2
@@ -803,7 +806,7 @@ describe("kiểm showcase", () => {
             if (vertical.length > 0) notes.push(`thừa ${vertical.length} thanh cuộn dọc`)
           }
           const scrollers = [...document.querySelectorAll("body *")].filter((el) => {
-            if (!(el instanceof HTMLElement) || el.matches("[data-slot=section-nav-scroll]")) return false
+            if (!(el instanceof HTMLElement) || el.matches("[data-slot=section-nav-scroll], [data-app-scroll]")) return false
             const style = getComputedStyle(el)
             const vertical = (style.overflowY === "auto" || style.overflowY === "scroll") && el.scrollHeight > el.clientHeight + 2
             const horizontal = (style.overflowX === "auto" || style.overflowX === "scroll") && el.scrollWidth > el.clientWidth + 2
@@ -1194,7 +1197,9 @@ describe("kiểm showcase", () => {
           const nav = document.querySelector("[data-slot=section-nav]")
           const header = document.querySelector("header")
           if (!(nav instanceof HTMLElement) || !(header instanceof HTMLElement)) return "thiếu thanh nhảy"
-          window.scrollTo(0, 700)
+          const scroller = document.querySelector("[data-app-scroll]")
+          if (scroller instanceof HTMLElement) scroller.scrollTop = 700
+          else window.scrollTo(0, 700)
           const navBox = nav.getBoundingClientRect()
           const bar = header.getBoundingClientRect()
           if (Math.abs(bar.top) > 2) return `header không dính (${bar.top.toFixed(1)})`

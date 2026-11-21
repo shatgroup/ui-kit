@@ -7,8 +7,8 @@ import { CONTROL_SIZE, type ControlSize } from "./control.ts"
 
 function PasswordInput({
   size = "default",
-  showPasswordLabel = "Hiện mật khẩu",
-  hidePasswordLabel = "Ẩn mật khẩu",
+  showPasswordLabel = "Show password",
+  hidePasswordLabel = "Hide password",
   className,
   ...props
 }: Omit<React.ComponentProps<"input">, "size"> & {

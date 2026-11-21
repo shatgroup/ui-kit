@@ -170,9 +170,9 @@ export function AppShell({
   inset = false,
   maxWidth = true,
   children,
-  collapseAriaLabel = "Thu gọn sidebar",
-  expandLabel = "Mở sidebar",
-  menuLabel = "Mở menu",
+  collapseAriaLabel = "Collapse sidebar",
+  expandLabel = "Expand sidebar",
+  menuLabel = "Open menu",
   bottomNav,
 }: AppShellProps) {
   return (

@@ -140,6 +140,17 @@ import { CollapsibleBasic as Ex_collapsible_basic } from "./collapsible-basic.ts
 import Ex_collapsible_demo from "./collapsible-demo.tsx"
 import { CollapsibleFileTree as Ex_collapsible_file_tree } from "./collapsible-file-tree.tsx"
 import { CollapsibleSettings as Ex_collapsible_settings } from "./collapsible-settings.tsx"
+import { ComboboxAutoHighlight as Ex_combobox_auto_highlight } from "./combobox-auto-highlight.tsx"
+import Ex_combobox_basic from "./combobox-basic.tsx"
+import { ComboboxWithClear as Ex_combobox_clear } from "./combobox-clear.tsx"
+import { ComboboxWithCustomItems as Ex_combobox_custom } from "./combobox-custom.tsx"
+import Ex_combobox_demo from "./combobox-demo.tsx"
+import { ComboboxDisabled as Ex_combobox_disabled } from "./combobox-disabled.tsx"
+import { ComboboxWithGroupsAndSeparator as Ex_combobox_groups } from "./combobox-groups.tsx"
+import { ComboxboxInputGroup as Ex_combobox_input_group } from "./combobox-input-group.tsx"
+import { ComboboxInvalid as Ex_combobox_invalid } from "./combobox-invalid.tsx"
+import { ComboboxMultiple as Ex_combobox_multiple } from "./combobox-multiple.tsx"
+import { ComboboxPopup as Ex_combobox_popup } from "./combobox-popup.tsx"
 import { CommandBasic as Ex_command_basic } from "./command-basic.tsx"
 import { CommandDemo as Ex_command_demo } from "./command-demo.tsx"
 import { CommandWithGroups as Ex_command_groups } from "./command-groups.tsx"
@@ -193,6 +204,7 @@ import Ex_field_select from "./field-select.tsx"
 import Ex_field_slider from "./field-slider.tsx"
 import Ex_field_switch from "./field-switch.tsx"
 import Ex_field_textarea from "./field-textarea.tsx"
+import Ex_form_demo from "./form-demo.tsx"
 import Ex_hover_card_demo from "./hover-card-demo.tsx"
 import { HoverCardSides as Ex_hover_card_sides } from "./hover-card-sides.tsx"
 import { InputBadge as Ex_input_badge } from "./input-badge.tsx"
@@ -317,6 +329,7 @@ import Ex_resizable_handle from "./resizable-handle.tsx"
 import { ResizableVertical as Ex_resizable_vertical } from "./resizable-vertical.tsx"
 import { ScrollAreaDemo as Ex_scroll_area_demo } from "./scroll-area-demo.tsx"
 import { ScrollAreaHorizontalDemo as Ex_scroll_area_horizontal_demo } from "./scroll-area-horizontal-demo.tsx"
+import { ScrollAreaRtl as Ex_scroll_area_rtl } from "./scroll-area-rtl.tsx"
 import { SelectAlignItem as Ex_select_align_item } from "./select-align-item.tsx"
 import { SelectDemo as Ex_select_demo } from "./select-demo.tsx"
 import { SelectDisabled as Ex_select_disabled } from "./select-disabled.tsx"
@@ -548,6 +561,17 @@ const examples: Record<string, ComponentType> = {
   "collapsible-demo": Ex_collapsible_demo,
   "collapsible-file-tree": Ex_collapsible_file_tree,
   "collapsible-settings": Ex_collapsible_settings,
+  "combobox-auto-highlight": Ex_combobox_auto_highlight,
+  "combobox-basic": Ex_combobox_basic,
+  "combobox-clear": Ex_combobox_clear,
+  "combobox-custom": Ex_combobox_custom,
+  "combobox-demo": Ex_combobox_demo,
+  "combobox-disabled": Ex_combobox_disabled,
+  "combobox-groups": Ex_combobox_groups,
+  "combobox-input-group": Ex_combobox_input_group,
+  "combobox-invalid": Ex_combobox_invalid,
+  "combobox-multiple": Ex_combobox_multiple,
+  "combobox-popup": Ex_combobox_popup,
   "command-basic": Ex_command_basic,
   "command-demo": Ex_command_demo,
   "command-groups": Ex_command_groups,
@@ -601,6 +625,7 @@ const examples: Record<string, ComponentType> = {
   "field-slider": Ex_field_slider,
   "field-switch": Ex_field_switch,
   "field-textarea": Ex_field_textarea,
+  "form-demo": Ex_form_demo,
   "hover-card-demo": Ex_hover_card_demo,
   "hover-card-sides": Ex_hover_card_sides,
   "input-badge": Ex_input_badge,
@@ -725,6 +750,7 @@ const examples: Record<string, ComponentType> = {
   "resizable-vertical": Ex_resizable_vertical,
   "scroll-area-demo": Ex_scroll_area_demo,
   "scroll-area-horizontal-demo": Ex_scroll_area_horizontal_demo,
+  "scroll-area-rtl": Ex_scroll_area_rtl,
   "select-align-item": Ex_select_align_item,
   "select-demo": Ex_select_demo,
   "select-disabled": Ex_select_disabled,

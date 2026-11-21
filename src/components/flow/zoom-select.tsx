@@ -19,8 +19,8 @@ import { cn } from "@/lib/utils";
 
 export function ZoomSelect({
   className,
-  placeholder = "Thu phóng",
-  fitLabel = "Vừa khung",
+  placeholder = "Zoom",
+  fitLabel = "Fit view",
   ...props
 }: Omit<PanelProps, "children"> & {
   placeholder?: string;

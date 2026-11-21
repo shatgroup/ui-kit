@@ -1,0 +1,70 @@
+---
+title: Form
+description: Build a form with React Hook Form, a label, a description, and a validation message.
+---
+
+<ComponentPreview name="form-demo" />
+
+## Installation
+
+```bash
+npx shadcn@latest add form
+```
+
+## Usage
+
+```tsx
+import { useForm } from "react-hook-form"
+
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+```
+
+```tsx
+const form = useForm({
+  defaultValues: { username: "" },
+})
+
+function onSubmit(values) {
+  console.log(values)
+}
+
+<Form {...form}>
+  <form onSubmit={form.handleSubmit(onSubmit)}>
+    <FormField
+      control={form.control}
+      name="username"
+      rules={{
+        required: "Username is required.",
+        minLength: { value: 2, message: "Username must be at least 2 characters." },
+      }}
+      render={({ field }) => (
+        <FormItem>
+          <FormLabel>Username</FormLabel>
+          <FormControl>
+            <Input placeholder="shadcn" {...field} />
+          </FormControl>
+          <FormDescription>This is your public display name.</FormDescription>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+    <Button type="submit">Submit</Button>
+  </form>
+</Form>
+```
+
+## Validation
+
+`FormMessage` shows the error for that field. Pass `rules` to `FormField`. Submit the demo with an empty username to see the message.
+
+Fields that are not tied to React Hook Form use [Field](/docs/components/radix/field).

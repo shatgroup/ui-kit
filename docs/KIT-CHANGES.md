@@ -141,11 +141,11 @@ Style component là `radix-nova`. Màu là token Future Teal trong `theme.css`. 
 
 Ví dụ docs chỉ khác bản gốc ở đường import, `next/link` thành `<a>`, và `next/image` thành `<img>`. `fill` thành class `absolute inset-0 size-full`. `width` và `height` giữ nguyên. Icon Tabler giữ nguyên.
 
-Bỏ RTL, locale (`calendar-booked-dates`) và `next/font` (`calendar-hijri`, vì `react-day-picker` 10 không có `persian`).
+Bỏ RTL, locale (`calendar-booked-dates`) và `next/font` (`calendar-hijri`, vì `react-day-picker` 10 không có `persian`). Riêng `scroll-area-rtl` vẫn hiện: kit không có `language-selector`, nên ví dụ gắn `dir="rtl"` và nhãn tiếng Ả Rập.
 
-### RTL (52)
+### RTL (53)
 
-`accordion-rtl`, `alert-rtl`, `alert-dialog-rtl`, `aspect-ratio-rtl`, `avatar-rtl`, `badge-rtl`, `breadcrumb-rtl`, `button-rtl`, `button-group-rtl`, `calendar-rtl`, `card-rtl`, `carousel-rtl`, `chart-rtl`, `checkbox-rtl`, `code-block-rtl`, `collapsible-rtl`, `command-rtl`, `context-menu-rtl`, `dialog-rtl`, `drawer-rtl`, `dropdown-menu-rtl`, `empty-rtl`, `field-rtl`, `hover-card-rtl`, `input-rtl`, `input-group-rtl`, `input-otp-rtl`, `item-rtl`, `kbd-rtl`, `label-rtl`, `menubar-rtl`, `native-select-rtl`, `navigation-menu-rtl`, `pagination-rtl`, `popover-rtl`, `progress-rtl`, `radio-group-rtl`, `resizable-rtl`, `scroll-area-rtl`, `select-rtl`, `separator-rtl`, `sheet-rtl`, `skeleton-rtl`, `slider-rtl`, `spinner-rtl`, `switch-rtl`, `table-rtl`, `tabs-rtl`, `textarea-rtl`, `toggle-rtl`, `toggle-group-rtl`, `tooltip-rtl`
+`accordion-rtl`, `alert-rtl`, `alert-dialog-rtl`, `aspect-ratio-rtl`, `avatar-rtl`, `badge-rtl`, `breadcrumb-rtl`, `button-rtl`, `button-group-rtl`, `calendar-rtl`, `card-rtl`, `carousel-rtl`, `chart-rtl`, `checkbox-rtl`, `code-block-rtl`, `collapsible-rtl`, `combobox-rtl`, `command-rtl`, `context-menu-rtl`, `dialog-rtl`, `drawer-rtl`, `dropdown-menu-rtl`, `empty-rtl`, `field-rtl`, `hover-card-rtl`, `input-rtl`, `input-group-rtl`, `input-otp-rtl`, `item-rtl`, `kbd-rtl`, `label-rtl`, `menubar-rtl`, `native-select-rtl`, `navigation-menu-rtl`, `pagination-rtl`, `popover-rtl`, `progress-rtl`, `radio-group-rtl`, `resizable-rtl`, `scroll-area-rtl`, `select-rtl`, `separator-rtl`, `sheet-rtl`, `skeleton-rtl`, `slider-rtl`, `spinner-rtl`, `switch-rtl`, `table-rtl`, `tabs-rtl`, `textarea-rtl`, `toggle-rtl`, `toggle-group-rtl`, `tooltip-rtl`
 
 ### locale (1)
 
@@ -153,6 +153,6 @@ Bỏ RTL, locale (`calendar-booked-dates`) và `next/font` (`calendar-hijri`, v�
 
 Không có trong registry Radix của CLI (`new-york-v4` / `radix-nova`): `data-table`, `date-picker`, `typography`, `toast` (Radix dùng Sonner).
 
-`form` giữ vì registry `radix-nova/form.json` không có file. Chỉ đổi import `new-york-v4` sang `@/components/ui`.
+`form` giữ vì registry `radix-nova/form.json` không có file, và repo docs không có `form.mdx`. Trang `/components/form` mô tả component `Form` đang cài, với React Hook Form. Chỉ đổi import `new-york-v4` sang `@/components/ui`.
 
-`combobox` cài cùng style `radix-nova`. `shadow-*` của component shadcn được giữ.
+`combobox` cài cùng style `radix-nova`. Trang `/components/combobox` chép từ `combobox.mdx`, bỏ ví dụ RTL. `shadow-*` của component shadcn được giữ.

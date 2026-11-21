@@ -1,48 +1,135 @@
+import { useLayoutEffect, useState, type ComponentType } from "react"
+import { Blend, Blocks, ChevronRight, LayoutTemplate, Package, Workflow } from "lucide-react"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible.tsx"
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
 } from "@/components/ui/sidebar.tsx"
 import type { NavItem } from "./command-menu.tsx"
 
-const itemClass =
-  "relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md data-[active=true]:border-accent data-[active=true]:bg-accent 3xl:fixed:w-full 3xl:fixed:max-w-48"
+const GROUP_ICON: Record<string, ComponentType<{ className?: string }>> = {
+  Components: Blocks,
+  Kit: Package,
+  Flow: Workflow,
+  Patterns: LayoutTemplate,
+  Utils: Blend,
+}
+
+const SCROLL_KEY = "docs-sidebar-scroll"
+const OPEN_KEY = "docs-sidebar-open"
+
+function readOpen() {
+  const raw = sessionStorage.getItem(OPEN_KEY)
+  if (!raw?.startsWith("[")) return []
+  const parsed: unknown = JSON.parse(raw)
+  if (!Array.isArray(parsed)) return []
+  return parsed.filter((item) => typeof item === "string")
+}
+
+function writeOpen(names: string[]) {
+  sessionStorage.setItem(OPEN_KEY, JSON.stringify(names))
+}
+
+function sidebarScroller() {
+  return document.querySelector<HTMLElement>("[data-docs-sidebar-content]")
+}
+
+function keepSidebarPlace(node: HTMLElement) {
+  const active = node.querySelector<HTMLElement>('[data-active="true"]')
+  if (!active) return
+  const frame = node.getBoundingClientRect()
+  const item = active.getBoundingClientRect()
+  if (item.top < frame.top) node.scrollTop -= frame.top - item.top
+  else if (item.bottom > frame.bottom) node.scrollTop += item.bottom - frame.bottom
+}
+
+function DocsGroup({
+  name,
+  items,
+  pathname,
+}: {
+  name: string
+  items: NavItem[]
+  pathname: string
+}) {
+  const contains = items.some((item) => item.href === pathname)
+  const [open, setOpen] = useState(() => contains || readOpen().includes(name))
+
+  function toggle(next: boolean) {
+    setOpen(next)
+    const names = new Set(readOpen())
+    if (next) names.add(name)
+    else names.delete(name)
+    writeOpen([...names])
+  }
+
+  const Icon = GROUP_ICON[name]
+  return (
+    <Collapsible open={open} onOpenChange={toggle} className="group/collapsible" asChild>
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton>
+            {Icon ? <Icon /> : null}
+            <span>{name}</span>
+            <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <SidebarMenuSub>
+            {items.map((item) => (
+              <SidebarMenuSubItem key={item.href}>
+                <SidebarMenuSubButton asChild isActive={item.href === pathname}>
+                  <a
+                    href={item.href}
+                    onClick={() => {
+                      const node = sidebarScroller()
+                      if (node) sessionStorage.setItem(SCROLL_KEY, String(node.scrollTop))
+                    }}
+                  >
+                    <span>{item.name}</span>
+                  </a>
+                </SidebarMenuSubButton>
+              </SidebarMenuSubItem>
+            ))}
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
+  )
+}
 
 function DocsSidebar({ groups, pathname }: { groups: { name: string; items: NavItem[] }[]; pathname: string }) {
+  useLayoutEffect(() => {
+    const node = sidebarScroller()
+    if (!node) return
+    const saved = Number(sessionStorage.getItem(SCROLL_KEY))
+    if (Number.isFinite(saved)) node.scrollTop = saved
+    keepSidebarPlace(node)
+  }, [pathname])
+
   return (
     <Sidebar
-      className="sticky top-[calc(var(--header-height)+0.6rem)] z-30 hidden h-[calc(100svh-10rem)] overflow-hidden overscroll-none bg-transparent [--sidebar-menu-width:--spacing(56)] lg:flex"
+      className="h-full w-full bg-transparent"
       collapsible="none"
     >
-      <div className="absolute top-12 right-2 bottom-0 hidden h-full w-px bg-[linear-gradient(to_bottom,transparent_0%,var(--border)_10%,var(--border)_90%,transparent_100%)] lg:flex" />
       <SidebarContent
         data-docs-sidebar-content=""
-        className="w-(--sidebar-menu-width) scroll-fade scrollbar-none overflow-x-hidden pl-2.5"
+        className="w-full scroll-fade scrollbar-none overflow-x-hidden"
       >
-        {groups.map((group) => (
-          <SidebarGroup key={group.name} className="pt-0 first:pt-12">
-            <SidebarGroupLabel className="font-medium text-muted-foreground">{group.name}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu className="gap-0.5">
-                {group.items.map((item) => (
-                  <SidebarMenuItem key={item.href}>
-                    <SidebarMenuButton asChild isActive={item.href === pathname} className={itemClass}>
-                      <a href={item.href}>
-                        <span className="absolute inset-0 flex w-(--sidebar-menu-width) bg-transparent" />
-                        {item.name}
-                      </a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))}
+        <SidebarGroup className="pt-6 lg:pt-8">
+          <SidebarMenu>
+            {groups.map((group) => (
+              <DocsGroup key={group.name} name={group.name} items={group.items} pathname={pathname} />
+            ))}
+          </SidebarMenu>
+        </SidebarGroup>
       </SidebarContent>
     </Sidebar>
   )

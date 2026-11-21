@@ -9,8 +9,8 @@ function TagsInput({
   value,
   onValueChange,
   size = "default",
-  placeholder = "Thêm tag",
-  removeLabel = "Xoá",
+  placeholder = "Add a tag",
+  removeLabel = "Remove",
 }: {
   value: string[]
   onValueChange: (value: string[]) => void

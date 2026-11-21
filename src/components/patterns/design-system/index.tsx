@@ -38,7 +38,7 @@ function SectionNav() {
   }
 
   return (
-    <div data-slot="section-nav" className="sticky top-14 z-10 min-w-0 border-b border-border bg-background py-2">
+    <div data-slot="section-nav" className="sticky top-0 z-10 min-w-0 border-b border-border bg-background py-2">
       <div data-slot="section-nav-scroll" className="scrollbar-none min-w-0 overflow-x-auto md:overflow-x-visible">
         <Tabs value={active} onValueChange={choose} className="w-max md:w-fit">
           <TabsList>

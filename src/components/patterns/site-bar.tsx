@@ -26,8 +26,8 @@ function SiteBar({ search }: { search?: ReactNode }) {
   }, [showcase])
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center gap-4 border-b border-border bg-background px-4">
-      <Inline gap={4} align="center" className="min-w-0 flex-1">
+    <header className="flex h-full min-h-0 items-center gap-4 overflow-hidden border-b border-border bg-background px-4">
+      <Inline gap={4} align="center" wrap={false} className="min-w-0 flex-1">
         <Text size="sm" weight="semibold">UI Kit</Text>
         <a href="/design-system" className={design ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
           Design System

@@ -1,7 +1,8 @@
-import type { CSSProperties, ReactNode } from "react"
+import { useEffect, useState, type ReactNode } from "react"
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button.tsx"
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable.tsx"
 import { SidebarProvider } from "@/components/ui/sidebar.tsx"
 import catalog from "./catalog.json"
 import { CommandMenu, type NavItem } from "./command-menu.tsx"
@@ -10,6 +11,8 @@ import { HighlightedCode } from "./highlighted-code.tsx"
 import { localGroups, localPages, type LocalPage } from "./local-docs.tsx"
 import { DocsSidebar } from "./docs-sidebar.tsx"
 import { DocsTableOfContents } from "./docs-toc.tsx"
+import { ScrollFadeDocs, scrollFadeToc } from "./scroll-fade-docs.tsx"
+import { ShimmerDocs, shimmerToc } from "./shimmer-docs.tsx"
 import "./typeset.css"
 
 type Block =
@@ -96,6 +99,7 @@ function Blocks({ blocks }: { blocks: Block[] }) {
         hideCode={block.hideCode}
         block={block.block}
         caption={block.caption}
+        direction={block.direction}
       />
     )
   })
@@ -107,6 +111,45 @@ function entryName(entry: Entry) {
 
 function entryHref(entry: Entry) {
   return `/components/${entry.page.name}`
+}
+
+const NAV_WIDTH_KEY = "docs-nav-width"
+const TOC_WIDTH_KEY = "docs-toc-width"
+
+const utilPages = [
+  { name: "scroll-fade", title: "Scroll Fade", toc: scrollFadeToc, Page: ScrollFadeDocs },
+  { name: "shimmer", title: "Shimmer", toc: shimmerToc, Page: ShimmerDocs },
+]
+
+const scrollFadeItem: NavItem = { name: "Scroll Fade", href: "/components/scroll-fade", group: "Components", component: false }
+
+const utilItems: NavItem[] = utilPages.filter((page) => page.name !== "scroll-fade").map((page) => ({
+  name: page.title,
+  href: `/components/${page.name}`,
+  group: "Utils",
+  component: false,
+}))
+
+function useMinWidth(width: number) {
+  const [matches, setMatches] = useState(() => window.matchMedia(`(min-width: ${width}px)`).matches)
+  useEffect(() => {
+    const query = window.matchMedia(`(min-width: ${width}px)`)
+    const sync = () => setMatches(query.matches)
+    sync()
+    query.addEventListener("change", sync)
+    return () => query.removeEventListener("change", sync)
+  }, [width])
+  return matches
+}
+
+function navWidth() {
+  const saved = Number(localStorage.getItem(NAV_WIDTH_KEY))
+  return Number.isFinite(saved) && saved >= 200 && saved <= 480 ? saved : 280
+}
+
+function tocWidth() {
+  const saved = Number(localStorage.getItem(TOC_WIDTH_KEY))
+  return Number.isFinite(saved) && saved >= 180 && saved <= 480 ? saved : 224
 }
 
 function ComponentsDocs() {
@@ -126,60 +169,105 @@ function ComponentsDocs() {
     group: "Components",
     component: true,
   }))
-  const toc = current?.kind === "doc"
-    ? current.page.blocks.flatMap((block) => block.type === "heading" && block.level === 2 ? [{ title: block.text.replace(/[`*]/g, ""), url: `#${block.id}`, depth: 2 }] : [])
-    : current?.kind === "local"
-      ? [{ title: "Cách dùng", url: "#cach-dung", depth: 2 }]
-      : []
+  const fadeAt = componentItems.findIndex((item) => item.name.localeCompare(scrollFadeItem.name) > 0)
+  const componentNav = [...componentItems]
+  componentNav.splice(fadeAt < 0 ? componentNav.length : fadeAt, 0, scrollFadeItem)
+  const wide = useMinWidth(1024)
+  const xl = useMinWidth(1280)
+  const util = utilPages.find((page) => page.name === slug)
+  const toc = util
+    ? util.toc
+    : current?.kind === "doc"
+      ? current.page.blocks.flatMap((block) => block.type === "heading" && block.level === 2 ? [{ title: block.text.replace(/[`*]/g, ""), url: `#${block.id}`, depth: 2 }] : [])
+      : current?.kind === "local"
+        ? [{ title: "Usage", url: "#usage", depth: 2 }]
+        : []
+
+  const nav = (
+    <DocsSidebar
+      pathname={pathname === "/components" ? "/components" : pathname}
+      groups={[
+        { name: "Components", items: [{ name: "Components", href: "/components", group: "Components", component: false }, ...componentNav] },
+        ...localGroups.map((group) => ({
+          name: group.name,
+          items: group.pages.map((page) => ({
+            name: page.title,
+            href: `/components/${page.name}`,
+            group: group.name,
+            component: false,
+          })),
+        })),
+        { name: "Utils", items: utilItems },
+      ]}
+    />
+  )
+  const articleBody = (
+    <div className="flex h-full min-h-0 min-w-0 flex-1 scroll-fade flex-col scrollbar-none lg:overflow-y-auto">
+      <div className="flex w-full min-w-0 flex-1 flex-col gap-6 px-6 py-6 text-foreground lg:py-8">
+        {slug === "" ? <Index items={componentNav} /> : null}
+        {slug !== "" && !current && !util ? <p>This page does not exist.</p> : null}
+        {util ? <util.Page /> : null}
+        {current?.kind === "local" ? <LocalArticle page={current.page} previous={previous} next={next} /> : null}
+        {current?.kind === "doc" ? (
+          <Article
+            title={current.page.title}
+            description={current.page.description}
+            blocks={current.page.blocks}
+            previous={previous}
+            next={next}
+          />
+        ) : null}
+      </div>
+    </div>
+  )
+  const article = (
+        <div data-slot="docs" className="flex h-full min-h-0 min-w-0 flex-1 items-stretch text-[1.05rem] sm:text-[15px] lg:overflow-hidden">
+          {xl && toc.length ? (
+            <ResizablePanelGroup orientation="horizontal" className="h-full min-h-0">
+              <ResizablePanel id="docs-article" minSize={320} className="min-w-0">
+                {articleBody}
+              </ResizablePanel>
+              <ResizableHandle withHandle aria-label="Resize outline" />
+              <ResizablePanel
+                id="docs-toc"
+                defaultSize={tocWidth()}
+                minSize={180}
+                maxSize={480}
+                onResize={(size, _id, previousSize) => {
+                  if (previousSize) localStorage.setItem(TOC_WIDTH_KEY, String(Math.round(size.inPixels)))
+                }}
+              >
+                <div className="h-full min-h-0 scroll-fade scrollbar-none overflow-y-auto">
+                  <DocsTableOfContents toc={toc} />
+                </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          ) : articleBody}
+        </div>
+  )
 
   return (
-    <div className="[--header-height:calc(var(--spacing)*14)] lg:[--header-height:calc(var(--spacing)*16)]">
-      <SidebarProvider
-        className="min-h-min flex-1 items-start px-0 [--top-spacing:0] lg:grid lg:grid-cols-[var(--sidebar-width)_minmax(0,1fr)] lg:[--top-spacing:calc(var(--spacing)*4)]"
-        style={{ "--sidebar-width": "calc(var(--spacing) * 72)" } as CSSProperties}
-      >
-        <DocsSidebar
-          pathname={pathname === "/components" ? "/components" : pathname}
-          groups={[
-            { name: "Components", items: [{ name: "Components", href: "/components", group: "Components", component: false }, ...componentItems] },
-            ...localGroups.map((group) => ({
-              name: group.name,
-              items: group.pages.map((page) => ({
-                name: page.title,
-                href: `/components/${page.name}`,
-                group: group.name,
-                component: false,
-              })),
-            })),
-          ]}
-        />
-        <div data-slot="docs" className="flex scroll-mt-24 items-stretch pb-8 text-[1.05rem] sm:text-[15px] xl:w-full">
-          <div className="flex min-w-0 flex-1 flex-col">
-            <div className="h-(--top-spacing) shrink-0" />
-            <div className="mx-auto flex w-full max-w-160 min-w-0 flex-1 flex-col gap-6 px-4 py-6 text-foreground md:px-0 lg:py-8">
-              {slug === "" ? <Index items={componentItems} /> : null}
-              {slug !== "" && !current ? <p>Không có trang này.</p> : null}
-              {current?.kind === "local" ? <LocalArticle page={current.page} previous={previous} next={next} /> : null}
-              {current?.kind === "doc" ? (
-                <Article
-                  title={current.page.title}
-                  description={current.page.description}
-                  blocks={current.page.blocks}
-                  previous={previous}
-                  next={next}
-                />
-              ) : null}
-            </div>
-          </div>
-          <div className="sticky top-[calc(var(--header-height)+1px)] z-30 ml-auto hidden h-[90svh] w-(--sidebar-width) flex-col gap-4 overflow-hidden overscroll-none pb-8 xl:flex">
-            <div className="h-(--top-spacing) shrink-0" />
-            {toc.length ? (
-              <div className="flex scroll-fade scrollbar-none flex-col gap-8 overflow-y-auto px-8">
-                <DocsTableOfContents toc={toc} />
-              </div>
-            ) : null}
-          </div>
-        </div>
+    <div className="h-full min-h-0 lg:overflow-hidden">
+      <SidebarProvider className="h-full min-h-0 lg:min-h-0">
+        {wide ? (
+          <ResizablePanelGroup orientation="horizontal" className="h-full min-h-0">
+            <ResizablePanel
+              id="docs-nav"
+              defaultSize={navWidth()}
+              minSize={200}
+              maxSize={480}
+              onResize={(size, _id, previous) => {
+                if (previous) localStorage.setItem(NAV_WIDTH_KEY, String(Math.round(size.inPixels)))
+              }}
+            >
+              {nav}
+            </ResizablePanel>
+            <ResizableHandle withHandle aria-label="Resize menu" />
+            <ResizablePanel id="docs-main" minSize={320} className="h-full min-w-0">
+              {article}
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        ) : article}
       </SidebarProvider>
     </div>
   )
@@ -270,7 +358,7 @@ function LocalArticle({
           </div>
         </div>
         <HighlightedCode code={page.code} language="tsx" />
-        <h2 id="cach-dung">Cách dùng</h2>
+        <h2 id="usage">Usage</h2>
         <p>{page.usage}</p>
       </div>
       <div className="hidden h-16 w-full items-center gap-2 sm:flex">
@@ -340,7 +428,7 @@ function DocsCommandMenu() {
     group: page.group,
     component: false,
   }))
-  return <CommandMenu items={[...componentItems, ...localItems]} />
+  return <CommandMenu items={[...componentItems, scrollFadeItem, ...localItems, ...utilItems]} />
 }
 
 export { ComponentsDocs, DocsCommandMenu }

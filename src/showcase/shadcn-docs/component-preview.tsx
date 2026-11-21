@@ -36,6 +36,7 @@ function ComponentPreview({
   hideCode = false,
   block = false,
   caption,
+  direction,
 }: {
   name: string
   className?: string
@@ -44,6 +45,7 @@ function ComponentPreview({
   hideCode?: boolean
   block?: boolean
   caption?: string
+  direction?: string
 }) {
   if (block) return <BlockPreview name={name} className={className} caption={caption} />
   return (
@@ -53,6 +55,7 @@ function ComponentPreview({
       previewClassName={previewClassName}
       align={align}
       hideCode={hideCode}
+      direction={direction}
     />
   )
 }
@@ -63,12 +66,14 @@ function InlinePreview({
   previewClassName,
   align = "center",
   hideCode = false,
+  direction,
 }: {
   name: string
   className?: string
   previewClassName?: string
   align?: "center" | "start" | "end"
   hideCode?: boolean
+  direction?: string
 }) {
   const [codeVisible, setCodeVisible] = React.useState(false)
   const Example = examples[name]
@@ -89,11 +94,11 @@ function InlinePreview({
       data-not-typeset
       className={cn("group relative mt-4 mb-12 flex flex-col overflow-hidden rounded-2xl border", className)}
     >
-      <div data-slot="preview" dir="ltr">
+      <div data-slot="preview" dir={direction === "rtl" ? "rtl" : "ltr"}>
         <div
           data-align={align}
           className={cn(
-            "preview relative flex h-72 w-full justify-center p-10 data-[align=center]:items-center data-[align=end]:items-start data-[align=start]:items-start sm:data-[align=end]:items-end",
+            "preview relative flex h-72 w-full justify-center p-10 data-[align=center]:items-center data-[align=end]:items-start data-[align=start]:items-start data-[chromeless=true]:h-auto data-[chromeless=true]:p-0 sm:data-[align=end]:items-end",
             previewClassName
           )}
         >
