@@ -24,7 +24,7 @@ export function HeroBanner({
       <Box className="relative aspect-video max-h-svh min-h-96 w-full overflow-hidden">
         <MoviePoster src={movie.image} title={movie.title} />
         <Box className="pointer-events-none absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-        <Stack gap={4} className="absolute bottom-16 left-4 z-10 w-4/5 max-w-xl md:bottom-24 md:left-16">
+        <Stack gap={4} className="absolute bottom-32 left-4 z-10 w-4/5 max-w-xl md:bottom-40 md:left-16">
           <Text as="h1" size="3xl" weight="bold">{movie.title}</Text>
           <Text size="lg" lineClamp={3}>{movie.description}</Text>
           <Inline gap={3}>

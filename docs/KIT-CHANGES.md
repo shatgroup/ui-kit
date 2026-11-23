@@ -184,6 +184,7 @@ Chỗ đổi so với bản gốc:
 - Không chép logo SVG Netflix, ảnh đại diện ngoài, video `/test-video.mp4`, đăng nhập, trang Kids/Account/Sign out.
 - Nguồn không có footer và không có ô tìm (chỉ icon). Icon tìm gắn `SearchOverlay`.
 - Kích thước lệch thang kit được làm tròn: thanh `h-[68px]` → `h-16`, lề `px-[60px]` → `px-16`, card `140×200` → `w-36 h-52`, `160×240` → `md:w-40 md:h-60`, hero `min-h-[400px]` → `min-h-96`.
-- `mb-*` và `-mt-32` bị cấm → `gap` của `Stack`. Hàng phim không kéo đè lên hero.
+- `mb-*` → `gap` của `Stack`. Riêng khối hàng phim trên `/streaming` dùng `-mt-32 md:-mt-40` để đè banner, có `check-ui-ignore-next-line`.
+- Poster hàng phim là `AspectRatio` 16/9. Mobile rộng `w-5/12` (khoảng 2,4 card), desktop `md:w-1/5` đến `xl:w-1/6` (5–6 card).
 - `shadow-xl` bỏ. `transition-all` đổi thành `transform` / `opacity` / `colors` với `--duration-*` và `--ease-*`.
 - Bỏ kéo-để-cuộn trên hàng phim để nút trong card nhận được click. Vẫn cuộn ngang và có mũi tên.

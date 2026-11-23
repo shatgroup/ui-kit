@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { FilmIcon, PlayIcon, PlusIcon, ThumbsUpIcon, InfoIcon } from "lucide-react"
 import { Inline, Stack, Text } from "@/components/layout/index.ts"
+import { AspectRatio } from "@/components/ui/aspect-ratio.tsx"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { Skeleton } from "@/components/ui/skeleton.tsx"
@@ -56,14 +57,15 @@ export function MovieCard({
   if (loading) {
     return (
       <Stack gap={2} slot="movie-card-loading">
-        <Skeleton className="h-52 w-full rounded-lg md:h-60" />
+        <Skeleton className="aspect-video w-full rounded-lg" />
       </Stack>
     )
   }
 
   return (
-    <div className="group/item relative w-36 shrink-0 md:w-40" data-slot="movie-card">
-      <div className={cn("relative h-52 overflow-hidden rounded-lg md:h-60", rise, "group-hover/item:z-10 group-hover/item:scale-110")}>
+    <div className="group/item relative w-full" data-slot="movie-card">
+      <div className={cn("relative overflow-hidden rounded-lg", rise, "group-hover/item:z-10 group-hover/item:scale-110")}>
+        <AspectRatio ratio={16 / 9}>
         <MoviePoster src={movie.image} title={movie.title} />
         <Button variant="ghost" className="absolute inset-0 h-full w-full rounded-none" aria-label={movie.title} onClick={showInfo} />
         <span className={cn("pointer-events-none absolute inset-0 bg-background/40 opacity-0", fade, "group-hover/item:opacity-100")} />
@@ -103,6 +105,7 @@ export function MovieCard({
           </Inline>
           <Text as="span" size="sm" weight="semibold" lineClamp={1}>{movie.title}</Text>
         </div>
+        </AspectRatio>
       </div>
     </div>
   )

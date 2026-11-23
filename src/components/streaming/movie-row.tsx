@@ -45,12 +45,13 @@ export function MovieRow({
         </Button>
         <div ref={scroller} className="flex gap-2 overflow-x-auto scroll-smooth py-8 scrollbar-none">
           {movies.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              movie={movie}
-              onOpen={() => onOpen(movie)}
-              onInfo={() => setDetail(movie)}
-            />
+            <div key={movie.id} className="w-5/12 shrink-0 md:w-1/5 xl:w-1/6">
+              <MovieCard
+                movie={movie}
+                onOpen={() => onOpen(movie)}
+                onInfo={() => setDetail(movie)}
+              />
+            </div>
           ))}
         </div>
         <Button

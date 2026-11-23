@@ -30,6 +30,16 @@ function useLocation() {
   return { href, go }
 }
 
+function StreamingRows({ movies, onOpen }: { movies: Movie[]; onOpen: (movie: Movie) => void }) {
+  // check-ui-ignore-next-line: hàng đầu đè banner như deepanik/netflix Home, chỉ trang /streaming
+  return <Stack gap={8} className="relative z-20 -mt-32 pb-16 md:-mt-40">
+    <MovieRow title="Đang thịnh hành" movies={movies.slice(0, 8)} onOpen={onOpen} />
+    <MovieRow title="Đánh giá cao" movies={movies.slice(2, 10)} onOpen={onOpen} />
+    <MovieRow title="Hành động" movies={movies.filter((movie) => movie.genres.includes("Hành động"))} onOpen={onOpen} />
+    <MovieRow title="Tình cảm" movies={movies.filter((movie) => movie.genres.includes("Tình cảm"))} onOpen={onOpen} />
+  </Stack>
+}
+
 export function StreamingPage() {
   const { href, go } = useLocation()
   const url = new URL(href, window.location.origin)
@@ -76,12 +86,9 @@ export function StreamingPage() {
           />
         </Container>
       ) : (
-        <Stack gap={8} className="pb-16">
+        <Stack gap={0}>
           <HeroBanner movies={heroMovies} onPlay={openMovie} onInfo={() => undefined} />
-          <MovieRow title="Đang thịnh hành" movies={movies.slice(0, 8)} onOpen={openMovie} />
-          <MovieRow title="Đánh giá cao" movies={movies.slice(2, 10)} onOpen={openMovie} />
-          <MovieRow title="Hành động" movies={movies.filter((movie) => movie.genres.includes("Hành động"))} onOpen={openMovie} />
-          <MovieRow title="Tình cảm" movies={movies.filter((movie) => movie.genres.includes("Tình cảm"))} onOpen={openMovie} />
+          <StreamingRows movies={movies} onOpen={openMovie} />
         </Stack>
       )}
     </StreamingFrame>
