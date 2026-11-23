@@ -1,6 +1,6 @@
 # Nguồn ảnh poster mẫu
 
-14 ảnh ngang, mỗi ảnh đúng 1280×720, cắt từ ảnh gốc Unsplash bằng `fit=crop`. Đây là ảnh thành phố, thiên nhiên, người và ánh đèn, không phải poster phim thật.
+14 ảnh ngang 1280×720 cho hero, và 14 ảnh dọc 800×1200 trong `portrait/` cho card. Cả hai bản cắt từ cùng một ảnh gốc Unsplash bằng `fit=crop`. Đây là ảnh thành phố, thiên nhiên, người và ánh đèn, không phải poster phim thật.
 
 Giấy phép: [Unsplash License](https://unsplash.com/license). Được dùng miễn phí, kể cả mục đích thương mại.
 
@@ -20,3 +20,5 @@ Giấy phép: [Unsplash License](https://unsplash.com/license). Được dùng m
 | `doi-gio.jpg` | https://unsplash.com/photos/Bkci_8qcdvQ — Kalen Emsley (https://unsplash.com/@kalenemsley). File gốc: https://images.unsplash.com/photo-1464822759023-fed622ff2c3b |
 | `den-cuoi-pho.jpg` | https://images.unsplash.com/photo-1519608487953-e999c86e7455 |
 | `mua-tren-kinh.jpg` | https://images.unsplash.com/photo-1428592953211-077101b2021b |
+
+Bản dọc cùng nguồn, file `portrait/<tên>.jpg`, 800×1200. Hero vẫn dùng ảnh ngang.

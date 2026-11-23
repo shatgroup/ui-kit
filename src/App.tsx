@@ -21,7 +21,7 @@ function headerHeight() {
 function Frame({ children, search, dark = false }: { children: ReactNode; search?: ReactNode; dark?: boolean }) {
   return (
     <TooltipProvider>
-      <div className={dark ? "dark h-svh" : "h-svh"}>
+      <div className={dark ? "dark h-svh bg-background text-foreground" : "h-svh"}>
         <ResizablePanelGroup orientation="vertical" className="h-full">
           <ResizablePanel
             id="site-header"
@@ -36,7 +36,7 @@ function Frame({ children, search, dark = false }: { children: ReactNode; search
           </ResizablePanel>
           <ResizableHandle withHandle aria-label="Resize header height" />
           <ResizablePanel id="site-body" minSize={200} className="min-h-0">
-            <div data-app-scroll className="h-full min-h-0 scroll-fade scrollbar-none overflow-auto">{children}</div>
+            <div data-app-scroll className={dark ? "h-full min-h-0 bg-background scrollbar-none overflow-auto" : "h-full min-h-0 scroll-fade scrollbar-none overflow-auto"}>{children}</div>
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

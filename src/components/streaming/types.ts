@@ -10,6 +10,7 @@ export type Movie = {
   title: string
   description: string
   image: string
+  poster: string
   badge?: string
   genres: string[]
   year: number

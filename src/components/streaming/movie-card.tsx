@@ -41,11 +41,13 @@ function matchPercent(title: string) {
 
 export function MovieCard({
   movie,
+  aspect = "poster",
   loading = false,
   onOpen,
   onInfo,
 }: {
-  movie: Pick<Movie, "title" | "description" | "image" | "badge"> & Partial<Pick<Movie, "year">>
+  movie: Pick<Movie, "title" | "description" | "image" | "badge"> & Partial<Pick<Movie, "year" | "poster">>
+  aspect?: "poster" | "landscape"
   loading?: boolean
   onOpen?: () => void
   onInfo?: () => void
@@ -53,11 +55,15 @@ export function MovieCard({
   const [saved, setSaved] = useState(false)
   const [liked, setLiked] = useState(false)
   const showInfo = onInfo ?? onOpen
+  const ratio = aspect === "landscape" ? 16 / 9 : 2 / 3
+  const src = aspect === "landscape" ? movie.image : movie.poster ?? movie.image
 
   if (loading) {
     return (
       <Stack gap={2} slot="movie-card-loading">
-        <Skeleton className="aspect-video w-full rounded-lg" />
+        <AspectRatio ratio={ratio}>
+          <Skeleton className="size-full rounded-lg" />
+        </AspectRatio>
       </Stack>
     )
   }
@@ -65,8 +71,8 @@ export function MovieCard({
   return (
     <div className="group/item relative w-full" data-slot="movie-card">
       <div className={cn("relative overflow-hidden rounded-lg", rise, "group-hover/item:z-10 group-hover/item:scale-110")}>
-        <AspectRatio ratio={16 / 9}>
-        <MoviePoster src={movie.image} title={movie.title} />
+        <AspectRatio ratio={ratio}>
+        <MoviePoster src={src} title={movie.title} />
         <Button variant="ghost" className="absolute inset-0 h-full w-full rounded-none" aria-label={movie.title} onClick={showInfo} />
         <span className={cn("pointer-events-none absolute inset-0 bg-background/40 opacity-0", fade, "group-hover/item:opacity-100")} />
         <div className={cn("absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-background via-background/80 to-transparent p-2 translate-y-full", rise, "group-hover/item:translate-y-0")}>

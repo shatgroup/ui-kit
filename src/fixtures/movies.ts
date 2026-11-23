@@ -18,8 +18,8 @@ const demo = {
   videoId: "dc48a09e-d9bb-420a-83d7-72dc2304c034",
 }
 
-function movie(input: Omit<Movie, "libraryId" | "videoId" | "episodes">): Movie {
-  return { ...input, ...demo, episodes: episodes(input.id) }
+function movie(input: Omit<Movie, "libraryId" | "videoId" | "episodes" | "poster">): Movie {
+  return { ...input, poster: `/posters/portrait/${input.id}.jpg`, ...demo, episodes: episodes(input.id) }
 }
 
 export const movies: Movie[] = [

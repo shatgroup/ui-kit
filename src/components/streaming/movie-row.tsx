@@ -30,23 +30,25 @@ export function MovieRow({
 
   if (movies.length === 0) return null
 
+  const arrow = `absolute top-4 bottom-4 z-10 hidden h-auto w-14 rounded-none bg-background/50 backdrop-blur md:inline-flex ${fade} opacity-0 group-hover/row:opacity-100`
+
   return (
-    <Stack gap={6} slot="movie-row" className="group/row px-4 lg:px-16 xl:pl-36 xl:pr-36">
-      <Text as="h2" size="2xl" weight="medium">{title}</Text>
+    <Stack gap={0} slot="movie-row" className="group/row">
+      <Text as="h2" size="2xl" weight="medium" className="pl-4 pr-4 md:pl-14 md:pr-14">{title}</Text>
       <Box className="relative">
         <Button
           variant="ghost"
-          size="icon-lg"
           aria-label="Cuộn trái"
-          className={`absolute top-0 bottom-0 left-0 z-10 hidden h-full w-10 rounded-none bg-background/50 md:inline-flex md:w-14 ${fade} opacity-0 group-hover/row:opacity-100`}
+          className={`${arrow} left-0`}
           onClick={() => scrollBy("left")}
         >
           <ChevronLeftIcon />
         </Button>
-        <div ref={scroller} className="flex gap-2 overflow-x-auto scroll-smooth py-8 scrollbar-none">
+        <div ref={scroller} className="flex gap-2 overflow-x-auto scroll-smooth pl-4 pr-4 scrollbar-none md:pl-14 md:pr-14">
           {movies.map((movie) => (
-            <div key={movie.id} className="w-5/12 shrink-0 md:w-1/5 xl:w-1/6">
+            <div key={movie.id} className="w-1/3 shrink-0 py-4 md:w-1/5 lg:w-1/7">
               <MovieCard
+                aspect="poster"
                 movie={movie}
                 onOpen={() => onOpen(movie)}
                 onInfo={() => setDetail(movie)}
@@ -56,9 +58,8 @@ export function MovieRow({
         </div>
         <Button
           variant="ghost"
-          size="icon-lg"
           aria-label="Cuộn phải"
-          className={`absolute top-0 right-0 bottom-0 z-10 hidden h-full w-10 rounded-none bg-background/50 md:inline-flex md:w-14 ${fade} opacity-0 group-hover/row:opacity-100`}
+          className={`${arrow} right-0`}
           onClick={() => scrollBy("right")}
         >
           <ChevronRightIcon />
