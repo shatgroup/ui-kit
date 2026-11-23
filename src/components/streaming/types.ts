@@ -15,6 +15,7 @@ export type Movie = {
   genres: string[]
   year: number
   runtime: string
+  maturity: string
   libraryId: string
   videoId: string
   episodes: Episode[]

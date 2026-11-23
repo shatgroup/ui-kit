@@ -18,8 +18,31 @@ const demo = {
   videoId: "dc48a09e-d9bb-420a-83d7-72dc2304c034",
 }
 
-function movie(input: Omit<Movie, "libraryId" | "videoId" | "episodes" | "poster">): Movie {
-  return { ...input, poster: `/posters/portrait/${input.id}.jpg`, ...demo, episodes: episodes(input.id) }
+const maturityById: Record<string, string> = {
+  "mua-ha": "13+",
+  "dem-sai-gon": "18+",
+  "bep-nho": "K",
+  "tram-cuoi": "16+",
+  "cuoi-pho": "13+",
+  "song-can": "13+",
+  "lop-hoc": "K",
+  "xuong-sang": "16+",
+  "ve-nha": "K",
+  "pho-khong-ngu": "16+",
+  "anh-vo": "16+",
+  "doi-gio": "13+",
+  "den-cuoi-pho": "18+",
+  "mua-tren-kinh": "16+",
+}
+
+function movie(input: Omit<Movie, "libraryId" | "videoId" | "episodes" | "poster" | "maturity">): Movie {
+  return {
+    ...input,
+    maturity: maturityById[input.id] ?? "16+",
+    poster: `/posters/portrait/${input.id}.jpg`,
+    ...demo,
+    episodes: episodes(input.id),
+  }
 }
 
 export const movies: Movie[] = [

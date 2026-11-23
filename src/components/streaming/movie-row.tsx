@@ -1,12 +1,18 @@
-import { useRef, useState } from "react"
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react"
+import { useState } from "react"
 import { Box, Stack, Text } from "@/components/layout/index.ts"
-import { Button } from "@/components/ui/button.tsx"
-import { MovieCard } from "./movie-card.tsx"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel.tsx"
+import { MovieCard, type CardGrow, type CardShift } from "./movie-card.tsx"
 import { MovieDetail } from "./movie-info.tsx"
 import type { Movie } from "./types.ts"
 
 const fade = "transition-opacity duration-(--duration-normal) ease-(--ease-standard)"
+
+function shiftFor(index: number, current: number, grow: CardGrow): CardShift {
+  if (current === index) return "none"
+  if (grow === "start") return current > index ? "forward-half" : "none"
+  if (grow === "end") return current < index ? "back-half" : "none"
+  return current < index ? "back" : "forward"
+}
 
 export function MovieRow({
   title,
@@ -18,52 +24,39 @@ export function MovieRow({
   onSeeAll?: () => void
   onOpen: (movie: Movie) => void
 }) {
-  const scroller = useRef<HTMLDivElement>(null)
   const [detail, setDetail] = useState<Movie | null>(null)
-
-  function scrollBy(direction: "left" | "right") {
-    const node = scroller.current
-    if (!node) return
-    const amount = node.clientWidth * 0.75
-    node.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" })
-  }
+  const [preview, setPreview] = useState<{ index: number; grow: CardGrow } | null>(null)
 
   if (movies.length === 0) return null
 
-  const arrow = `absolute top-4 bottom-4 z-10 hidden h-auto w-14 rounded-none bg-background/50 backdrop-blur md:inline-flex ${fade} opacity-0 group-hover/row:opacity-100`
+  // check-ui-ignore-next-line: mẫu -ml-2/pl-2 của Carousel để N card vừa khít, chỉ hàng streaming
+  const track = "-ml-2 pl-14 pr-14"
+  const arrow = `top-4 bottom-4 z-10 hidden h-auto w-14 translate-y-0 rounded-none bg-background/50 backdrop-blur opacity-0 md:inline-flex ${fade} pointer-events-none group-hover/row:pointer-events-auto group-hover/row:opacity-100 disabled:opacity-0`
 
   return (
     <Stack gap={0} slot="movie-row" className="group/row">
-      <Text as="h2" size="2xl" weight="medium" className="pl-4 pr-4 md:pl-14 md:pr-14">{title}</Text>
+      <Text as="h2" size="2xl" weight="medium" className="pl-14 pr-14">{title}</Text>
       <Box className="relative">
-        <Button
-          variant="ghost"
-          aria-label="Cuộn trái"
-          className={`${arrow} left-0`}
-          onClick={() => scrollBy("left")}
-        >
-          <ChevronLeftIcon />
-        </Button>
-        <div ref={scroller} className="flex gap-2 overflow-x-auto scroll-smooth pl-4 pr-4 scrollbar-none md:pl-14 md:pr-14">
-          {movies.map((movie) => (
-            <div key={movie.id} className="w-1/3 shrink-0 py-4 md:w-1/5 lg:w-1/7">
-              <MovieCard
-                aspect="poster"
-                movie={movie}
-                onOpen={() => onOpen(movie)}
-                onInfo={() => setDetail(movie)}
-              />
-            </div>
-          ))}
-        </div>
-        <Button
-          variant="ghost"
-          aria-label="Cuộn phải"
-          className={`${arrow} right-0`}
-          onClick={() => scrollBy("right")}
-        >
-          <ChevronRightIcon />
-        </Button>
+        <Carousel opts={{ align: "start", slidesToScroll: "auto", containScroll: "trimSnaps" }} className="w-full">
+          <CarouselContent className={track}>
+            {movies.map((movie, index) => (
+              <CarouselItem key={movie.id} className="basis-1/3 pl-2 md:basis-1/5 lg:basis-1/7">
+                <div className="py-4">
+                  <MovieCard
+                    aspect="poster"
+                    movie={movie}
+                    shift={preview ? shiftFor(preview.index, index, preview.grow) : "none"}
+                    onOpen={() => onOpen(movie)}
+                    onInfo={() => setDetail(movie)}
+                    onPreview={(open, grow) => setPreview(open ? { index, grow } : null)}
+                  />
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious className={`${arrow} left-0`} aria-label="Cuộn trái" />
+          <CarouselNext className={`${arrow} right-0`} aria-label="Cuộn phải" />
+        </Carousel>
       </Box>
       <MovieDetail
         movie={detail}
