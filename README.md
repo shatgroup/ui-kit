@@ -25,6 +25,7 @@ Chép đúng tag đang dùng:
 - `src/components/layout`
 - `src/components/patterns`
 - `src/components/media`
+- `src/components/streaming`
 - `src/styles`
 - `src/lib/utils.ts`
 - `src/lib/utils.test.ts`

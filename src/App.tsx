@@ -8,6 +8,7 @@ import { ExampleView } from "@/showcase/shadcn-docs/example-view.tsx"
 import { DocsCommandMenu } from "@/showcase/shadcn-docs/docs-shell.tsx"
 import { DesignSystemPage } from "@/pages/design-system-page.tsx"
 import { ShowcasePage } from "@/pages/showcase-page.tsx"
+import { StreamingPage } from "@/pages/streaming-page.tsx"
 import type { ReactNode } from "react"
 
 const HEADER_HEIGHT_KEY = "site-header-height"
@@ -55,6 +56,7 @@ export default function App() {
     return <Frame><ShowcasePage /></Frame>
   }
   if (path === "/showcase") return <Frame><ShowcasePage /></Frame>
+  if (path === "/streaming" || path.startsWith("/streaming/")) return <Frame><StreamingPage /></Frame>
   if (path.startsWith("/view/")) return <ExampleView name={path.slice("/view/".length)} />
   if (path === "/components" || path.startsWith("/components/")) {
     return <Frame search={<DocsCommandMenu />}><ComponentsPage /></Frame>

@@ -28,8 +28,9 @@ import { StepsBar } from "@/components/ui/steps-bar.tsx"
 import { TagsInput } from "@/components/ui/tags-input.tsx"
 import { ThemeToggle } from "@/components/ui/theme-toggle.tsx"
 import { Truncated } from "@/components/ui/truncated.tsx"
+import { streamingPages } from "./streaming-docs.tsx"
 
-type LocalGroup = "Kit" | "Flow" | "Patterns"
+type LocalGroup = "Kit" | "Flow" | "Patterns" | "Streaming"
 
 type LocalPage = {
   name: string
@@ -486,9 +487,10 @@ const localPages: LocalPage[] = [
     wide: true,
     Preview: () => <Ticker items={[{ symbol: "TEAL", avatar: "T", price: "12.40", change: "1.2%", up: true }]} />,
   },
+  ...streamingPages,
 ]
 
-const localGroups = (["Kit", "Flow", "Patterns"] as const).map((name) => ({
+const localGroups = (["Kit", "Flow", "Patterns", "Streaming"] as const).map((name) => ({
   name,
   pages: localPages.filter((page) => page.group === name),
 }))

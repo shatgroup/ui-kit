@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img">
+  <rect width="640" height="360" fill="#102628"/>
+  <rect x="0" y="0" width="12" height="360" fill="#00bba7"/>
+  <circle cx="520" cy="84" r="46" fill="#00bba7" opacity="0.85"/>
+  <text x="48" y="196" fill="#e7f4f3" font-family="Be Vietnam Pro, sans-serif" font-size="42" font-weight="700">Về nhà ăn cơm</text>
+</svg>

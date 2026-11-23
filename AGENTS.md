@@ -20,6 +20,7 @@ Khung lấy từ `~/Projects/_mau/khung/AGENTS.md` vì `~/Projects/_mau/AGENTS.m
 **Lớp code:**
 - `src/components/ui/` — component lõi, giữ class gốc shadcn. Chỉ thư mục này được giá trị tuỳ ý.
 - `src/components/patterns/` và `src/components/media/` — khối ráp sẵn. Kiểu dáng nằm ở đây, nhãn chữ truyền qua props.
+- `src/components/streaming/` — component trang xem phim. `kit-sync` kéo thư mục này cùng kit.
 - `src/pages/` — chỉ ráp primitive, component và pattern. Không class trang trí (`bg-*`, `border-*`, `rounded-*`, `shadow-*`, màu chữ, giá trị tuỳ ý). Bố cục dùng `Stack`, `Inline`, `Grid`, `Box`.
 - `src/fixtures/` — dữ liệu mẫu.
 - Không dùng `shadow-*` (trừ `shadow-none`). Popup dùng viền 1px `--border`. Không sửa biến `--shadow-*` trong `theme.css`.

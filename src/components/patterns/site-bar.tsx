@@ -11,6 +11,7 @@ function SiteBar({ search }: { search?: ReactNode }) {
   const design = path === "/design-system" || path === "/" || path === "/tokens" || path === "/kit"
   const components = path === "/components" || path.startsWith("/components/")
   const showcase = path === "/showcase" || path === "/preview" || path === "/preview-motion"
+  const streaming = path === "/streaming" || path.startsWith("/streaming/")
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
@@ -37,6 +38,9 @@ function SiteBar({ search }: { search?: ReactNode }) {
         </a>
         <a href="/showcase" className={showcase ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
           Showcase
+        </a>
+        <a href="/streaming" className={streaming ? "text-sm font-semibold" : "text-sm text-muted-foreground"}>
+          Streaming
         </a>
       </Inline>
       {search}

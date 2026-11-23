@@ -1,5 +1,5 @@
 import { useLayoutEffect, useState, type ComponentType } from "react"
-import { Blend, Blocks, ChevronRight, LayoutTemplate, Package, Workflow } from "lucide-react"
+import { Blend, Blocks, ChevronRight, Clapperboard, LayoutTemplate, Package, Workflow } from "lucide-react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible.tsx"
 import {
   Sidebar,
@@ -19,6 +19,7 @@ const GROUP_ICON: Record<string, ComponentType<{ className?: string }>> = {
   Kit: Package,
   Flow: Workflow,
   Patterns: LayoutTemplate,
+  Streaming: Clapperboard,
   Utils: Blend,
 }
 

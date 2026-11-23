@@ -1,4 +1,4 @@
-import type { ReactNode } from "react"
+import type { ReactNode, Ref } from "react"
 import { cn } from "@/lib/utils.ts"
 import { PAD } from "./classes.ts"
 import type { Space } from "./types.ts"
@@ -27,24 +27,27 @@ type BoxProps = {
   radius?: Radius
   className?: string
   slot?: string
+  ref?: Ref<HTMLDivElement>
   children?: ReactNode
 }
 
 export function Box({
   padding,
-  tone = "background",
+  tone,
   border = false,
   radius = "none",
   className,
   slot,
+  ref,
   children,
 }: BoxProps) {
   return (
     <div
+      ref={ref}
       data-slot={slot}
       className={cn(
         "min-w-0",
-        TONE[tone],
+        tone && TONE[tone],
         border && "border border-border",
         RADIUS[radius],
         padding !== undefined && PAD[padding],

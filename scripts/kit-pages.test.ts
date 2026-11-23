@@ -34,7 +34,7 @@ function filesUnder(dir: string): string[] {
 describe("trang component", () => {
   it("mỗi nhóm có đủ trang", () => {
     const counts = Object.fromEntries(localGroups.map((group) => [group.name, group.pages.length]))
-    expect(counts).toEqual({ Kit: 15, Flow: 20, Patterns: 8 })
+    expect(counts).toEqual({ Kit: 15, Flow: 20, Patterns: 8, Streaming: 11 })
     expect(new Set(localPages.map((page) => page.name)).size).toBe(localPages.length)
   })
 
@@ -73,7 +73,20 @@ describe("trang component", () => {
       "status-timeline",
       "ticker",
     ]
-    const missing = [...kitFiles, ...flowFiles, ...patternFiles].filter((name) => !pageNames.has(name))
+    const streamingFiles = [
+      "episode-list",
+      "genre-chips",
+      "hero-banner",
+      "movie-card",
+      "movie-grid",
+      "movie-info",
+      "movie-row",
+      "search-overlay",
+      "site-header",
+      "video-player",
+      "watch-layout",
+    ]
+    const missing = [...kitFiles, ...flowFiles, ...patternFiles, ...streamingFiles].filter((name) => !pageNames.has(name))
     expect(missing).toEqual([])
     const uiFiles = readdirSync(join(root, "src/components/ui")).filter((name) => name.endsWith(".tsx") && name !== "progress-kit.test.tsx")
     const shadcnWithoutPage = new Set(["form", "combobox", "responsive-dialog"])
