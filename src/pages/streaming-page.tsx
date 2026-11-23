@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { Stack } from "@/components/layout/index.ts"
 import { StreamingFrame } from "@/components/streaming/streaming-frame.tsx"
-import { EpisodeList, HeroBanner, MovieInfo, MovieRow, SiteHeader, VideoPlayer, WatchLayout } from "@/components/streaming/index.ts"
+import { ContinueWatching, EpisodeList, FeaturedShelf, HeroBanner, MovieInfo, MovieRow, SiteHeader, VideoPlayer, WatchLayout } from "@/components/streaming/index.ts"
 import { Container } from "@/components/layout/index.ts"
 import { heroMovies, movies } from "@/fixtures/movies.ts"
 import type { Movie } from "@/components/streaming/types.ts"
@@ -31,13 +31,17 @@ function useLocation() {
 }
 
 function StreamingRows({ movies, onOpen }: { movies: Movie[]; onOpen: (movie: Movie) => void }) {
-  // check-ui-ignore-next-line: hàng đầu đè banner như deepanik/netflix Home, chỉ trang /streaming
-  return <Stack gap={4} className="relative z-20 -mt-32 pb-16 md:-mt-40">
-    <MovieRow title="Đang thịnh hành" movies={movies.slice(0, 8)} onOpen={onOpen} />
-    <MovieRow title="Đánh giá cao" movies={movies.slice(2, 10)} onOpen={onOpen} />
-    <MovieRow title="Hành động" movies={movies.filter((movie) => movie.genres.includes("Hành động"))} onOpen={onOpen} />
-    <MovieRow title="Tình cảm" movies={movies.filter((movie) => movie.genres.includes("Tình cảm"))} onOpen={onOpen} />
-  </Stack>
+  const watching = movies.find((movie) => movie.progress !== undefined) ?? movies[0]
+  return (
+    <Stack gap={8} className="pb-16">
+      <FeaturedShelf movies={movies} onOpen={onOpen} />
+      <MovieRow title="Đang thịnh hành" movies={movies.slice(0, 8)} onOpen={onOpen} />
+      <MovieRow title="Đánh giá cao" movies={movies.slice(2, 10)} onOpen={onOpen} />
+      <MovieRow title="Hành động" movies={movies.filter((movie) => movie.genres.includes("Hành động"))} onOpen={onOpen} />
+      <MovieRow title="Tình cảm" movies={movies.filter((movie) => movie.genres.includes("Tình cảm"))} onOpen={onOpen} />
+      <ContinueWatching movie={watching} onPlay={onOpen} />
+    </Stack>
+  )
 }
 
 export function StreamingPage() {

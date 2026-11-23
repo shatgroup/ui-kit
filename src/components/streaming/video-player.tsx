@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react"
 import { MaximizeIcon, MinimizeIcon } from "lucide-react"
-import { Box, Inline, Stack, Text } from "@/components/layout/index.ts"
+import { Box, Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx"
 import { AspectRatio } from "@/components/ui/aspect-ratio.tsx"
 import { Button } from "@/components/ui/button.tsx"
+import { Progress } from "@/components/ui/progress.tsx"
 import { Skeleton } from "@/components/ui/skeleton.tsx"
 import { Spinner } from "@/components/ui/spinner.tsx"
 import { cn } from "@/lib/utils.ts"
+import type { Movie } from "./types.ts"
 
 type Status = "loading" | "ready" | "error"
 
@@ -102,6 +104,37 @@ export function VideoPlayer({
         </Box>
       </Box>
       {caption ? <Text weight="medium">{caption}</Text> : null}
+    </Stack>
+  )
+}
+
+const gutter = "pl-4 pr-4 md:pl-14 md:pr-14"
+
+export function ContinueWatching({ movie, onPlay }: { movie: Movie; onPlay: (movie: Movie) => void }) {
+  const seasons = movie.kind === "series" ? `${movie.seasons.length} mùa` : "Phim lẻ"
+  return (
+    <Stack gap={4} slot="continue-watching" className={gutter}>
+      <Text as="h2" size="2xl" weight="medium">Đang xem dở</Text>
+      <Grid columns={{ base: 1, lg: 2 }} gap={6} className="items-center">
+        <Stack gap={2}>
+          <VideoPlayer libraryId={movie.libraryId} videoId={movie.videoId} title={movie.title} />
+          <Progress value={movie.progress ?? 0} aria-label="Tiến độ xem" />
+        </Stack>
+        <Stack gap={3}>
+          <Text as="h3" size="2xl" weight="semibold">{movie.title}</Text>
+          <Inline gap={2} align="center">
+            <Text size="sm">{movie.year}</Text>
+            <Text size="sm" tone="muted">•</Text>
+            <span className="inline-flex items-center rounded-sm border border-primary px-1">
+              <Text as="span" size="xs">{movie.maturity}</Text>
+            </span>
+            <Text size="sm" tone="muted">•</Text>
+            <Text size="sm">{seasons}</Text>
+          </Inline>
+          <Text tone="muted" lineClamp={3}>{movie.description}</Text>
+          <Button className="self-start rounded-full" onClick={() => onPlay(movie)}>Xem tiếp</Button>
+        </Stack>
+      </Grid>
     </Stack>
   )
 }

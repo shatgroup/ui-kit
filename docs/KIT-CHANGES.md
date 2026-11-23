@@ -184,9 +184,14 @@ Chỗ đổi so với bản gốc:
 - Không chép logo SVG Netflix, ảnh đại diện ngoài, video `/test-video.mp4`, đăng nhập, trang Kids/Account/Sign out.
 - Nguồn không có footer và không có ô tìm (chỉ icon). Icon tìm gắn `SearchOverlay`.
 - Kích thước lệch thang kit được làm tròn: thanh `h-[68px]` → `h-16`, lề `px-[60px]` → `px-16`, card `140×200` → `w-36 h-52`, `160×240` → `md:w-40 md:h-60`, hero `min-h-[400px]` → `min-h-96`.
-- `mb-*` → `gap` của `Stack`. Riêng khối hàng phim trên `/streaming` dùng `-mt-32 md:-mt-40` để đè banner, có `check-ui-ignore-next-line`.
+- `mb-*` → `gap` của `Stack`.
 - `MovieCard` có `aspect`: `poster` 2/3 (mặc định, hàng phim) và `landscape` 16/9. Ảnh dọc nằm ở `public/posters/portrait/`. Hero vẫn dùng ảnh ngang.
-- Hàng phim dùng `Carousel` của kit. Item `basis-1/3 md:basis-1/5 lg:basis-1/7`, lề `pl-4 pr-4 md:pl-14 md:pr-14`, track thêm `-ml-2`. Nút cuộn `w-14` nằm trong lề từ `md`, cao bằng card, hiện khi rê hàng, mỗi lần bấm cuộn một trang. Hover nằm trong card: `scale-110`, ảnh `scale-105`, phủ `bg-background/40`, khung nội dung trượt từ dưới lên. `py-6` chừa chỗ cho card phóng 110%, không bị cắt. Mobile không hover: chạm card mở `MovieDetail`. Thêm field `maturity`.
+- Trang `/streaming` theo bố cục concept Netflix Black Redesign, chỉ lấy bố cục. Màu nhấn dùng `primary` của kit, font giữ Be Vietnam Pro.
+- Hero: nhãn PHIM BỘ/PHIM LẺ, tên, năm • ô độ tuổi viền `primary` • số mùa, mô tả, nút Phát `primary` và Chi tiết nền `foreground` (`rounded-full`), nút play tròn giữa, danh sách mùa và thẻ tập 16:9 bên phải từ `lg`, Tabs Tổng quan / Tập phim / Chi tiết.
+- Khu nổi bật: Tabs lọc, ô tìm, chip thể loại đang chọn viền `primary`, poster 2:3, tên đè ảnh, badge TOP 10, `Progress` theo mức cuộn.
+- Hàng phim: vạch `primary` cạnh tiêu đề, mũi tên và nút Xem tất cả `rounded-full`, card 16:9, desktop `lg:basis-1/5`. Dòng dưới ảnh: năm • số mùa • độ tuổi. `py-16` để card `scale-150` không bị cắt. Hover trong card: play tròn viền góc trên trái, tên và meta trên gradient, ô độ tuổi viền `primary`, card khác `opacity-40`. Mobile chạm mở `MovieDetail`.
+- Dưới cùng Đang xem dở: `VideoPlayer` nhỏ, `Progress`, tên, meta, mô tả, nút Xem tiếp.
+- Dữ liệu mẫu thêm `kind`, `dubbed`, `progress`, `seasons` (tập theo mùa). `episodes` là danh sách phẳng để trang xem vẫn chạy.
 - Số đo lấy từ DESIGN.md của shadcn.io/design/netflix, chỉ cỡ chữ, khoảng, bo góc, tỉ lệ. Không lấy màu và Netflix Sans. Làm tròn: hero 56px → `text-6xl` (60px), tablet 40px → `text-4xl` (36px), mobile 32px → `text-3xl` (30px), đậm 900 → `font-black`, dòng 70px → `leading-tight`. Tiêu đề hàng 24px/500 → `text-2xl` `font-medium`. Mô tả 16/24 → `text-base` `leading-6`. Nút hero 24px, padding 8×22, bo 8px → `text-2xl` `py-2` `px-6` `rounded-lg`. Khoảng section 64px → `gap-16`. Lề trang 16 / 80 / 148px → `px-4` / `lg:px-16` (64px) / `xl:pl-36 xl:pr-36` (144px). Bo poster 8px giữ `rounded-lg` (`--radius` 0.5rem).
 - `shadow-xl` bỏ. `transition-all` đổi thành `transform` / `opacity` / `colors` với `--duration-*` và `--ease-*`.
 - Bỏ kéo-để-cuộn trên hàng phim để nút trong card nhận được click. Vẫn cuộn ngang và có mũi tên.

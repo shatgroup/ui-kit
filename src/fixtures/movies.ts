@@ -4,13 +4,32 @@ export const genreNames = ["Hành động", "Tình cảm", "Hài", "Khoa học",
 
 const episodeTitles = ["Khởi đầu", "Người cũ", "Đêm mưa", "Lối tắt", "Bữa cơm", "Biển hiệu", "Nửa đường", "Trở lại"]
 
-function episodes(id: string): Episode[] {
-  return episodeTitles.map((title, index) => ({
-    id: `${id}-${index + 1}`,
+const seriesIds = new Set(["mua-ha", "bep-nho", "lop-hoc", "ve-nha", "anh-vo", "doi-gio"])
+const topIds = new Set(["dem-sai-gon", "tram-cuoi", "xuong-sang", "den-cuoi-pho"])
+const dubbedIds = new Set(["dem-sai-gon", "lop-hoc", "den-cuoi-pho"])
+const progressById: Record<string, number> = { "mua-ha": 36, "cuoi-pho": 58 }
+
+function seasonEpisodes(id: string, season: number, titles: string[]): Episode[] {
+  return titles.map((title, index) => ({
+    id: `${id}-s${season}-${index + 1}`,
     number: index + 1,
     title,
     duration: `${40 + index} phút`,
   }))
+}
+
+function buildSeasons(id: string, kind: "series" | "film", runtime: string) {
+  if (kind === "film") {
+    const episodes = [{ id: `${id}-1`, number: 1, title: "Toàn bộ", duration: runtime }]
+    return { seasons: [{ id: `${id}-s1`, number: 1, episodes }], episodes }
+  }
+  const first = seasonEpisodes(id, 1, episodeTitles.slice(0, 4))
+  const second = seasonEpisodes(id, 2, episodeTitles.slice(4))
+  const seasons = [
+    { id: `${id}-s1`, number: 1, episodes: first },
+    { id: `${id}-s2`, number: 2, episodes: second },
+  ]
+  return { seasons, episodes: [...first, ...second] }
 }
 
 const demo = {
@@ -35,13 +54,19 @@ const maturityById: Record<string, string> = {
   "mua-tren-kinh": "16+",
 }
 
-function movie(input: Omit<Movie, "libraryId" | "videoId" | "episodes" | "poster" | "maturity">): Movie {
+function movie(input: Omit<Movie, "libraryId" | "videoId" | "episodes" | "poster" | "maturity" | "kind" | "dubbed" | "seasons" | "progress">): Movie {
+  const kind = seriesIds.has(input.id) ? "series" : "film"
+  const built = buildSeasons(input.id, kind, input.runtime)
   return {
     ...input,
+    kind,
+    dubbed: dubbedIds.has(input.id),
+    progress: progressById[input.id],
+    badge: input.badge ?? (topIds.has(input.id) ? "Top 10" : undefined),
     maturity: maturityById[input.id] ?? "16+",
     poster: `/posters/portrait/${input.id}.jpg`,
     ...demo,
-    episodes: episodes(input.id),
+    ...built,
   }
 }
 

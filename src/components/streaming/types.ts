@@ -5,6 +5,12 @@ export type Episode = {
   duration: string
 }
 
+export type Season = {
+  id: string
+  number: number
+  episodes: Episode[]
+}
+
 export type Movie = {
   id: string
   title: string
@@ -16,7 +22,11 @@ export type Movie = {
   year: number
   runtime: string
   maturity: string
+  kind: "series" | "film"
+  dubbed: boolean
+  progress?: number
   libraryId: string
   videoId: string
+  seasons: Season[]
   episodes: Episode[]
 }
