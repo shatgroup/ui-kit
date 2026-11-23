@@ -47,7 +47,7 @@ export function VideoPlayer({
 
   return (
     <Stack gap={2} slot="video-player">
-      <Box radius="lg" border className="relative overflow-hidden">
+      <Box tone="card" radius="lg" border className="relative overflow-hidden">
         <Box ref={frame} className="relative">
         <AspectRatio ratio={16 / 9} className="bg-muted">
           {status !== "error" ? (

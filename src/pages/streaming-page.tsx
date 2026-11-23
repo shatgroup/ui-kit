@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import { Container, Stack, Text } from "@/components/layout/index.ts"
+import { Stack } from "@/components/layout/index.ts"
 import { StreamingFrame } from "@/components/streaming/streaming-frame.tsx"
-import { EpisodeList, HeroBanner, MovieGrid, MovieInfo, MovieRow, SiteHeader, VideoPlayer, WatchLayout } from "@/components/streaming/index.ts"
-import { GenreChips } from "@/components/streaming/genre-chips.tsx"
-import { genreNames, heroMovies, movies } from "@/fixtures/movies.ts"
+import { EpisodeList, HeroBanner, MovieInfo, MovieRow, SiteHeader, VideoPlayer, WatchLayout } from "@/components/streaming/index.ts"
+import { Container } from "@/components/layout/index.ts"
+import { heroMovies, movies } from "@/fixtures/movies.ts"
 import type { Movie } from "@/components/streaming/types.ts"
 
 function useLocation() {
@@ -35,19 +35,12 @@ export function StreamingPage() {
   const url = new URL(href, window.location.origin)
   const watching = url.pathname.replace(/\/$/, "") === "/streaming/xem"
   const selected = movies.find((movie) => movie.id === url.searchParams.get("phim")) ?? movies[0]
-  const [genre, setGenre] = useState<string | undefined>()
   const [episodeId, setEpisodeId] = useState(selected.episodes[0].id)
   const episode = selected.episodes.find((item) => item.id === episodeId) ?? selected.episodes[0]
-  const listed = genre ? movies.filter((movie) => movie.genres.includes(genre)) : movies
 
   function openMovie(movie: Movie) {
     setEpisodeId(movie.episodes[0].id)
     go(`/streaming/xem?phim=${movie.id}`)
-  }
-
-  function showList(next?: string) {
-    setGenre(next)
-    document.getElementById("danh-sach")?.scrollIntoView({ block: "start" })
   }
 
   return (
@@ -83,20 +76,12 @@ export function StreamingPage() {
           />
         </Container>
       ) : (
-        <Stack>
-          <HeroBanner movies={heroMovies} onPlay={openMovie} onInfo={openMovie} />
-          <Container size="xl">
-            <Stack gap={8}>
-              <GenreChips genres={genreNames} value={genre} onChange={setGenre} />
-              <MovieRow title="Đang thịnh hành" movies={movies.slice(0, 8)} onSeeAll={() => showList()} onOpen={openMovie} />
-              <MovieRow title="Hành động" movies={movies.filter((movie) => movie.genres.includes("Hành động"))} onSeeAll={() => showList("Hành động")} onOpen={openMovie} />
-              <MovieRow title="Tình cảm" movies={movies.filter((movie) => movie.genres.includes("Tình cảm"))} onSeeAll={() => showList("Tình cảm")} onOpen={openMovie} />
-              <Stack gap={3}>
-                <Text as="h2" id="danh-sach" size="xl" weight="semibold" className="scroll-mt-nav">Danh sách</Text>
-                <MovieGrid movies={listed} onOpen={openMovie} />
-              </Stack>
-            </Stack>
-          </Container>
+        <Stack gap={8} className="pb-16">
+          <HeroBanner movies={heroMovies} onPlay={openMovie} onInfo={() => undefined} />
+          <MovieRow title="Đang thịnh hành" movies={movies.slice(0, 8)} onOpen={openMovie} />
+          <MovieRow title="Đánh giá cao" movies={movies.slice(2, 10)} onOpen={openMovie} />
+          <MovieRow title="Hành động" movies={movies.filter((movie) => movie.genres.includes("Hành động"))} onOpen={openMovie} />
+          <MovieRow title="Tình cảm" movies={movies.filter((movie) => movie.genres.includes("Tình cảm"))} onOpen={openMovie} />
         </Stack>
       )}
     </StreamingFrame>

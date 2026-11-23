@@ -156,3 +156,34 @@ Không có trong registry Radix của CLI (`new-york-v4` / `radix-nova`): `data-
 `form` giữ vì registry `radix-nova/form.json` không có file, và repo docs không có `form.mdx`. Trang `/components/form` mô tả component `Form` đang cài, với React Hook Form. Chỉ đổi import `new-york-v4` sang `@/components/ui`.
 
 `combobox` cài cùng style `radix-nova`. Trang `/components/combobox` chép từ `combobox.mdx`, bỏ ví dụ RTL. `shadow-*` của component shadcn được giữ.
+
+## Streaming — deepanik/netflix
+
+Nguồn: `github.com/deepanik/netflix`, LICENSE MIT (Copyright 2024 Laxmi Narayan Pandey). Bản gốc giao diện nằm ở `docs/reference/deepanik-netflix-original/` cùng file `LICENSE`. Không chép `Login.tsx`, `services/` hay `api.config.ts`.
+
+| File kit | Chép từ |
+|---|---|
+| `src/components/streaming/site-header.tsx` | `src/components/Navbar.tsx` |
+| `src/components/streaming/hero-banner.tsx` | `src/pages/Home.tsx` (khối hero) |
+| `src/components/streaming/movie-row.tsx` | `src/components/MovieRow.tsx` |
+| `src/components/streaming/movie-card.tsx` | `src/components/MovieRow.tsx` (card và hover) |
+| `src/components/streaming/movie-info.tsx` (`MovieDetail`) | `src/components/MovieModal.tsx` |
+| `src/pages/streaming-page.tsx` | `src/pages/Home.tsx` (các hàng) |
+
+`VideoPlayer` và `EpisodeList` không có trong nguồn. Giữ bản kit, thêm nền `tone="card"`, bo `lg`, viền cho cùng khối tối của modal.
+
+Chỗ đổi so với bản gốc:
+
+- Màu `#e50914`, `#141414`, `#181818`, `#e5e5e5`, `green-500`, `gray` → token Future Teal: `background`, `primary`, `card`, `success`, `muted`.
+- Font không gắn trong component. Theme kit đã là Be Vietnam Pro.
+- Nút thô (Phát, Chi tiết, play/thêm/thích/info, mũi tên cuộn, chuông, menu) → `Button`.
+- Nhãn HD và số thông báo → `Badge`.
+- Menu hồ sơ tự hiện khi rê → `DropdownMenu`. Menu mobile trượt hết màn hình → `Sheet`.
+- `Link` của react-router → `a`. Nguồn không dùng `next/image`; `img` giữ `object-cover` và phủ khung.
+- Dữ liệu TMDB → `src/fixtures/movies.ts`. Phần trăm khớp là số ổn định từ tên phim, không gọi API.
+- Không chép logo SVG Netflix, ảnh đại diện ngoài, video `/test-video.mp4`, đăng nhập, trang Kids/Account/Sign out.
+- Nguồn không có footer và không có ô tìm (chỉ icon). Icon tìm gắn `SearchOverlay`.
+- Kích thước lệch thang kit được làm tròn: thanh `h-[68px]` → `h-16`, lề `px-[60px]` → `px-16`, card `140×200` → `w-36 h-52`, `160×240` → `md:w-40 md:h-60`, hero `min-h-[400px]` → `min-h-96`.
+- `mb-*` và `-mt-32` bị cấm → `gap` của `Stack`. Hàng phim không kéo đè lên hero.
+- `shadow-xl` bỏ. `transition-all` đổi thành `transform` / `opacity` / `colors` với `--duration-*` và `--ease-*`.
+- Bỏ kéo-để-cuộn trên hàng phim để nút trong card nhận được click. Vẫn cuộn ngang và có mũi tên.

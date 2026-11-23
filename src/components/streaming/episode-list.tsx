@@ -1,4 +1,4 @@
-import { Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
+import { Box, Grid, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Button } from "@/components/ui/button.tsx"
 import { ScrollArea } from "@/components/ui/scroll-area.tsx"
 import type { Episode } from "./types.ts"
@@ -13,7 +13,8 @@ export function EpisodeList({
   onSelect: (episode: Episode) => void
 }) {
   return (
-    <Stack gap={3} slot="episode-list">
+    <Box tone="card" radius="lg" border padding={4} slot="episode-list">
+    <Stack gap={3}>
       <Text as="h2" size="lg" weight="semibold">Danh sách tập</Text>
       <Grid columns={5} gap={2} className="lg:hidden">
         {episodes.map((episode) => {
@@ -59,5 +60,6 @@ export function EpisodeList({
         </Stack>
       </ScrollArea>
     </Stack>
+    </Box>
   )
 }

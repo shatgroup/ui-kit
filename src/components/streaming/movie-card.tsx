@@ -1,17 +1,16 @@
 import { useState } from "react"
-import { FilmIcon, PlayIcon } from "lucide-react"
-import { Stack, Text } from "@/components/layout/index.ts"
-import { AspectRatio } from "@/components/ui/aspect-ratio.tsx"
+import { FilmIcon, PlayIcon, PlusIcon, ThumbsUpIcon, InfoIcon } from "lucide-react"
+import { Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { Skeleton } from "@/components/ui/skeleton.tsx"
 import { cn } from "@/lib/utils.ts"
 import type { Movie } from "./types.ts"
 
-const zoom = "transition-transform duration-(--duration-normal) ease-(--ease-out)"
-const fade = "transition-opacity duration-(--duration-fast) ease-(--ease-out)"
+const rise = "transition-transform duration-(--duration-slow) ease-(--ease-out)"
+const fade = "transition-opacity duration-(--duration-slow) ease-(--ease-out)"
 
-export function MoviePoster({ src, title, zoomOnHover = false }: { src: string; title: string; zoomOnHover?: boolean }) {
+export function MoviePoster({ src, title }: { src: string; title: string; zoomOnHover?: boolean }) {
   const [failed, setFailed] = useState(src.length === 0)
 
   if (failed) {
@@ -27,54 +26,84 @@ export function MoviePoster({ src, title, zoomOnHover = false }: { src: string; 
     <img
       src={src}
       alt=""
-      className={cn("absolute inset-0 size-full object-cover", zoom, zoomOnHover && "md:group-hover:scale-105")}
+      className="absolute inset-0 size-full object-cover"
       onError={() => setFailed(true)}
     />
   )
+}
+
+function matchPercent(title: string) {
+  let total = 0
+  for (const char of title) total += char.charCodeAt(0)
+  return 70 + (total % 28)
 }
 
 export function MovieCard({
   movie,
   loading = false,
   onOpen,
+  onInfo,
 }: {
-  movie: Pick<Movie, "title" | "description" | "image" | "badge">
+  movie: Pick<Movie, "title" | "description" | "image" | "badge"> & Partial<Pick<Movie, "year">>
   loading?: boolean
   onOpen?: () => void
+  onInfo?: () => void
 }) {
+  const [saved, setSaved] = useState(false)
+  const [liked, setLiked] = useState(false)
+  const showInfo = onInfo ?? onOpen
+
   if (loading) {
     return (
       <Stack gap={2} slot="movie-card-loading">
-        <Skeleton className="aspect-video w-full rounded-lg" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-2/3" />
+        <Skeleton className="h-52 w-full rounded-lg md:h-60" />
       </Stack>
     )
   }
 
   return (
-    <Button
-      variant="ghost"
-      onClick={onOpen}
-      className="group h-auto w-full flex-col items-stretch justify-start gap-2 whitespace-normal p-0 text-left hover:bg-transparent dark:hover:bg-transparent"
-    >
-      <span className="relative block overflow-hidden rounded-lg border border-border">
-        <AspectRatio ratio={16 / 9} className="bg-muted">
-          <MoviePoster src={movie.image} title={movie.title} zoomOnHover />
-          <span className={cn("pointer-events-none absolute inset-0 hidden bg-gradient-to-t from-background via-background/70 to-transparent opacity-0 md:block", fade, "group-hover:opacity-100 group-focus-visible:opacity-100")}>
-            <span className="absolute inset-0 flex items-center justify-center">
-              <span className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                <PlayIcon />
-              </span>
-            </span>
-            <span className="absolute inset-x-0 bottom-0 p-3">
-              <Text as="span" size="xs" lineClamp={2}>{movie.description}</Text>
-            </span>
-          </span>
-        </AspectRatio>
-        {movie.badge ? <Badge className="absolute top-2 left-2">{movie.badge}</Badge> : null}
-      </span>
-      <Text as="span" weight="medium" lineClamp={2}>{movie.title}</Text>
-    </Button>
+    <div className="group/item relative w-36 shrink-0 md:w-40" data-slot="movie-card">
+      <div className={cn("relative h-52 overflow-hidden rounded-lg md:h-60", rise, "group-hover/item:z-10 group-hover/item:scale-110")}>
+        <MoviePoster src={movie.image} title={movie.title} />
+        <Button variant="ghost" className="absolute inset-0 h-full w-full rounded-none" aria-label={movie.title} onClick={showInfo} />
+        <span className={cn("pointer-events-none absolute inset-0 bg-background/40 opacity-0", fade, "group-hover/item:opacity-100")} />
+        <div className={cn("absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-background via-background/80 to-transparent p-2 translate-y-full", rise, "group-hover/item:translate-y-0")}>
+          <Inline gap={1} className="pb-2">
+            <Button size="icon-xs" className="rounded-full" aria-label={`Phát ${movie.title}`} onClick={onOpen}>
+              <PlayIcon />
+            </Button>
+            <Button
+              size="icon-xs"
+              variant={saved ? "secondary" : "outline"}
+              className="rounded-full"
+              aria-pressed={saved}
+              aria-label="Thêm vào danh sách"
+              onClick={() => setSaved((value) => !value)}
+            >
+              <PlusIcon />
+            </Button>
+            <Button
+              size="icon-xs"
+              variant={liked ? "secondary" : "outline"}
+              className="rounded-full"
+              aria-pressed={liked}
+              aria-label="Thích"
+              onClick={() => setLiked((value) => !value)}
+            >
+              <ThumbsUpIcon />
+            </Button>
+            <Button size="icon-xs" variant="outline" className="rounded-full" aria-label={`Chi tiết ${movie.title}`} onClick={showInfo}>
+              <InfoIcon />
+            </Button>
+          </Inline>
+          <Inline gap={1} align="center">
+            <Text as="span" size="xs" tone="success" weight="semibold">{matchPercent(movie.title)}%</Text>
+            <Badge variant="outline">HD</Badge>
+            {movie.year ? <Text as="span" size="xs">{movie.year}</Text> : null}
+          </Inline>
+          <Text as="span" size="sm" weight="semibold" lineClamp={1}>{movie.title}</Text>
+        </div>
+      </div>
+    </div>
   )
 }

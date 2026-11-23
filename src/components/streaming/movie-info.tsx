@@ -1,8 +1,11 @@
 import { useState } from "react"
-import { Inline, Stack, Text } from "@/components/layout/index.ts"
+import { PlayIcon } from "lucide-react"
+import { Box, Inline, Stack, Text } from "@/components/layout/index.ts"
 import { Badge } from "@/components/ui/badge.tsx"
 import { Button } from "@/components/ui/button.tsx"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible.tsx"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog.tsx"
+import { MoviePoster } from "./movie-card.tsx"
 import type { Movie } from "./types.ts"
 
 const limit = 180
@@ -37,5 +40,55 @@ export function MovieInfo({ movie }: { movie: Movie }) {
         </Stack>
       </Collapsible>
     </Stack>
+  )
+}
+
+export function MovieDetail({
+  movie,
+  open,
+  onOpenChange,
+  onPlay,
+}: {
+  movie: Movie | null
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  onPlay: (movie: Movie) => void
+}) {
+  if (!movie) return null
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-4xl gap-0 overflow-hidden p-0 sm:max-w-4xl">
+        <DialogHeader className="sr-only">
+          <DialogTitle>{movie.title}</DialogTitle>
+          <DialogDescription>{movie.description}</DialogDescription>
+        </DialogHeader>
+        <Box className="relative aspect-video">
+          <MoviePoster src={movie.image} title={movie.title} />
+          <Box className="pointer-events-none absolute inset-0 bg-gradient-to-t from-card via-card/60 to-transparent" />
+          <Stack gap={4} className="absolute inset-x-0 bottom-0 p-6 md:p-8">
+            <Text as="h2" size="3xl" weight="bold">{movie.title}</Text>
+            <Inline>
+              <Button size="lg" onClick={() => onPlay(movie)}>
+                <PlayIcon />
+                Phát
+              </Button>
+            </Inline>
+          </Stack>
+        </Box>
+        <Stack gap={4} className="p-6 md:p-8">
+          <Inline gap={4} align="center">
+            <Text as="span" size="sm" tone="success" weight="semibold">{movie.badge ?? "HD"}</Text>
+            <Text as="span" size="sm">{movie.year}</Text>
+            <Text as="span" size="sm">{movie.runtime}</Text>
+          </Inline>
+          <Text>{movie.description}</Text>
+          <Inline gap={2}>
+            {movie.genres.map((genre) => (
+              <Badge key={genre} variant="outline">{genre}</Badge>
+            ))}
+          </Inline>
+        </Stack>
+      </DialogContent>
+    </Dialog>
   )
 }
