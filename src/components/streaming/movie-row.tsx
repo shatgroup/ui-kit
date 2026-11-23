@@ -24,7 +24,7 @@ export function MovieRow({
 
   // check-ui-ignore-next-line: mẫu -ml-2/pl-2 của Carousel để N card vừa khít, chỉ hàng streaming
   const track = `-ml-2 ${gutter}`
-  const arrow = `top-4 bottom-4 z-10 hidden h-auto w-14 translate-y-0 rounded-none bg-background/50 backdrop-blur opacity-0 md:inline-flex ${fade} pointer-events-none group-hover/row:pointer-events-auto group-hover/row:opacity-100 disabled:opacity-0`
+  const arrow = `top-6 bottom-6 z-10 hidden h-auto w-14 translate-y-0 rounded-none bg-background/50 backdrop-blur opacity-0 md:inline-flex ${fade} pointer-events-none group-hover/row:pointer-events-auto group-hover/row:opacity-100 disabled:opacity-0`
 
   return (
     <Stack gap={0} slot="movie-row" className="group/row">
@@ -34,7 +34,7 @@ export function MovieRow({
           <CarouselContent className={track}>
             {movies.map((movie) => (
               <CarouselItem key={movie.id} className="basis-1/3 pl-2 md:basis-1/5 lg:basis-1/7">
-                <div className="py-4">
+                <div className="py-6">
                   <MovieCard
                     aspect="poster"
                     movie={movie}
