@@ -10,9 +10,9 @@ import type { Movie } from "./types.ts"
 
 const motion = "transition-transform duration-(--duration-normal) ease-(--ease-out)"
 const hoverDelay = 400
+const screenPad = 8
 
-export type CardGrow = "start" | "end" | "center"
-export type CardShift = "none" | "back" | "forward" | "back-half" | "forward-half"
+type CardGrow = "start" | "end" | "center"
 
 type CardMovie = Pick<Movie, "title" | "description" | "image" | "badge"> & Partial<Pick<Movie, "year" | "poster" | "runtime" | "maturity" | "genres">>
 
@@ -105,19 +105,31 @@ function Preview({
     const place = () => {
       const rect = anchor.getBoundingClientRect()
       const width = rect.width * 1.5
-      const left = grow === "start" ? rect.left : grow === "end" ? rect.right - width : rect.left - rect.width * 0.25
+      let left = rect.left + (rect.width - width) / 2
+      if (grow === "start") left = rect.left
+      if (grow === "end") left = rect.right - width
       node.style.position = "fixed"
-      node.style.top = `${rect.top}px`
-      node.style.left = `${left}px`
       node.style.width = `${width}px`
       node.style.zIndex = "70"
+      const height = node.offsetHeight
+      let top = rect.top + rect.height / 2 - height / 2
+      const maxLeft = window.innerWidth - screenPad - width
+      const maxTop = window.innerHeight - screenPad - height
+      if (left < screenPad) left = screenPad
+      if (left > maxLeft) left = Math.max(screenPad, maxLeft)
+      if (top < screenPad) top = screenPad
+      if (top > maxTop) top = Math.max(screenPad, maxTop)
+      node.style.left = `${left}px`
+      node.style.top = `${top}px`
     }
     place()
     const frame = requestAnimationFrame(() => setShown(true))
     window.addEventListener("resize", place)
+    window.addEventListener("scroll", place, true)
     return () => {
       cancelAnimationFrame(frame)
       window.removeEventListener("resize", place)
+      window.removeEventListener("scroll", place, true)
     }
   }, [anchor, grow])
 
@@ -130,13 +142,7 @@ function Preview({
       ref={panel}
       data-slot="movie-preview"
       onMouseLeave={onClose}
-      className={cn(
-        "dark origin-top",
-        motion,
-        shown ? "scale-100" : "scale-75",
-        grow === "start" && "origin-top-left",
-        grow === "end" && "origin-top-right",
-      )}
+      className={cn("dark origin-center text-foreground", motion, shown ? "scale-100" : "scale-75")}
     >
       <div className={shell}>
         <div className="overflow-hidden rounded-t-lg">
@@ -158,7 +164,7 @@ function Preview({
               <Button
                 size="icon"
                 variant="outline"
-                className="rounded-full border-foreground/30 bg-transparent"
+                className="rounded-full border-foreground/40 bg-transparent text-foreground hover:border-foreground hover:bg-transparent dark:border-foreground/40 dark:bg-transparent dark:hover:border-foreground dark:hover:bg-transparent"
                 aria-pressed={saved}
                 aria-label="Thêm vào danh sách"
                 onClick={() => setSaved((value) => !value)}
@@ -168,7 +174,7 @@ function Preview({
               <Button
                 size="icon"
                 variant="outline"
-                className="rounded-full border-foreground/30 bg-transparent"
+                className="rounded-full border-foreground/40 bg-transparent text-foreground hover:border-foreground hover:bg-transparent dark:border-foreground/40 dark:bg-transparent dark:hover:border-foreground dark:hover:bg-transparent"
                 aria-pressed={liked}
                 aria-label="Thích"
                 onClick={() => setLiked((value) => !value)}
@@ -179,7 +185,7 @@ function Preview({
             <Button
               size="icon"
               variant="outline"
-              className="rounded-full border-foreground/30 bg-transparent"
+              className="rounded-full border-foreground/40 bg-transparent text-foreground hover:border-foreground hover:bg-transparent dark:border-foreground/40 dark:bg-transparent dark:hover:border-foreground dark:hover:bg-transparent"
               aria-label={`Chi tiết ${movie.title}`}
               onClick={onInfo}
             >
@@ -202,30 +208,18 @@ function Preview({
   )
 }
 
-const shiftClass: Record<CardShift, string> = {
-  none: "",
-  back: "-translate-x-1/4",
-  forward: "translate-x-1/4",
-  "back-half": "-translate-x-1/2",
-  "forward-half": "translate-x-1/2",
-}
-
 export function MovieCard({
   movie,
   aspect = "poster",
   loading = false,
-  shift = "none",
   onOpen,
   onInfo,
-  onPreview,
 }: {
   movie: CardMovie
   aspect?: "poster" | "landscape"
   loading?: boolean
-  shift?: CardShift
   onOpen?: () => void
   onInfo?: () => void
-  onPreview?: (open: boolean, grow: CardGrow) => void
 }) {
   const root = useRef<HTMLDivElement>(null)
   const wait = useRef<number | null>(null)
@@ -251,7 +245,6 @@ export function MovieCard({
       const next = growOf(node)
       setGrow(next)
       setOpen(true)
-      onPreview?.(true, next)
     }, hoverDelay)
   }
 
@@ -263,7 +256,6 @@ export function MovieCard({
   function close() {
     clearWait()
     setOpen(false)
-    onPreview?.(false, "center")
   }
 
   if (loading) {
@@ -284,23 +276,21 @@ export function MovieCard({
       onMouseEnter={enter}
       onMouseLeave={leave}
     >
-      <div className={cn(motion, shiftClass[shift])}>
-        <Button
-          variant="ghost"
-          className="h-auto w-full rounded-lg p-0"
-          aria-label={movie.title}
-          onClick={() => {
-            if (finePointer()) return
-            showInfo?.()
-          }}
-        >
-          <span className="relative block w-full overflow-hidden rounded-lg">
-            <AspectRatio ratio={ratio}>
-              <MoviePoster src={src} title={movie.title} />
-            </AspectRatio>
-          </span>
-        </Button>
-      </div>
+      <Button
+        variant="ghost"
+        className="h-auto w-full rounded-lg p-0"
+        aria-label={movie.title}
+        onClick={() => {
+          if (finePointer()) return
+          showInfo?.()
+        }}
+      >
+        <span className="relative block w-full overflow-hidden rounded-lg">
+          <AspectRatio ratio={ratio}>
+            <MoviePoster src={src} title={movie.title} />
+          </AspectRatio>
+        </span>
+      </Button>
       {open && root.current ? (
         <Preview
           movie={movie}
