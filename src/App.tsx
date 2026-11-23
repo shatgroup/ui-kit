@@ -18,10 +18,10 @@ function headerHeight() {
   return Number.isFinite(saved) && saved >= 56 && saved <= 320 ? saved : 56
 }
 
-function Frame({ children, search }: { children: ReactNode; search?: ReactNode }) {
+function Frame({ children, search, dark = false }: { children: ReactNode; search?: ReactNode; dark?: boolean }) {
   return (
     <TooltipProvider>
-      <div className="h-svh">
+      <div className={dark ? "dark h-svh" : "h-svh"}>
         <ResizablePanelGroup orientation="vertical" className="h-full">
           <ResizablePanel
             id="site-header"
@@ -56,7 +56,7 @@ export default function App() {
     return <Frame><ShowcasePage /></Frame>
   }
   if (path === "/showcase") return <Frame><ShowcasePage /></Frame>
-  if (path === "/streaming" || path.startsWith("/streaming/")) return <Frame><StreamingPage /></Frame>
+  if (path === "/streaming" || path.startsWith("/streaming/")) return <Frame dark><StreamingPage /></Frame>
   if (path.startsWith("/view/")) return <ExampleView name={path.slice("/view/".length)} />
   if (path === "/components" || path.startsWith("/components/")) {
     return <Frame search={<DocsCommandMenu />}><ComponentsPage /></Frame>

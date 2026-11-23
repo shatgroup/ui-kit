@@ -45,7 +45,7 @@ function SiteBar({ search }: { search?: ReactNode }) {
       </Inline>
       {search}
       <div className="flex flex-1 justify-end">
-        <ThemeToggle />
+        {streaming ? null : <ThemeToggle />}
       </div>
     </header>
   )

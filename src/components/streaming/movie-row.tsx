@@ -31,8 +31,8 @@ export function MovieRow({
   if (movies.length === 0) return null
 
   return (
-    <Stack gap={4} slot="movie-row" className="group/row px-4 md:px-16">
-      <Text as="h2" size="xl" weight="bold">{title}</Text>
+    <Stack gap={6} slot="movie-row" className="group/row px-4 lg:px-16 xl:pl-36 xl:pr-36">
+      <Text as="h2" size="2xl" weight="medium">{title}</Text>
       <Box className="relative">
         <Button
           variant="ghost"

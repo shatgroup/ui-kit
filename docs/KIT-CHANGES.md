@@ -186,5 +186,6 @@ Chỗ đổi so với bản gốc:
 - Kích thước lệch thang kit được làm tròn: thanh `h-[68px]` → `h-16`, lề `px-[60px]` → `px-16`, card `140×200` → `w-36 h-52`, `160×240` → `md:w-40 md:h-60`, hero `min-h-[400px]` → `min-h-96`.
 - `mb-*` → `gap` của `Stack`. Riêng khối hàng phim trên `/streaming` dùng `-mt-32 md:-mt-40` để đè banner, có `check-ui-ignore-next-line`.
 - Poster hàng phim là `AspectRatio` 16/9. Mobile rộng `w-5/12` (khoảng 2,4 card), desktop `md:w-1/5` đến `xl:w-1/6` (5–6 card).
+- Số đo lấy từ DESIGN.md của shadcn.io/design/netflix, chỉ cỡ chữ, khoảng, bo góc, tỉ lệ. Không lấy màu và Netflix Sans. Làm tròn: hero 56px → `text-6xl` (60px), tablet 40px → `text-4xl` (36px), mobile 32px → `text-3xl` (30px), đậm 900 → `font-black`, dòng 70px → `leading-tight`. Tiêu đề hàng 24px/500 → `text-2xl` `font-medium`. Mô tả 16/24 → `text-base` `leading-6`. Nút hero 24px, padding 8×22, bo 8px → `text-2xl` `py-2` `px-6` `rounded-lg`. Khoảng section 64px → `gap-16`. Lề trang 16 / 80 / 148px → `px-4` / `lg:px-16` (64px) / `xl:pl-36 xl:pr-36` (144px). Bo poster 8px giữ `rounded-lg` (`--radius` 0.5rem).
 - `shadow-xl` bỏ. `transition-all` đổi thành `transform` / `opacity` / `colors` với `--duration-*` và `--ease-*`.
 - Bỏ kéo-để-cuộn trên hàng phim để nút trong card nhận được click. Vẫn cuộn ngang và có mũi tên.

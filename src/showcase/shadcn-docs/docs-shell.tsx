@@ -163,6 +163,7 @@ function ComponentsDocs() {
   const current = index >= 0 ? sequence[index] : undefined
   const previous = index > 0 ? sequence[index - 1] : undefined
   const next = index >= 0 ? sequence[index + 1] : undefined
+  const streamingPage = current?.kind === "local" && current.page.group === "Streaming"
   const componentItems: NavItem[] = pages.map((page) => ({
     name: page.title,
     href: `/components/${page.name}`,
@@ -247,7 +248,7 @@ function ComponentsDocs() {
   )
 
   return (
-    <div className="h-full min-h-0 lg:overflow-hidden">
+    <div className={streamingPage ? "dark h-full min-h-0 bg-background text-foreground lg:overflow-hidden" : "h-full min-h-0 lg:overflow-hidden"}>
       <SidebarProvider className="h-full min-h-0 lg:min-h-0">
         {wide ? (
           <ResizablePanelGroup orientation="horizontal" className="h-full min-h-0">

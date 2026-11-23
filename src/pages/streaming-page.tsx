@@ -32,7 +32,7 @@ function useLocation() {
 
 function StreamingRows({ movies, onOpen }: { movies: Movie[]; onOpen: (movie: Movie) => void }) {
   // check-ui-ignore-next-line: hàng đầu đè banner như deepanik/netflix Home, chỉ trang /streaming
-  return <Stack gap={8} className="relative z-20 -mt-32 pb-16 md:-mt-40">
+  return <Stack gap={16} className="relative z-20 -mt-32 pb-16 md:-mt-40">
     <MovieRow title="Đang thịnh hành" movies={movies.slice(0, 8)} onOpen={onOpen} />
     <MovieRow title="Đánh giá cao" movies={movies.slice(2, 10)} onOpen={onOpen} />
     <MovieRow title="Hành động" movies={movies.filter((movie) => movie.genres.includes("Hành động"))} onOpen={onOpen} />
